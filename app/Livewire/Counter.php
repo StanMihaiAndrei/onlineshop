@@ -10,7 +10,7 @@ class Counter extends Component
 
     public function increment()
     {
-        $this->count = $this->count + 5;
+        $this->count++;
     }
 
     public function render()
