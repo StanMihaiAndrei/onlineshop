@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::view('/', 'welcome');
+Route::view('/', 'welcome')->name('home');
 
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
@@ -12,13 +12,18 @@ Route::view('profile', 'profile')
     ->middleware(['auth'])
     ->name('profile');
 
-
 Route::get('/hello', function () {
     return view('hello');
-});
+})->name('hello');
 
+// Rute publice
 Route::view('/shop', 'shop')->name('shop');
-Route::view('/orders', 'orders')->middleware(['auth', 'verified'])->name('orders');
+
+// Rute pentru clienți autentificați
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::view('/orders', 'orders')->name('orders');
+    Route::view('/cart', 'cart')->name('cart');
+});
 
 // Rute admin (protejate cu middleware custom)
 Route::middleware(['auth', 'admin'])->group(function () {

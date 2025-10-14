@@ -16,21 +16,36 @@
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-100">
-            <livewire:layout.navigation />
+            @if(auth()->check() && auth()->user()->role === 'admin')
+                <!-- Layout pentru ADMIN cu Sidebar -->
+                <div class="flex">
+                    <!-- Sidebar pentru Admin -->
+                    <livewire:layout.admin-sidebar />
 
-            <!-- Page Heading -->
-            @if (isset($header))
-                <header class="bg-white shadow">
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                        {{ $header }}
+                    <!-- Main Content -->
+                    <div class="flex-1">
+                        <!-- Top Navigation -->
+                        <livewire:layout.admin-top-navigation />
+
+                        <!-- Page Content -->
+                        <main class="p-6">
+                            {{ $slot }}
+                        </main>
                     </div>
-                </header>
+                </div>
+            @else
+                <!-- Layout pentru CLIENT (redirect la guest layout) -->
+                <livewire:layout.navigation />
+                
+                <!-- Page Content -->
+                <main>
+                    <div class="py-12">
+                        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                            {{ $slot }}
+                        </div>
+                    </div>
+                </main>
             @endif
-
-            <!-- Page Content -->
-            <main>
-               @yield('content')
-            </main>
         </div>
     </body>
 </html>

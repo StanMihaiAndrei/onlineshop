@@ -27,28 +27,26 @@ new class extends Component
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     @auth
-                        @if(auth()->user()->role === 'admin')
-                            <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate>
-                                {{ __('Admin Dashboard') }}
-                            </x-nav-link>
-                            <x-nav-link :href="route('admin.products')" wire:navigate>
-                                {{ __('Products') }}
-                            </x-nav-link>
-                            <x-nav-link :href="route('admin.orders')" wire:navigate>
-                                {{ __('Orders') }}
-                            </x-nav-link>
-                        @else
+                        @if(auth()->user()->role === 'client')
+                            <!-- Meniu pentru CLIENȚI -->
                             <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate>
                                 {{ __('My Account') }}
                             </x-nav-link>
-                            <x-nav-link :href="route('shop')" wire:navigate>
+                            <x-nav-link :href="route('shop')" :active="request()->routeIs('shop')" wire:navigate>
                                 {{ __('Shop') }}
                             </x-nav-link>
-                            <x-nav-link :href="route('orders')" wire:navigate>
+                            <x-nav-link :href="route('orders')" :active="request()->routeIs('orders')" wire:navigate>
                                 {{ __('My Orders') }}
+                            </x-nav-link>
+                            <x-nav-link :href="route('cart')" wire:navigate>
+                                {{ __('Cart') }}
                             </x-nav-link>
                         @endif
                     @else
+                        <!-- Meniu pentru GUEST (vizitatori nelogați) -->
+                        <x-nav-link :href="route('home')" wire:navigate>
+                            {{ __('Home') }}
+                        </x-nav-link>
                         <x-nav-link :href="route('shop')" wire:navigate>
                             {{ __('Shop') }}
                         </x-nav-link>
@@ -107,18 +105,9 @@ new class extends Component
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
             @auth
-                @if(auth()->user()->role === 'admin')
-                    <x-responsive-nav-link :href="route('dashboard')" wire:navigate>
-                        {{ __('Admin Dashboard') }}
-                    </x-responsive-nav-link>
-                    <x-responsive-nav-link :href="route('admin.products')" wire:navigate>
-                        {{ __('Products') }}
-                    </x-responsive-nav-link>
-                    <x-responsive-nav-link :href="route('admin.orders')" wire:navigate>
-                        {{ __('Orders') }}
-                    </x-responsive-nav-link>
-                @else
-                    <x-responsive-nav-link :href="route('dashboard')" wire:navigate>
+                @if(auth()->user()->role === 'client')
+                    <!-- Meniu mobil pentru CLIENȚI -->
+                    <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate>
                         {{ __('My Account') }}
                     </x-responsive-nav-link>
                     <x-responsive-nav-link :href="route('shop')" wire:navigate>
@@ -127,8 +116,15 @@ new class extends Component
                     <x-responsive-nav-link :href="route('orders')" wire:navigate>
                         {{ __('My Orders') }}
                     </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('cart')" wire:navigate>
+                        {{ __('Cart') }}
+                    </x-responsive-nav-link>
                 @endif
             @else
+                <!-- Meniu mobil pentru GUEST -->
+                <x-responsive-nav-link :href="route('home')" wire:navigate>
+                    {{ __('Home') }}
+                </x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('shop')" wire:navigate>
                     {{ __('Shop') }}
                 </x-responsive-nav-link>
