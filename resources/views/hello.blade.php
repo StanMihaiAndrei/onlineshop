@@ -1,10 +1,9 @@
-<!-- filepath: c:\Apache24\htdocs\onlineshop\resources\views\hello.blade.php -->
 @extends('layouts.app')
 
 @section('title', 'Hello Tailwind')
 
 @section('content')
-    <div class="bg-violet-300 text-white p-4">
+    <div class="bg-violet-500 text-green-500 p-4">
         Tailwind funcționează!
     </div>
 
