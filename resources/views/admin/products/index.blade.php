@@ -1,9 +1,9 @@
 <x-app-layout>
     <div class="container mx-auto px-4 py-6">
-        <div class="flex justify-between items-center mb-6">
+        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
             <h2 class="text-2xl font-bold text-gray-800">Products</h2>
             <a href="{{ route('admin.products.create') }}" 
-               class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition">
+               class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition text-center">
                 + Add New Product
             </a>
         </div>
@@ -14,7 +14,8 @@
             </div>
         @endif
 
-        <div class="bg-white rounded-lg shadow overflow-hidden">
+        <!-- Desktop Table View -->
+        <div class="hidden md:block bg-white rounded-lg shadow overflow-hidden">
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                     <tr>
@@ -80,6 +81,76 @@
                     @endforelse
                 </tbody>
             </table>
+        </div>
+
+        <!-- Mobile Card View -->
+        <div class="md:hidden space-y-4">
+            @forelse($products as $product)
+                <div class="bg-white rounded-lg shadow overflow-hidden">
+                    <div class="p-4">
+                        <div class="flex gap-4 mb-3">
+                            @if($product->first_image)
+                                <img src="{{ asset('storage/' . $product->first_image) }}" 
+                                     alt="{{ $product->title }}" 
+                                     class="h-20 w-20 object-cover rounded flex-shrink-0">
+                            @else
+                                <div class="h-20 w-20 bg-gray-200 rounded flex items-center justify-center flex-shrink-0">
+                                    <span class="text-gray-400 text-xs">No image</span>
+                                </div>
+                            @endif
+                            <div class="flex-1 min-w-0">
+                                <h3 class="text-sm font-semibold text-gray-900 mb-1">{{ $product->title }}</h3>
+                                <p class="text-xs text-gray-500 line-clamp-2">{{ $product->description }}</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3 mb-3">
+                            <div>
+                                <p class="text-xs text-gray-500">Price</p>
+                                <p class="text-sm font-semibold text-gray-900">${{ number_format($product->price, 2) }}</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500">Stock</p>
+                                <p class="text-sm font-semibold text-gray-900">{{ $product->stock }}</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="px-2 py-1 text-xs font-semibold rounded-full 
+                                {{ $product->is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                                {{ $product->is_active ? 'Active' : 'Inactive' }}
+                            </span>
+                        </div>
+
+                        <div class="flex gap-2">
+                            <a href="{{ route('admin.products.show', $product) }}" 
+                               class="flex-1 text-center px-3 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition">
+                                View
+                            </a>
+                            <a href="{{ route('admin.products.edit', $product) }}" 
+                               class="flex-1 text-center px-3 py-2 bg-indigo-600 text-white text-sm rounded-lg hover:bg-indigo-700 transition">
+                                Edit
+                            </a>
+                            <form action="{{ route('admin.products.destroy', $product) }}" 
+                                  method="POST" 
+                                  class="flex-1"
+                                  onsubmit="return confirm('Are you sure you want to delete this product?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="w-full px-3 py-2 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 transition">
+                                    Delete
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            @empty
+                <div class="bg-white rounded-lg shadow p-6 text-center">
+                    <p class="text-gray-500">
+                        No products found. <a href="{{ route('admin.products.create') }}" class="text-blue-600">Add your first product</a>
+                    </p>
+                </div>
+            @endforelse
         </div>
 
         <div class="mt-6">
