@@ -12,18 +12,49 @@ new class extends Component
     }
 }; ?>
 
-<div x-data="{ open: true }" class="relative">
+<div x-data="{ open: true, mobileOpen: false }" class="relative">
+    <!-- Mobile Menu Button (visible only on small screens) -->
+    <button @click="mobileOpen = !mobileOpen" class="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-lg bg-gray-800 text-white">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+    </button>
+
+    <!-- Overlay for mobile -->
+    <div x-show="mobileOpen" 
+         @click="mobileOpen = false"
+         x-transition:enter="transition-opacity ease-linear duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition-opacity ease-linear duration-300"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         class="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden"
+         style="display: none;">
+    </div>
+
     <!-- Sidebar -->
-    <aside :class="open ? 'w-64' : 'w-20'" class="bg-gray-800 text-white min-h-screen transition-all duration-300 flex flex-col">
+    <aside :class="{
+        'w-64': open,
+        'w-20': !open,
+        'translate-x-0': mobileOpen,
+        '-translate-x-full': !mobileOpen
+    }" 
+    class="bg-gray-800 text-white min-h-screen transition-all duration-300 flex flex-col fixed lg:static z-40 lg:translate-x-0">
         <!-- Logo & Toggle -->
         <div class="p-4 flex items-center justify-between border-b border-gray-700">
             <a href="{{ route('dashboard') }}" wire:navigate class="flex items-center space-x-2">
                 <x-application-logo class="block h-9 w-auto fill-current text-white" />
                 <span x-show="open" class="font-bold text-lg">Admin Panel</span>
             </a>
-            <button @click="open = !open" class="text-gray-400 hover:text-white">
+            <button @click="open = !open" class="text-gray-400 hover:text-white hidden lg:block">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+            <button @click="mobileOpen = false" class="text-gray-400 hover:text-white lg:hidden">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                 </svg>
             </button>
         </div>
@@ -31,6 +62,7 @@ new class extends Component
         <!-- Navigation Links -->
         <nav class="flex-1 px-2 py-4 space-y-2">
             <a href="{{ route('dashboard') }}" wire:navigate 
+               @click="mobileOpen = false"
                class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 transition {{ request()->routeIs('dashboard') ? 'bg-gray-700' : '' }}">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
@@ -39,6 +71,7 @@ new class extends Component
             </a>
 
             <a href="{{ route('admin.products') }}" wire:navigate 
+               @click="mobileOpen = false"
                class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 transition {{ request()->routeIs('admin.products') ? 'bg-gray-700' : '' }}">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
@@ -47,6 +80,7 @@ new class extends Component
             </a>
 
             <a href="{{ route('admin.orders') }}" wire:navigate 
+               @click="mobileOpen = false"
                class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 transition {{ request()->routeIs('admin.orders') ? 'bg-gray-700' : '' }}">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>

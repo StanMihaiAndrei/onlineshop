@@ -9,9 +9,6 @@ new #[Layout('layouts.guest')] class extends Component
 {
     public string $password = '';
 
-    /**
-     * Confirm the current user's password.
-     */
     public function confirmPassword(): void
     {
         $this->validate([
@@ -28,35 +25,28 @@ new #[Layout('layouts.guest')] class extends Component
         }
 
         session(['auth.password_confirmed_at' => time()]);
-
         $this->redirectIntended(default: route('dashboard', absolute: false), navigate: true);
     }
 }; ?>
 
-<div>
-    <div class="mb-4 text-sm text-gray-600">
-        {{ __('This is a secure area of the application. Please confirm your password before continuing.') }}
+<div class="flex justify-center items-center min-h-screen py-12">
+    <div class="w-full max-w-md px-6 py-8 bg-white shadow-md rounded-lg">
+        <div class="mb-4 text-sm text-gray-600">
+            {{ __('This is a secure area of the application. Please confirm your password before continuing.') }}
+        </div>
+
+        <form wire:submit="confirmPassword">
+            <div>
+                <x-input-label for="password" :value="__('Password')" />
+                <x-text-input wire:model="password" id="password" class="block mt-1 w-full" type="password" name="password" required autocomplete="current-password" />
+                <x-input-error :messages="$errors->get('password')" class="mt-2" />
+            </div>
+
+            <div class="flex justify-end mt-4">
+                <x-primary-button>
+                    {{ __('Confirm') }}
+                </x-primary-button>
+            </div>
+        </form>
     </div>
-
-    <form wire:submit="confirmPassword">
-        <!-- Password -->
-        <div>
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input wire:model="password"
-                          id="password"
-                          class="block mt-1 w-full"
-                          type="password"
-                          name="password"
-                          required autocomplete="current-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
-
-        <div class="flex justify-end mt-4">
-            <x-primary-button>
-                {{ __('Confirm') }}
-            </x-primary-button>
-        </div>
-    </form>
 </div>
