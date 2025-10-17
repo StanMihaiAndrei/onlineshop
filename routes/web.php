@@ -21,6 +21,7 @@ Route::get('/hello', function () {
 // Rute publice pentru Shop
 Route::get('/shop', [ShopController::class, 'index'])->name('shop');
 Route::get('/shop/{slug}', [ShopController::class, 'show'])->name('shop.show');
+Route::get('/checkout', function () { return view('checkout.index'); })->name('checkout');
 
 // Rute admin (protejate cu middleware custom)
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {

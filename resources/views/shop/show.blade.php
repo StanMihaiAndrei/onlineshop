@@ -42,7 +42,7 @@
                     </div>
 
                     <!-- Product Info Section -->
-                    <div>
+                    <div x-data="{ quantity: 1 }">
                         <h1 class="text-3xl font-bold text-gray-800 mb-4">{{ $product->title }}</h1>
                         
                         <div class="flex items-center gap-4 mb-6">
@@ -61,27 +61,35 @@
                         </div>
 
                         @if($product->stock > 0)
-                            <div class="mb-6" x-data="{ quantity: 1 }">
+                            <div class="mb-6">
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Quantity</label>
                                 <div class="flex items-center gap-4">
                                     <button @click="quantity = Math.max(1, quantity - 1)" 
-                                            class="w-10 h-10 rounded-lg border border-gray-300 hover:bg-gray-50">
-                                        -
+                                            class="w-10 h-10 rounded-lg border border-gray-300 hover:bg-gray-50 flex items-center justify-center">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
+                                        </svg>
                                     </button>
                                     <input type="number" 
                                            x-model="quantity" 
                                            min="1" 
                                            :max="{{ $product->stock }}"
-                                           class="w-20 text-center border border-gray-300 rounded-lg">
+                                           class="w-20 text-center border border-gray-300 rounded-lg py-2">
                                     <button @click="quantity = Math.min({{ $product->stock }}, quantity + 1)" 
-                                            class="w-10 h-10 rounded-lg border border-gray-300 hover:bg-gray-50">
-                                        +
+                                            class="w-10 h-10 rounded-lg border border-gray-300 hover:bg-gray-50 flex items-center justify-center">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                        </svg>
                                     </button>
                                     <span class="text-sm text-gray-600">{{ $product->stock }} available</span>
                                 </div>
                             </div>
 
-                            <button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition">
+                            <button @click="addToCart({{ $product->id }}, quantity)"
+                                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition flex items-center justify-center gap-2">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                                </svg>
                                 Add to Cart
                             </button>
                         @else
@@ -94,4 +102,10 @@
             </div>
         </div>
     </div>
+
+    <script>
+        function addToCart(productId, quantity) {
+            Livewire.dispatch('cart-add-item', { productId: productId, quantity: quantity });
+        }
+    </script>
 </x-guest-layout>
