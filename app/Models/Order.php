@@ -25,6 +25,7 @@ class Order extends Model
         'shipping_country',
         'payment_method',
         'payment_status',
+        'stripe_session_id',
         'notes',
     ];
 

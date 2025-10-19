@@ -102,14 +102,33 @@
                             <h2 class="text-xl font-semibold text-gray-900 mb-4">Payment Method</h2>
                             
                             <div class="space-y-3">
-                                <label class="flex items-center p-4 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
+                                <label class="flex items-center p-4 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition">
                                     <input type="radio" name="payment_method" value="cash_on_delivery" checked class="w-4 h-4 text-blue-600">
-                                    <span class="ml-3 text-gray-900 font-medium">Cash on Delivery</span>
+                                    <div class="ml-3">
+                                        <span class="text-gray-900 font-medium">Cash on Delivery</span>
+                                        <p class="text-xs text-gray-500 mt-1">Pay when you receive your order</p>
+                                    </div>
                                 </label>
 
-                                <label class="flex items-center p-4 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
+                                <label class="flex items-center p-4 border-2 border-blue-500 rounded-lg cursor-pointer hover:bg-blue-50 transition bg-gradient-to-r from-blue-50 to-indigo-50">
                                     <input type="radio" name="payment_method" value="card" class="w-4 h-4 text-blue-600">
-                                    <span class="ml-3 text-gray-900 font-medium">Credit/Debit Card (Coming Soon)</span>
+                                    <div class="ml-3 flex-1">
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-gray-900 font-medium">Credit/Debit Card</span>
+                                            <div class="flex gap-1">
+                                                <svg class="w-8 h-5" viewBox="0 0 32 20" fill="none">
+                                                    <rect width="32" height="20" rx="2" fill="#1434CB"/>
+                                                    <circle cx="12" cy="10" r="6" fill="#EB001B"/>
+                                                    <circle cx="20" cy="10" r="6" fill="#FF5F00"/>
+                                                </svg>
+                                                <svg class="w-8 h-5" viewBox="0 0 32 20" fill="none">
+                                                    <rect width="32" height="20" rx="2" fill="#0165AC"/>
+                                                    <path d="M18 4h8v12h-8z" fill="#FFA500"/>
+                                                </svg>
+                                            </div>
+                                        </div>
+                                        <p class="text-xs text-gray-600 mt-1">🔒 Secure payment powered by Stripe</p>
+                                    </div>
                                 </label>
                             </div>
                             @error('payment_method')
@@ -126,7 +145,7 @@
                         </div>
 
                         <!-- Submit Button -->
-                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition">
+                        <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 px-6 rounded-lg transition shadow-lg hover:shadow-xl">
                             Place Order
                         </button>
                     </form>
@@ -166,7 +185,7 @@
                             </div>
                             <div class="flex justify-between items-center mb-2">
                                 <span class="text-gray-600">Shipping</span>
-                                <span class="font-medium">FREE</span>
+                                <span class="font-medium text-green-600">FREE</span>
                             </div>
                             <div class="flex justify-between items-center pt-4 border-t border-gray-200">
                                 <span class="text-lg font-semibold">Total</span>

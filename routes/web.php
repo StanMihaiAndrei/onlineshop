@@ -31,6 +31,11 @@ Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
 Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
 Route::get('/checkout/success/{order}', [CheckoutController::class, 'success'])->name('checkout.success');
 
+// Stripe routes
+Route::get('/stripe/success/{order}', [CheckoutController::class, 'stripeSuccess'])->name('stripe.success');
+Route::get('/stripe/cancel/{order}', [CheckoutController::class, 'stripeCancel'])->name('stripe.cancel');
+Route::post('/stripe/webhook', [CheckoutController::class, 'webhook'])->name('stripe.webhook');
+
 // Orders history - doar pentru utilizatori autentificați
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');

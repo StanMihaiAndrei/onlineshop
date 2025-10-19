@@ -7,6 +7,9 @@ use App\Models\OrderItem;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Stripe\Stripe;
+use Stripe\Checkout\Session as StripeSession;
+
 
 class CheckoutController extends Controller
 {
@@ -25,7 +28,7 @@ class CheckoutController extends Controller
         return view('checkout.index', compact('cartItems', 'cartTotal'));
     }
 
-    public function store(Request $request)
+     public function store(Request $request)
     {
         $validated = $request->validate([
             'shipping_name' => 'required|string|max:255',
@@ -53,7 +56,7 @@ class CheckoutController extends Controller
                 return $item['price'] * $item['quantity'];
             });
 
-            // Create order (user_id poate fi null pentru guest users)
+            // Create order
             $order = Order::create([
                 'user_id' => auth()->check() ? auth()->id() : null,
                 'total_amount' => $totalAmount,
@@ -65,6 +68,7 @@ class CheckoutController extends Controller
                 'shipping_postal_code' => $validated['shipping_postal_code'],
                 'shipping_country' => $validated['shipping_country'],
                 'payment_method' => $validated['payment_method'],
+                'payment_status' => $validated['payment_method'] === 'card' ? 'pending' : 'pending',
                 'notes' => $validated['notes'] ?? null,
             ]);
 
@@ -91,15 +95,113 @@ class CheckoutController extends Controller
 
             DB::commit();
 
-            // Clear cart
-            session()->forget('cart');
+            // If card payment, redirect to Stripe
+            if ($validated['payment_method'] === 'card') {
+                return $this->createStripeSession($order, $cartItems);
+            }
 
+            // For cash on delivery, clear cart and show success
+            session()->forget('cart');
             return redirect()->route('checkout.success', $order)->with('success', 'Order placed successfully!');
 
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Error placing order: ' . $e->getMessage())->withInput();
         }
+    }
+
+    private function createStripeSession(Order $order, array $cartItems)
+    {
+        Stripe::setApiKey(config('services.stripe.secret'));
+
+        $lineItems = [];
+        foreach ($cartItems as $item) {
+            $lineItems[] = [
+                'price_data' => [
+                    'currency' => 'ron',
+                    'product_data' => [
+                        'name' => $item['title'],
+                        'images' => $item['image'] ? [asset('storage/' . $item['image'])] : [],
+                    ],
+                    'unit_amount' => intval($item['price'] * 100), // Convert to cents
+                ],
+                'quantity' => $item['quantity'],
+            ];
+        }
+
+        $session = StripeSession::create([
+            'payment_method_types' => ['card'],
+            'line_items' => $lineItems,
+            'mode' => 'payment',
+            'success_url' => route('stripe.success', ['order' => $order->id]),
+            'cancel_url' => route('stripe.cancel', ['order' => $order->id]),
+            'customer_email' => $order->shipping_email,
+            'metadata' => [
+                'order_id' => $order->id,
+                'order_number' => $order->order_number,
+            ],
+        ]);
+
+        // Store Stripe session ID
+        $order->update(['stripe_session_id' => $session->id]);
+
+        return redirect($session->url);
+    }
+
+    public function stripeSuccess(Request $request, Order $order)
+    {
+        // Mark payment as paid
+        $order->update(['payment_status' => 'paid']);
+        
+        // Clear cart
+        session()->forget('cart');
+        
+        return redirect()->route('checkout.success', $order)
+            ->with('success', 'Payment successful! Order placed successfully!');
+    }
+
+    public function stripeCancel(Request $request, Order $order)
+    {
+        // Restore stock
+        foreach ($order->items as $item) {
+            $product = Product::find($item->product_id);
+            if ($product) {
+                $product->increment('stock', $item->quantity);
+            }
+        }
+
+        // Delete order
+        $order->delete();
+
+        return redirect()->route('checkout')
+            ->with('error', 'Payment cancelled. Please try again.');
+    }
+
+    public function webhook(Request $request)
+    {
+        Stripe::setApiKey(config('services.stripe.secret'));
+        $endpoint_secret = config('services.stripe.webhook_secret');
+
+        $payload = $request->getContent();
+        $sig_header = $request->header('Stripe-Signature');
+
+        try {
+            $event = \Stripe\Webhook::constructEvent($payload, $sig_header, $endpoint_secret);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
+
+        // Handle the event
+        if ($event->type === 'checkout.session.completed') {
+            $session = $event->data->object;
+            
+            $order = Order::where('stripe_session_id', $session->id)->first();
+            if ($order) {
+                $order->update(['payment_status' => 'paid']);
+            }
+        }
+
+        return response()->json(['status' => 'success']);
     }
 
     public function success(Order $order)
