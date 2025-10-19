@@ -36,7 +36,7 @@
 
                 <div class="space-y-3">
                     @auth
-                        <a href="{{ route('orders') }}" class="block w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition">
+                        <a href="{{ route('orders.index') }}" class="block w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition">
                             View My Orders
                         </a>
                     @else

@@ -75,7 +75,7 @@ new class extends Component
                 <span x-show="open">Products</span>
             </a>
 
-            <a href="{{ route('admin.orders') }}" wire:navigate 
+            <a href="{{ route('admin.orders.index') }}" wire:navigate 
                @click="mobileOpen = false"
                class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 transition {{ request()->routeIs('admin.orders') ? 'bg-gray-700' : '' }}">
                 <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
