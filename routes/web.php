@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ShopController;
 use Illuminate\Support\Facades\Route;
 
@@ -22,7 +23,17 @@ Route::get('/hello', function () {
 // Rute publice pentru Shop
 Route::get('/shop', [ShopController::class, 'index'])->name('shop');
 Route::get('/shop/{slug}', [ShopController::class, 'show'])->name('shop.show');
-Route::get('/checkout', function () { return view('checkout.index'); })->name('checkout');
+
+// Checkout routes (fără auth - oricine poate comanda)
+Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
+Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+Route::get('/checkout/success/{order}', [CheckoutController::class, 'success'])->name('checkout.success');
+
+// Orders history - doar pentru utilizatori autentificați
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::view('/orders', 'orders')->name('orders');
+    Route::view('/cart', 'cart')->name('cart');
+});
 
 // Rute admin (protejate cu middleware custom)
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
@@ -34,16 +45,5 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     // User management routes
     Route::resource('users', UserController::class);
 });
-
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::view('/orders', 'orders')->name('orders');
-    Route::view('/cart', 'cart')->name('cart');
-});
-
-// Rute admin (protejate cu middleware custom)
-// Route::middleware(['auth', 'admin'])->group(function () {
-//     Route::view('/admin/products', 'admin.products')->name('admin.products');
-//     Route::view('/admin/orders', 'admin.orders')->name('admin.orders');
-// });
 
 require __DIR__.'/auth.php';
