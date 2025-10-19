@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\ShopController;
 use Illuminate\Support\Facades\Route;
 
@@ -29,6 +30,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::delete('products/{product}/images', [ProductController::class, 'deleteImage'])
         ->name('products.delete-image');
     Route::view('/orders', 'admin.orders')->name('orders');
+
+    // User management routes
+    Route::resource('users', UserController::class);
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
