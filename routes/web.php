@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminOrderController;
+use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\ColorController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\CheckoutController;
@@ -57,6 +59,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     // User management routes
     Route::resource('users', UserController::class);
+
+     // Nomenclatoare
+    Route::resource('colors', ColorController::class);
+    Route::resource('categories', CategoryController::class);
 });
 
 require __DIR__.'/auth.php';

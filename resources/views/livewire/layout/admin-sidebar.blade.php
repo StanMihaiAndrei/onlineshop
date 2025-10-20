@@ -12,7 +12,7 @@ new class extends Component
     }
 }; ?>
 
-<div x-data="{ open: true, mobileOpen: false }" 
+<div x-data="{ open: true, mobileOpen: false, nomenclaturesOpen: false }" 
      @toggle-mobile-menu.window="mobileOpen = !mobileOpen"
      class="relative">
     
@@ -92,6 +92,50 @@ new class extends Component
                 </svg>
                 <span x-show="open">Users</span>
             </a>
+
+            <!-- Nomenclatoare Dropdown -->
+            <div class="space-y-1">
+                <button @click="nomenclaturesOpen = !nomenclaturesOpen" 
+                        class="w-full flex items-center justify-between px-4 py-3 rounded-lg hover:bg-gray-700 transition {{ request()->routeIs('admin.colors.*') || request()->routeIs('admin.categories.*') ? 'bg-gray-700' : '' }}">
+                    <div class="flex items-center space-x-3">
+                        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                        </svg>
+                        <span x-show="open">Nomenclatoare</span>
+                    </div>
+                    <svg x-show="open" 
+                         :class="{'rotate-180': nomenclaturesOpen}" 
+                         class="w-4 h-4 transition-transform" 
+                         fill="none" 
+                         stroke="currentColor" 
+                         viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+
+                <!-- Dropdown Items -->
+                <div x-show="nomenclaturesOpen && open" 
+                     x-collapse
+                     class="ml-8 space-y-1">
+                    <a href="{{ route('admin.colors.index') }}" wire:navigate 
+                       @click="mobileOpen = false"
+                       class="flex items-center space-x-3 px-4 py-2 rounded-lg hover:bg-gray-700 transition text-sm {{ request()->routeIs('admin.colors.*') ? 'bg-gray-700' : '' }}">
+                        <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path>
+                        </svg>
+                        <span>Colors</span>
+                    </a>
+
+                    <a href="{{ route('admin.categories.index') }}" wire:navigate 
+                       @click="mobileOpen = false"
+                       class="flex items-center space-x-3 px-4 py-2 rounded-lg hover:bg-gray-700 transition text-sm {{ request()->routeIs('admin.categories.*') ? 'bg-gray-700' : '' }}">
+                        <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                        </svg>
+                        <span>Categories</span>
+                    </a>
+                </div>
+            </div>
         </nav>
 
         <!-- User Info & Logout -->
