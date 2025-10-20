@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
+use App\Models\Color;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -12,13 +14,15 @@ class ProductController extends Controller
 {
     public function index()
     {
-        $products = Product::latest()->paginate(10);
+        $products = Product::with(['categories', 'colors'])->latest()->paginate(10);
         return view('admin.products.index', compact('products'));
     }
 
     public function create()
     {
-        return view('admin.products.create');
+        $categories = Category::where('is_active', true)->orderBy('name')->get();
+        $colors = Color::where('is_active', true)->orderBy('name')->get();
+        return view('admin.products.create', compact('categories', 'colors'));
     }
 
     public function store(Request $request)
@@ -29,6 +33,10 @@ class ProductController extends Controller
             'price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
             'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'categories' => 'nullable|array',
+            'categories.*' => 'exists:categories,id',
+            'colors' => 'nullable|array',
+            'colors.*' => 'exists:colors,id',
         ]);
 
         $images = [];
@@ -39,7 +47,7 @@ class ProductController extends Controller
             }
         }
 
-        Product::create([
+        $product = Product::create([
             'title' => $validated['title'],
             'slug' => Str::slug($validated['title']),
             'description' => $validated['description'],
@@ -48,18 +56,30 @@ class ProductController extends Controller
             'images' => $images,
         ]);
 
+        // Atașăm categoriile și culorile
+        if (!empty($validated['categories'])) {
+            $product->categories()->attach($validated['categories']);
+        }
+        if (!empty($validated['colors'])) {
+            $product->colors()->attach($validated['colors']);
+        }
+
         return redirect()->route('admin.products.index')
             ->with('success', 'Product created successfully!');
     }
 
     public function show(Product $product)
     {
+        $product->load(['categories', 'colors']);
         return view('admin.products.show', compact('product'));
     }
 
     public function edit(Product $product)
     {
-        return view('admin.products.edit', compact('product'));
+        $product->load(['categories', 'colors']);
+        $categories = Category::where('is_active', true)->orderBy('name')->get();
+        $colors = Color::where('is_active', true)->orderBy('name')->get();
+        return view('admin.products.edit', compact('product', 'categories', 'colors'));
     }
 
     public function update(Request $request, Product $product)
@@ -70,6 +90,10 @@ class ProductController extends Controller
             'price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
             'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'categories' => 'nullable|array',
+            'categories.*' => 'exists:categories,id',
+            'colors' => 'nullable|array',
+            'colors.*' => 'exists:colors,id',
         ]);
 
         // Păstrăm imaginile existente
@@ -91,6 +115,10 @@ class ProductController extends Controller
             'images' => $images,
             'is_active' => $request->has('is_active') ? true : false,
         ]);
+
+        // Sincronizăm categoriile și culorile
+        $product->categories()->sync($validated['categories'] ?? []);
+        $product->colors()->sync($validated['colors'] ?? []);
 
         return redirect()->route('admin.products.index')
             ->with('success', 'Product updated successfully!');
@@ -117,16 +145,9 @@ class ProductController extends Controller
         $images = $product->images ?? [];
 
         if (isset($images[$imageIndex])) {
-            // Șterge imaginea din storage
             Storage::disk('public')->delete($images[$imageIndex]);
-            
-            // Șterge imaginea din array
             unset($images[$imageIndex]);
-            
-            // Reindexează array-ul pentru a nu avea goluri
             $images = array_values($images);
-            
-            // Actualizează produsul
             $product->update(['images' => $images]);
             
             return back()->with('success', 'Image deleted successfully!');

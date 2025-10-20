@@ -159,18 +159,23 @@
                         <div class="space-y-4 mb-6">
                             @foreach($cartItems as $item)
                                 <div class="flex gap-3">
-                                    @if($item['image'])
-                                        <img src="{{ asset('storage/' . $item['image']) }}" 
-                                             alt="{{ $item['title'] }}"
-                                             class="w-16 h-16 object-cover rounded">
-                                    @else
-                                        <div class="w-16 h-16 bg-gray-200 rounded flex items-center justify-center">
-                                            <span class="text-gray-400 text-xs">No image</span>
-                                        </div>
-                                    @endif
+                                    <a href="{{ route('shop.product', [$item['category_slug'] ?? 'uncategorized', $item['slug']]) }}" class="flex-shrink-0">
+                                        @if($item['image'])
+                                            <img src="{{ asset('storage/' . $item['image']) }}" 
+                                                 alt="{{ $item['title'] }}"
+                                                 class="w-16 h-16 object-cover rounded">
+                                        @else
+                                            <div class="w-16 h-16 bg-gray-200 rounded flex items-center justify-center">
+                                                <span class="text-gray-400 text-xs">No image</span>
+                                            </div>
+                                        @endif
+                                    </a>
                                     
                                     <div class="flex-1">
-                                        <h3 class="text-sm font-medium text-gray-900 line-clamp-2">{{ $item['title'] }}</h3>
+                                        <a href="{{ route('shop.product', [$item['category_slug'] ?? 'uncategorized', $item['slug']]) }}" 
+                                           class="text-sm font-medium text-gray-900 hover:text-blue-600 line-clamp-2">
+                                            {{ $item['title'] }}
+                                        </a>
                                         <p class="text-sm text-gray-600">Qty: {{ $item['quantity'] }}</p>
                                         <p class="text-sm font-semibold text-gray-900">${{ number_format($item['price'] * $item['quantity'], 2) }}</p>
                                     </div>

@@ -26,7 +26,8 @@ Route::get('/hello', function () {
 
 // Rute publice pentru Shop
 Route::get('/shop', [ShopController::class, 'index'])->name('shop');
-Route::get('/shop/{slug}', [ShopController::class, 'show'])->name('shop.show');
+Route::get('/shop/{categorySlug}', [ShopController::class, 'category'])->name('shop.category');
+Route::get('/shop/{categorySlug}/{productSlug}', [ShopController::class, 'showByCategory'])->name('shop.product');
 
 // Checkout routes (fără auth - oricine poate comanda)
 Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
@@ -60,7 +61,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     // User management routes
     Route::resource('users', UserController::class);
 
-     // Nomenclatoare
+    // Nomenclatoare
     Route::resource('colors', ColorController::class);
     Route::resource('categories', CategoryController::class);
 });

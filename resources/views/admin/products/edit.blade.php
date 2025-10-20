@@ -81,6 +81,52 @@
                     </div>
                 </div>
 
+                <!-- Categories -->
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Categories</label>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-3 p-4 border border-gray-300 rounded-lg max-h-48 overflow-y-auto">
+                        @forelse($categories as $category)
+                            <label class="flex items-center">
+                                <input type="checkbox" 
+                                       name="categories[]" 
+                                       value="{{ $category->id }}"
+                                       {{ in_array($category->id, old('categories', $product->categories->pluck('id')->toArray())) ? 'checked' : '' }}
+                                       class="rounded border-gray-300 text-blue-600 shadow-sm focus:ring-blue-500">
+                                <span class="ml-2 text-sm text-gray-700">{{ $category->name }}</span>
+                            </label>
+                        @empty
+                            <p class="text-sm text-gray-500 col-span-3">No categories available. <a href="{{ route('admin.categories.create') }}" class="text-blue-600">Create one</a></p>
+                        @endforelse
+                    </div>
+                    @error('categories')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Colors -->
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Colors</label>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 p-4 border border-gray-300 rounded-lg max-h-48 overflow-y-auto">
+                        @forelse($colors as $color)
+                            <label class="flex items-center">
+                                <input type="checkbox" 
+                                       name="colors[]" 
+                                       value="{{ $color->id }}"
+                                       {{ in_array($color->id, old('colors', $product->colors->pluck('id')->toArray())) ? 'checked' : '' }}
+                                       class="rounded border-gray-300 text-blue-600 shadow-sm focus:ring-blue-500">
+                                <div class="w-6 h-6 rounded-full ml-2 border-2 border-gray-300" 
+                                     style="background-color: {{ $color->hex_code }}"></div>
+                                <span class="ml-2 text-sm text-gray-700">{{ $color->name }}</span>
+                            </label>
+                        @empty
+                            <p class="text-sm text-gray-500 col-span-4">No colors available. <a href="{{ route('admin.colors.create') }}" class="text-blue-600">Create one</a></p>
+                        @endforelse
+                    </div>
+                    @error('colors')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
                 <div class="mb-4">
                     <label class="flex items-center">
                         <input type="checkbox" 
@@ -168,7 +214,6 @@
         </div>
     </div>
 
-    <!-- Hidden form for deleting images -->
     <form id="delete-image-form" method="POST" style="display: none;">
         @csrf
         @method('DELETE')

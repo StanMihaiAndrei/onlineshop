@@ -31,7 +31,7 @@ class Cart extends Component
     #[On('cart-add-item')]
     public function addToCart($productId, $quantity = 1)
     {
-        $product = Product::find($productId);
+        $product = Product::with('categories')->find($productId);
         
         if (!$product || !$product->is_active || $product->stock < $quantity) {
             $this->dispatch('notification', [
@@ -42,6 +42,10 @@ class Cart extends Component
         }
 
         $cart = session()->get('cart', []);
+        
+        // Găsim prima categorie sau folosim 'uncategorized'
+        $primaryCategory = $product->categories->first();
+        $categorySlug = $primaryCategory ? $primaryCategory->slug : 'uncategorized';
         
         if (isset($cart[$productId])) {
             $newQuantity = $cart[$productId]['quantity'] + $quantity;
@@ -58,6 +62,7 @@ class Cart extends Component
                 'id' => $product->id,
                 'title' => $product->title,
                 'slug' => $product->slug,
+                'category_slug' => $categorySlug,
                 'price' => $product->price,
                 'quantity' => $quantity,
                 'image' => $product->first_image,

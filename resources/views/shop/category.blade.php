@@ -1,6 +1,15 @@
 <x-guest-layout>
     <div class="py-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Breadcrumb -->
+            <nav class="mb-6 text-sm">
+                <ol class="flex items-center space-x-2 text-gray-600">
+                    <li><a href="{{ route('shop') }}" class="hover:text-blue-600">Shop</a></li>
+                    <li><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg></li>
+                    <li class="font-semibold text-gray-900">{{ $category->name }}</li>
+                </ol>
+            </nav>
+
             <div class="flex flex-col lg:flex-row gap-8">
                 <!-- Sidebar Filters -->
                 <aside class="w-full lg:w-64 flex-shrink-0">
@@ -8,7 +17,7 @@
                         <div class="flex justify-between items-center mb-4">
                             <h3 class="text-lg font-bold text-gray-800">Filters</h3>
                             @if(request()->has('color'))
-                                <a href="{{ route('shop') }}" 
+                                <a href="{{ route('shop.category', $category->slug) }}" 
                                    class="text-xs text-blue-600 hover:text-blue-800">
                                     Clear all
                                 </a>
@@ -25,7 +34,7 @@
                                         </div>
                                         <span class="text-sm font-medium text-gray-700">{{ $selectedColor->name }}</span>
                                     </div>
-                                    <a href="{{ route('shop') }}" 
+                                    <a href="{{ route('shop.category', $category->slug) }}" 
                                        class="text-gray-500 hover:text-red-600">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -40,15 +49,14 @@
                             <h4 class="font-semibold text-gray-700 mb-3">Categories</h4>
                             <div class="space-y-2">
                                 <a href="{{ route('shop') }}" 
-                                   class="flex items-center justify-between px-3 py-2 rounded hover:bg-gray-100 transition {{ !request()->segment(2) ? 'bg-blue-50 text-blue-600' : 'text-gray-700' }}">
+                                   class="flex items-center justify-between px-3 py-2 rounded hover:bg-gray-100 transition text-gray-700">
                                     <span>All Products</span>
-                                    <span class="text-xs bg-gray-200 px-2 py-1 rounded-full">{{ \App\Models\Product::where('is_active', true)->count() }}</span>
                                 </a>
-                                @foreach($categories as $category)
-                                    <a href="{{ route('shop.category', $category->slug) }}" 
-                                       class="flex items-center justify-between px-3 py-2 rounded hover:bg-gray-100 transition text-gray-700">
-                                        <span>{{ $category->name }}</span>
-                                        <span class="text-xs bg-gray-200 px-2 py-1 rounded-full">{{ $category->products_count }}</span>
+                                @foreach($categories as $cat)
+                                    <a href="{{ route('shop.category', $cat->slug) }}" 
+                                       class="flex items-center justify-between px-3 py-2 rounded hover:bg-gray-100 transition {{ $cat->id === $category->id ? 'bg-blue-50 text-blue-600' : 'text-gray-700' }}">
+                                        <span>{{ $cat->name }}</span>
+                                        <span class="text-xs bg-gray-200 px-2 py-1 rounded-full">{{ $cat->products_count }}</span>
                                     </a>
                                 @endforeach
                             </div>
@@ -60,7 +68,7 @@
                                 <h4 class="font-semibold text-gray-700 mb-3">Colors</h4>
                                 <div class="grid grid-cols-4 gap-2">
                                     @foreach($colors as $color)
-                                        <a href="{{ route('shop', ['color' => $color->id]) }}" 
+                                        <a href="{{ route('shop.category', ['categorySlug' => $category->slug, 'color' => $color->id]) }}" 
                                            class="group relative">
                                             <div class="w-10 h-10 rounded-full border-2 cursor-pointer hover:scale-110 transition {{ isset($selectedColor) && $selectedColor->id === $color->id ? 'border-blue-500 ring-2 ring-blue-300' : 'border-gray-300' }}" 
                                                  style="background-color: {{ $color->hex_code }}"
@@ -81,26 +89,21 @@
                 <div class="flex-1">
                     <div class="mb-6">
                         <h1 class="text-3xl font-bold text-gray-800">
+                            {{ $category->name }}
                             @if(isset($selectedColor))
-                                Products in {{ $selectedColor->name }}
-                            @else
-                                Our Products
+                                <span class="text-2xl text-gray-600">in {{ $selectedColor->name }}</span>
                             @endif
                         </h1>
+                        @if($category->description)
+                            <p class="text-gray-600 mt-2">{{ $category->description }}</p>
+                        @endif
                         <p class="text-gray-600 mt-2">Showing {{ $products->count() }} of {{ $products->total() }} products</p>
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                         @forelse($products as $product)
                             <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition group">
-                                @php
-                                    $primaryCategory = $product->categories->first();
-                                    $productUrl = $primaryCategory 
-                                        ? route('shop.product', [$primaryCategory->slug, $product->slug])
-                                        : route('shop.product', ['uncategorized', $product->slug]);
-                                @endphp
-                                
-                                <a href="{{ $productUrl }}">
+                                <a href="{{ route('shop.product', [$category->slug, $product->slug]) }}">
                                     <div class="aspect-w-1 aspect-h-1 bg-gray-200 relative overflow-hidden">
                                         @if($product->first_image)
                                             <img src="{{ asset('storage/' . $product->first_image) }}" 
@@ -123,27 +126,21 @@
                                 </a>
                                 
                                 <div class="p-4">
-                                    <a href="{{ $productUrl }}">
+                                    <a href="{{ route('shop.product', [$category->slug, $product->slug]) }}">
                                         <h3 class="text-lg font-semibold text-gray-800 hover:text-blue-600 transition mb-2 line-clamp-1">
                                             {{ $product->title }}
                                         </h3>
                                     </a>
                                     
-                                    <!-- Categories -->
-                                    @if($product->categories->count() > 0)
+                                    <!-- Other Categories -->
+                                    @if($product->categories->count() > 1)
                                         <div class="flex flex-wrap gap-1 mb-2">
-                                            @foreach($product->categories as $category)
-                                                <a href="{{ route('shop.category', $category->slug) }}" 
+                                            @foreach($product->categories->where('id', '!=', $category->id) as $otherCategory)
+                                                <a href="{{ route('shop.category', $otherCategory->slug) }}" 
                                                    class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded hover:bg-gray-200 transition">
-                                                    {{ $category->name }}
+                                                    {{ $otherCategory->name }}
                                                 </a>
                                             @endforeach
-                                        </div>
-                                    @else
-                                        <div class="mb-2">
-                                            <span class="text-xs bg-gray-100 text-gray-500 px-2 py-1 rounded italic">
-                                                Uncategorized
-                                            </span>
                                         </div>
                                     @endif
 
@@ -197,7 +194,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
                                 </svg>
                                 <p class="text-gray-600 text-lg">No products found matching your filters.</p>
-                                <a href="{{ route('shop') }}" class="text-blue-600 hover:underline mt-2 inline-block">Clear filters</a>
+                                <a href="{{ route('shop.category', $category->slug) }}" class="text-blue-600 hover:underline mt-2 inline-block">Clear filters</a>
                             </div>
                         @endforelse
                     </div>

@@ -2,26 +2,104 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
+use App\Models\Color;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
 class ShopController extends Controller
 {
-    public function index()
+    // Listare toate produsele - /shop
+    public function index(Request $request)
     {
-        $products = Product::where('is_active', true)
-            ->latest()
-            ->paginate(12);
+        $query = Product::with(['categories', 'colors'])
+            ->where('is_active', true);
+
+        // Filtru după culoare
+        if ($request->has('color') && $request->color) {
+            $query->whereHas('colors', function($q) use ($request) {
+                $q->where('colors.id', $request->color);
+            });
+        }
+
+        $products = $query->latest()->paginate(12)->withQueryString();
         
-        return view('shop.index', compact('products'));
+        $categories = Category::where('is_active', true)
+            ->withCount('products')
+            ->orderBy('name')
+            ->get();
+        
+        $colors = Color::where('is_active', true)
+            ->orderBy('name')
+            ->get();
+
+        $selectedColor = $request->color ? Color::find($request->color) : null;
+        
+        return view('shop.index', compact('products', 'categories', 'colors', 'selectedColor'));
     }
 
-    public function show($slug)
+    // Listare produse după categorie - /shop/animale
+    public function category(Request $request, $categorySlug)
     {
-        $product = Product::where('slug', $slug)
+        $category = Category::where('slug', $categorySlug)
             ->where('is_active', true)
             ->firstOrFail();
         
-        return view('shop.show', compact('product'));
+        $query = Product::whereHas('categories', function($q) use ($category) {
+                $q->where('categories.id', $category->id);
+            })
+            ->where('is_active', true)
+            ->with(['categories', 'colors']);
+
+        // Filtru după culoare
+        if ($request->has('color') && $request->color) {
+            $query->whereHas('colors', function($q) use ($request) {
+                $q->where('colors.id', $request->color);
+            });
+        }
+
+        $products = $query->latest()->paginate(12)->withQueryString();
+        
+        $categories = Category::where('is_active', true)
+            ->withCount('products')
+            ->orderBy('name')
+            ->get();
+        
+        $colors = Color::where('is_active', true)
+            ->orderBy('name')
+            ->get();
+
+        $selectedColor = $request->color ? Color::find($request->color) : null;
+        
+        return view('shop.category', compact('products', 'category', 'categories', 'colors', 'selectedColor'));
+    }
+
+    // Detalii produs cu categorie - /shop/animale/lesa
+    public function showByCategory($categorySlug, $productSlug)
+    {
+        // Verificăm dacă e categoria "uncategorized" (produse fără categorie)
+        if ($categorySlug === 'uncategorized') {
+            $product = Product::where('slug', $productSlug)
+                ->where('is_active', true)
+                ->with(['categories', 'colors'])
+                ->firstOrFail();
+            
+            return view('shop.show', compact('product'));
+        }
+
+        // Categorie normală
+        $category = Category::where('slug', $categorySlug)
+            ->where('is_active', true)
+            ->firstOrFail();
+        
+        $product = Product::whereHas('categories', function($query) use ($category) {
+                $query->where('categories.id', $category->id);
+            })
+            ->where('slug', $productSlug)
+            ->where('is_active', true)
+            ->with(['categories', 'colors'])
+            ->firstOrFail();
+        
+        return view('shop.show', compact('product', 'category'));
     }
 }

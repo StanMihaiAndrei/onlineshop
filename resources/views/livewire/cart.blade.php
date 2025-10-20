@@ -46,7 +46,7 @@
                 <div class="space-y-4">
                     @foreach($cartItems as $item)
                         <div class="flex gap-4 bg-gray-50 p-4 rounded-lg" wire:key="cart-item-{{ $item['id'] }}">
-                            <a href="{{ route('shop.show', $item['slug']) }}" class="flex-shrink-0">
+                            <a href="{{ route('shop.product', [$item['category_slug'] ?? 'uncategorized', $item['slug']]) }}" class="flex-shrink-0">
                                 @if($item['image'])
                                     <img src="{{ asset('storage/' . $item['image']) }}" 
                                          alt="{{ $item['title'] }}"
@@ -59,7 +59,7 @@
                             </a>
                             
                             <div class="flex-1 min-w-0">
-                                <a href="{{ route('shop.show', $item['slug']) }}" 
+                                <a href="{{ route('shop.product', [$item['category_slug'] ?? 'uncategorized', $item['slug']]) }}" 
                                    class="text-sm font-semibold text-gray-800 hover:text-blue-600 line-clamp-2">
                                     {{ $item['title'] }}
                                 </a>
