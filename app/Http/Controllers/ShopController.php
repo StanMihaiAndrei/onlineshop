@@ -15,6 +15,13 @@ class ShopController extends Controller
         $query = Product::with(['categories', 'colors'])
             ->where('is_active', true);
 
+        // Filtru după categorie
+        if ($request->has('category') && $request->category) {
+            $query->whereHas('categories', function($q) use ($request) {
+                $q->where('categories.id', $request->category);
+            });
+        }
+
         // Filtru după culoare
         if ($request->has('color') && $request->color) {
             $query->whereHas('colors', function($q) use ($request) {
@@ -33,9 +40,10 @@ class ShopController extends Controller
             ->orderBy('name')
             ->get();
 
+        $selectedCategory = $request->category ? Category::find($request->category) : null;
         $selectedColor = $request->color ? Color::find($request->color) : null;
         
-        return view('shop.index', compact('products', 'categories', 'colors', 'selectedColor'));
+        return view('shop.index', compact('products', 'categories', 'colors', 'selectedCategory', 'selectedColor'));
     }
 
     // Listare produse după categorie - /shop/animale

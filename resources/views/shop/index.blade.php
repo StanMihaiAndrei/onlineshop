@@ -1,87 +1,109 @@
 <x-guest-layout>
     <div class="py-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col lg:flex-row gap-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-2">
+            <div class="flex flex-col lg:flex-row gap-6">
                 <!-- Sidebar Filters -->
                 <aside class="w-full lg:w-64 flex-shrink-0">
-                    <div class="bg-white rounded-lg shadow-md p-6 sticky top-4">
+                    <div class="bg-white rounded-lg shadow-md p-5 sticky top-4">
                         <div class="flex justify-between items-center mb-4">
                             <h3 class="text-lg font-bold text-gray-800">Filters</h3>
-                            @if(request()->has('color'))
+                            @if(request()->has('category') || request()->has('color'))
                                 <a href="{{ route('shop') }}" 
-                                   class="text-xs text-blue-600 hover:text-blue-800">
-                                    Clear all
+                                   class="text-xs text-blue-600 hover:text-blue-800 underline">
+                                    Clear
                                 </a>
                             @endif
                         </div>
 
-                        <!-- Active Filters -->
-                        @if(isset($selectedColor))
-                            <div class="mb-4 p-3 bg-blue-50 rounded-lg">
-                                <div class="flex items-center justify-between">
-                                    <div class="flex items-center gap-2">
-                                        <div class="w-4 h-4 rounded-full border border-gray-300" 
-                                             style="background-color: {{ $selectedColor->hex_code }}">
-                                        </div>
-                                        <span class="text-sm font-medium text-gray-700">{{ $selectedColor->name }}</span>
-                                    </div>
-                                    <a href="{{ route('shop') }}" 
-                                       class="text-gray-500 hover:text-red-600">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                                        </svg>
-                                    </a>
-                                </div>
-                            </div>
-                        @endif
-                        
-                        <!-- Categories Filter -->
-                        <div class="mb-6">
-                            <h4 class="font-semibold text-gray-700 mb-3">Categories</h4>
-                            <div class="space-y-2">
-                                <a href="{{ route('shop') }}" 
-                                   class="flex items-center justify-between px-3 py-2 rounded hover:bg-gray-100 transition {{ !request()->segment(2) ? 'bg-blue-50 text-blue-600' : 'text-gray-700' }}">
-                                    <span>All Products</span>
-                                    <span class="text-xs bg-gray-200 px-2 py-1 rounded-full">{{ \App\Models\Product::where('is_active', true)->count() }}</span>
-                                </a>
-                                @foreach($categories as $category)
-                                    <a href="{{ route('shop.category', $category->slug) }}" 
-                                       class="flex items-center justify-between px-3 py-2 rounded hover:bg-gray-100 transition text-gray-700">
-                                        <span>{{ $category->name }}</span>
-                                        <span class="text-xs bg-gray-200 px-2 py-1 rounded-full">{{ $category->products_count }}</span>
-                                    </a>
-                                @endforeach
-                            </div>
-                        </div>
-
-                        <!-- Colors Filter -->
-                        @if($colors->count() > 0)
-                            <div class="border-t pt-6">
-                                <h4 class="font-semibold text-gray-700 mb-3">Colors</h4>
-                                <div class="grid grid-cols-4 gap-2">
-                                    @foreach($colors as $color)
-                                        <a href="{{ route('shop', ['color' => $color->id]) }}" 
-                                           class="group relative">
-                                            <div class="w-10 h-10 rounded-full border-2 cursor-pointer hover:scale-110 transition {{ isset($selectedColor) && $selectedColor->id === $color->id ? 'border-blue-500 ring-2 ring-blue-300' : 'border-gray-300' }}" 
-                                                 style="background-color: {{ $color->hex_code }}"
-                                                 title="{{ $color->name }}">
-                                            </div>
-                                            <span class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition whitespace-nowrap z-10">
-                                                {{ $color->name }}
-                                            </span>
-                                        </a>
+                        <form method="GET" action="{{ route('shop') }}" id="filterForm">
+                            <!-- Categories Filter -->
+                            <div class="mb-4">
+                                <label for="category" class="block text-sm font-semibold text-gray-700 mb-2">
+                                    Category
+                                </label>
+                                <select name="category" 
+                                        id="category"
+                                        onchange="document.getElementById('filterForm').submit()"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+                                    <option value="">All Categories</option>
+                                    @foreach($categories as $category)
+                                        <option value="{{ $category->id }}" 
+                                                {{ request('category') == $category->id ? 'selected' : '' }}>
+                                            {{ $category->name }} ({{ $category->products_count }})
+                                        </option>
                                     @endforeach
-                                </div>
+                                </select>
                             </div>
-                        @endif
+
+                            <!-- Colors Filter -->
+                            @if($colors->count() > 0)
+                                <div class="border-t pt-4">
+                                    <label for="color" class="block text-sm font-semibold text-gray-700 mb-2">
+                                        Color
+                                    </label>
+                                    <select name="color" 
+                                            id="color"
+                                            onchange="document.getElementById('filterForm').submit()"
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+                                        <option value="">All Colors</option>
+                                        @foreach($colors as $color)
+                                            <option value="{{ $color->id }}" 
+                                                    {{ request('color') == $color->id ? 'selected' : '' }}>
+                                                {{ $color->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            @endif
+
+                            <!-- Active Filters Display -->
+                            @if(isset($selectedCategory) || isset($selectedColor))
+                                <div class="mt-4 pt-4 border-t">
+                                    <p class="text-xs font-semibold text-gray-600 mb-2">Active Filters:</p>
+                                    <div class="space-y-2">
+                                        @if(isset($selectedCategory))
+                                            <div class="flex items-center justify-between text-xs bg-blue-50 px-2 py-1.5 rounded">
+                                                <span class="text-gray-700">{{ $selectedCategory->name }}</span>
+                                                <a href="{{ route('shop', ['color' => request('color')]) }}" 
+                                                   class="text-red-600 hover:text-red-800">
+                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                                    </svg>
+                                                </a>
+                                            </div>
+                                        @endif
+                                        @if(isset($selectedColor))
+                                            <div class="flex items-center justify-between text-xs bg-blue-50 px-2 py-1.5 rounded">
+                                                <div class="flex items-center gap-1.5">
+                                                    <div class="w-3 h-3 rounded-full border border-gray-300" 
+                                                         style="background-color: {{ $selectedColor->hex_code }}">
+                                                    </div>
+                                                    <span class="text-gray-700">{{ $selectedColor->name }}</span>
+                                                </div>
+                                                <a href="{{ route('shop', ['category' => request('category')]) }}" 
+                                                   class="text-red-600 hover:text-red-800">
+                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                                    </svg>
+                                                </a>
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+                            @endif
+                        </form>
                     </div>
                 </aside>
 
                 <!-- Products Grid -->
-                <div class="flex-1">
+                <div class="flex-1 min-w-0">
                     <div class="mb-6">
                         <h1 class="text-3xl font-bold text-gray-800">
-                            @if(isset($selectedColor))
+                            @if(isset($selectedCategory) && isset($selectedColor))
+                                {{ $selectedCategory->name }} - {{ $selectedColor->name }}
+                            @elseif(isset($selectedCategory))
+                                {{ $selectedCategory->name }}
+                            @elseif(isset($selectedColor))
                                 Products in {{ $selectedColor->name }}
                             @else
                                 Our Products
@@ -90,7 +112,7 @@
                         <p class="text-gray-600 mt-2">Showing {{ $products->count() }} of {{ $products->total() }} products</p>
                     </div>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
                         @forelse($products as $product)
                             <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition group">
                                 @php
