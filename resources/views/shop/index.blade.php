@@ -7,15 +7,70 @@
                     <div class="bg-white rounded-lg shadow-md p-5 sticky top-4">
                         <div class="flex justify-between items-center mb-4">
                             <h3 class="text-lg font-bold text-gray-800">Filters</h3>
-                            @if(request()->has('category') || request()->has('color'))
+                            @if(request()->hasAny(['category', 'color', 'search', 'min_price', 'max_price']))
                                 <a href="{{ route('shop') }}" 
                                    class="text-xs text-blue-600 hover:text-blue-800 underline">
-                                    Clear
+                                    Clear All
                                 </a>
                             @endif
                         </div>
 
                         <form method="GET" action="{{ route('shop') }}" id="filterForm">
+                            <!-- Search Bar -->
+                            <div class="mb-4">
+                                <label for="search" class="block text-sm font-semibold text-gray-700 mb-2">
+                                    Search
+                                </label>
+                                <div class="relative">
+                                    <input type="text" 
+                                           name="search" 
+                                           id="search"
+                                           value="{{ request('search') }}"
+                                           placeholder="Search products..."
+                                           class="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+                                    @if(request('search'))
+                                        <button type="button" 
+                                                onclick="document.getElementById('search').value=''; document.getElementById('filterForm').submit();"
+                                                class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                            </svg>
+                                        </button>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <!-- Price Range Filter -->
+                            <div class="mb-4 pb-4 border-b">
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                    Price Range
+                                </label>
+                                <div class="flex gap-2 items-center">
+                                    <input type="number" 
+                                           name="min_price" 
+                                           id="min_price"
+                                           value="{{ request('min_price') }}"
+                                           placeholder="Min"
+                                           min="0"
+                                           step="0.01"
+                                           class="w-full px-2 py-1.5 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    <span class="text-gray-500">-</span>
+                                    <input type="number" 
+                                           name="max_price" 
+                                           id="max_price"
+                                           value="{{ request('max_price') }}"
+                                           placeholder="Max"
+                                           min="0"
+                                           step="0.01"
+                                           class="w-full px-2 py-1.5 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                </div>
+                                @if($priceRange)
+                                    <p class="text-xs text-gray-500 mt-1">
+                                        Range: ${{ number_format($priceRange->min, 2) }} - ${{ number_format($priceRange->max, 2) }}
+                                    </p>
+                                @endif
+                            </div>
+
                             <!-- Categories Filter -->
                             <div class="mb-4">
                                 <label for="category" class="block text-sm font-semibold text-gray-700 mb-2">
@@ -23,7 +78,6 @@
                                 </label>
                                 <select name="category" 
                                         id="category"
-                                        onchange="document.getElementById('filterForm').submit()"
                                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
                                     <option value="">All Categories</option>
                                     @foreach($categories as $category)
@@ -37,13 +91,12 @@
 
                             <!-- Colors Filter -->
                             @if($colors->count() > 0)
-                                <div class="border-t pt-4">
+                                <div class="mb-4 pb-4 border-b">
                                     <label for="color" class="block text-sm font-semibold text-gray-700 mb-2">
                                         Color
                                     </label>
                                     <select name="color" 
                                             id="color"
-                                            onchange="document.getElementById('filterForm').submit()"
                                             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
                                         <option value="">All Colors</option>
                                         @foreach($colors as $color)
@@ -56,15 +109,47 @@
                                 </div>
                             @endif
 
+                            <!-- Apply Filters Button -->
+                            <button type="submit" 
+                                    class="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition text-sm font-semibold">
+                                Apply Filters
+                            </button>
+
                             <!-- Active Filters Display -->
-                            @if(isset($selectedCategory) || isset($selectedColor))
+                            @if(request()->hasAny(['category', 'color', 'search', 'min_price', 'max_price']))
                                 <div class="mt-4 pt-4 border-t">
                                     <p class="text-xs font-semibold text-gray-600 mb-2">Active Filters:</p>
                                     <div class="space-y-2">
+                                        @if(request('search'))
+                                            <div class="flex items-center justify-between text-xs bg-blue-50 px-2 py-1.5 rounded">
+                                                <span class="text-gray-700 truncate">Search: "{{ request('search') }}"</span>
+                                                <a href="{{ route('shop', array_filter(['category' => request('category'), 'color' => request('color'), 'min_price' => request('min_price'), 'max_price' => request('max_price')])) }}" 
+                                                   class="text-red-600 hover:text-red-800 ml-2">
+                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                                    </svg>
+                                                </a>
+                                            </div>
+                                        @endif
+                                        
+                                        @if(request('min_price') || request('max_price'))
+                                            <div class="flex items-center justify-between text-xs bg-blue-50 px-2 py-1.5 rounded">
+                                                <span class="text-gray-700">
+                                                    Price: ${{ request('min_price', '0') }} - ${{ request('max_price', '∞') }}
+                                                </span>
+                                                <a href="{{ route('shop', array_filter(['category' => request('category'), 'color' => request('color'), 'search' => request('search')])) }}" 
+                                                   class="text-red-600 hover:text-red-800 ml-2">
+                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                                    </svg>
+                                                </a>
+                                            </div>
+                                        @endif
+
                                         @if(isset($selectedCategory))
                                             <div class="flex items-center justify-between text-xs bg-blue-50 px-2 py-1.5 rounded">
                                                 <span class="text-gray-700">{{ $selectedCategory->name }}</span>
-                                                <a href="{{ route('shop', ['color' => request('color')]) }}" 
+                                                <a href="{{ route('shop', array_filter(['color' => request('color'), 'search' => request('search'), 'min_price' => request('min_price'), 'max_price' => request('max_price')])) }}" 
                                                    class="text-red-600 hover:text-red-800">
                                                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -72,6 +157,7 @@
                                                 </a>
                                             </div>
                                         @endif
+                                        
                                         @if(isset($selectedColor))
                                             <div class="flex items-center justify-between text-xs bg-blue-50 px-2 py-1.5 rounded">
                                                 <div class="flex items-center gap-1.5">
@@ -80,7 +166,7 @@
                                                     </div>
                                                     <span class="text-gray-700">{{ $selectedColor->name }}</span>
                                                 </div>
-                                                <a href="{{ route('shop', ['category' => request('category')]) }}" 
+                                                <a href="{{ route('shop', array_filter(['category' => request('category'), 'search' => request('search'), 'min_price' => request('min_price'), 'max_price' => request('max_price')])) }}" 
                                                    class="text-red-600 hover:text-red-800">
                                                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -97,19 +183,55 @@
 
                 <!-- Products Grid -->
                 <div class="flex-1 min-w-0">
-                    <div class="mb-6">
-                        <h1 class="text-3xl font-bold text-gray-800">
-                            @if(isset($selectedCategory) && isset($selectedColor))
-                                {{ $selectedCategory->name }} - {{ $selectedColor->name }}
-                            @elseif(isset($selectedCategory))
-                                {{ $selectedCategory->name }}
-                            @elseif(isset($selectedColor))
-                                Products in {{ $selectedColor->name }}
-                            @else
-                                Our Products
-                            @endif
-                        </h1>
-                        <p class="text-gray-600 mt-2">Showing {{ $products->count() }} of {{ $products->total() }} products</p>
+                    <div class="mb-6 flex justify-between items-center">
+                        <div>
+                            <h1 class="text-3xl font-bold text-gray-800">
+                                @if(isset($selectedCategory) && isset($selectedColor))
+                                    {{ $selectedCategory->name }} - {{ $selectedColor->name }}
+                                @elseif(isset($selectedCategory))
+                                    {{ $selectedCategory->name }}
+                                @elseif(isset($selectedColor))
+                                    Products in {{ $selectedColor->name }}
+                                @elseif(request('search'))
+                                    Search Results for "{{ request('search') }}"
+                                @else
+                                    Our Products
+                                @endif
+                            </h1>
+                            <p class="text-gray-600 mt-2">Showing {{ $products->count() }} of {{ $products->total() }} products</p>
+                        </div>
+
+                        <!-- Sort Dropdown -->
+                        <div>
+                            <form method="GET" action="{{ route('shop') }}" id="sortForm">
+                                <!-- Păstrează filtrele existente -->
+                                @if(request('category'))
+                                    <input type="hidden" name="category" value="{{ request('category') }}">
+                                @endif
+                                @if(request('color'))
+                                    <input type="hidden" name="color" value="{{ request('color') }}">
+                                @endif
+                                @if(request('search'))
+                                    <input type="hidden" name="search" value="{{ request('search') }}">
+                                @endif
+                                @if(request('min_price'))
+                                    <input type="hidden" name="min_price" value="{{ request('min_price') }}">
+                                @endif
+                                @if(request('max_price'))
+                                    <input type="hidden" name="max_price" value="{{ request('max_price') }}">
+                                @endif
+                                
+                                <select name="sort" 
+                                        onchange="document.getElementById('sortForm').submit()"
+                                        class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+                                    <option value="">Sort by</option>
+                                    <option value="price_asc" {{ request('sort') === 'price_asc' ? 'selected' : '' }}>Price: Low to High</option>
+                                    <option value="price_desc" {{ request('sort') === 'price_desc' ? 'selected' : '' }}>Price: High to Low</option>
+                                    <option value="name_asc" {{ request('sort') === 'name_asc' ? 'selected' : '' }}>Name: A to Z</option>
+                                    <option value="name_desc" {{ request('sort') === 'name_desc' ? 'selected' : '' }}>Name: Z to A</option>
+                                </select>
+                            </form>
+                        </div>
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
