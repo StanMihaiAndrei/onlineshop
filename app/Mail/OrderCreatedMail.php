@@ -17,7 +17,7 @@ class OrderCreatedMail extends Mailable implements ShouldQueue
     public function __construct(
         public Order $order
     ) {
-        $this->delay(now()->addSeconds(15));
+        $this->delay(now()->addSeconds(20));
     }
 
     public function envelope(): Envelope

@@ -17,21 +17,25 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🛒 Comandă nouă pe CraftGits Shop</h1>
-            <p><strong>Numărul comenzii:</strong> {{ $order->order_number }}</p>
-            <p><strong>Data:</strong> {{ $order->created_at->format('d.m.Y H:i') }}</p>
+            <h1>🎉 Comandă nouă pe site!</h1>
+            <p>O comandă nouă a fost plasată pe CraftGits Shop</p>
         </div>
 
         <div class="order-details">
-            <h2>Detalii client</h2>
-            <p><strong>Nume:</strong> {{ $order->shipping_name }}</p>
+            <h2>Detalii comandă #{{ $order->order_number }}</h2>
+            
+            <p><strong>Client:</strong> {{ $order->shipping_name }}</p>
             <p><strong>Email:</strong> {{ $order->shipping_email }}</p>
             <p><strong>Telefon:</strong> {{ $order->shipping_phone }}</p>
-            <p><strong>Adresă:</strong> {{ $order->shipping_address }}, {{ $order->shipping_city }}, {{ $order->shipping_postal_code }}, {{ $order->shipping_country }}</p>
+            <p><strong>Adresa:</strong> {{ $order->shipping_address }}, {{ $order->shipping_city }}, {{ $order->shipping_postal_code }}, {{ $order->shipping_country }}</p>
+            <p><strong>Metodă plată:</strong> {{ $order->payment_method === 'card' ? 'Card bancar' : 'Ramburs la livrare' }}</p>
+            <p><strong>Status plată:</strong> {{ $order->payment_status === 'paid' ? 'Plătit' : 'În așteptare' }}</p>
             
-            <hr>
-            
-            <h2>Produse comandate</h2>
+            @if($order->notes)
+                <p><strong>Note:</strong> {{ $order->notes }}</p>
+            @endif
+
+            <h3>Produse comandate:</h3>
             @foreach($order->items as $item)
                 <div class="item">
                     <strong>{{ $item->product_title }}</strong><br>
@@ -39,18 +43,12 @@
                 </div>
             @endforeach
             
-            <hr>
-            
-            <p class="total">Total comandă: ${{ number_format($order->total_amount, 2) }}</p>
-            <p><strong>Metodă plată:</strong> {{ $order->payment_method === 'card' ? 'Card bancar' : 'Ramburs la livrare' }}</p>
-            <p><strong>Status plată:</strong> {{ ucfirst($order->payment_status) }}</p>
-            
-            @if($order->notes)
-                <hr>
-                <h3>Observații:</h3>
-                <p>{{ $order->notes }}</p>
-            @endif
+            <div class="total">
+                Total comandă: ${{ number_format($order->total_amount, 2) }}
+            </div>
         </div>
+
+        <p>Accesează panoul admin pentru a gestiona această comandă.</p>
     </div>
 </body>
 </html>

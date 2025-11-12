@@ -12,28 +12,33 @@
         .item { border-bottom: 1px solid #ddd; padding: 10px 0; }
         .item:last-child { border-bottom: none; }
         .total { font-weight: bold; font-size: 18px; color: #2563eb; }
-        .footer { margin-top: 20px; padding-top: 20px; border-top: 1px solid #ddd; color: #666; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>✅ Comanda trimisă cu succes!</h1>
-            <p>Mulțumim pentru comandă!</p>
+            <h1>✅ Comanda ta a fost confirmată!</h1>
+            <p>Mulțumim pentru comanda ta #{{ $order->order_number }}</p>
         </div>
 
         <p>Bună {{ $order->shipping_name }},</p>
         
-        <p>Comanda ta a fost înregistrată cu succes și este în curs de procesare.</p>
+        <p>Comanda ta a fost plasată cu succes și va fi procesată în curând.</p>
 
         <div class="order-details">
-            <h2>Detalii comandă #{{ $order->order_number }}</h2>
-            <p><strong>Data comenzii:</strong> {{ $order->created_at->format('d.m.Y H:i') }}</p>
-            <p><strong>Metodă de plată:</strong> {{ $order->payment_method === 'card' ? 'Card bancar' : 'Ramburs la livrare' }}</p>
-            
-            <hr>
-            
-            <h3>Produse comandate:</h3>
+            <h3>Detalii comandă:</h3>
+            <p><strong>Număr comandă:</strong> {{ $order->order_number }}</p>
+            <p><strong>Data:</strong> {{ $order->created_at->format('d/m/Y H:i') }}</p>
+            <p><strong>Metodă plată:</strong> {{ $order->payment_method === 'card' ? 'Card bancar' : 'Ramburs la livrare' }}</p>
+            <p><strong>Status plată:</strong> {{ $order->payment_status === 'paid' ? 'Plătit' : 'În așteptare' }}</p>
+
+            <h4>Adresa de livrare:</h4>
+            <p>{{ $order->shipping_address }}<br>
+            {{ $order->shipping_city }}, {{ $order->shipping_postal_code }}<br>
+            {{ $order->shipping_country }}<br>
+            Tel: {{ $order->shipping_phone }}</p>
+
+            <h4>Produse comandate:</h4>
             @foreach($order->items as $item)
                 <div class="item">
                     <strong>{{ $item->product_title }}</strong><br>
@@ -41,22 +46,16 @@
                 </div>
             @endforeach
             
-            <hr>
-            
-            <p class="total">Total: ${{ number_format($order->total_amount, 2) }}</p>
-            
-            <hr>
-            
-            <h3>Adresa de livrare:</h3>
-            <p>{{ $order->shipping_address }}<br>
-            {{ $order->shipping_city }}, {{ $order->shipping_postal_code }}<br>
-            {{ $order->shipping_country }}</p>
+            <div class="total">
+                Total: ${{ number_format($order->total_amount, 2) }}
+            </div>
         </div>
 
-        <div class="footer">
-            <p>Vei primi un email de confirmare când comanda va fi expediată.</p>
-            <p>Pentru întrebări, ne poți contacta la: contact@craftgits.ro</p>
-        </div>
+        <p>Vei primi un email cu actualizarea statusului comenzii când aceasta va fi procesată.</p>
+        
+        <p>Pentru întrebări, ne poți contacta la: contact@craftgits.ro</p>
+        
+        <p>Mulțumim că ai ales CraftGits Shop!</p>
     </div>
 </body>
 </html>

@@ -98,17 +98,15 @@ class CheckoutController extends Controller
             // Load order items for emails
             $order->load('items');
 
-            // Send emails using queue
-            $this->sendOrderEmails($order);
-
             DB::commit();
 
-            // If card payment, redirect to Stripe
+            // If card payment, redirect to Stripe (NO emails sent yet)
             if ($validated['payment_method'] === 'card') {
                 return $this->createStripeSession($order, $cartItems);
             }
 
-            // For cash on delivery, clear cart and show success
+            // For cash on delivery, send emails and show success
+            $this->sendOrderEmails($order);
             session()->forget('cart');
             return redirect()->route('checkout.success', $order)->with('success', 'Order placed successfully!');
 
@@ -118,7 +116,7 @@ class CheckoutController extends Controller
         }
     }
 
-      private function sendOrderEmails(Order $order)
+    private function sendOrderEmails(Order $order)
     {
         try {
             // Queue customer email first (no delay)
@@ -178,6 +176,12 @@ class CheckoutController extends Controller
         // Mark payment as paid
         $order->update(['payment_status' => 'paid']);
         
+        // Load order items for emails
+        $order->load('items');
+        
+        // NOW send emails after successful payment
+        $this->sendOrderEmails($order);
+        
         // Clear cart
         session()->forget('cart');
         
@@ -221,8 +225,9 @@ class CheckoutController extends Controller
             $session = $event->data->object;
             
             $order = Order::where('stripe_session_id', $session->id)->first();
-            if ($order) {
+            if ($order && $order->payment_status !== 'paid') {
                 $order->update(['payment_status' => 'paid']);
+                // NU mai trimite email-uri aici - se trimit din stripeSuccess
             }
         }
 

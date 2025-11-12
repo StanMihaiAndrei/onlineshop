@@ -29,11 +29,16 @@ class AdminOrderController extends Controller
     {
         $validated = $request->validate([
             'status' => 'required|in:pending,processing,completed,cancelled',
+            'cancellation_reason' => 'required_if:status,cancelled|nullable|string|max:1000',
         ]);
 
         $previousStatus = $order->status;
         
-        $order->update(['status' => $validated['status']]);
+        // Update order status
+        $order->update([
+            'status' => $validated['status'],
+            'cancellation_reason' => $validated['status'] === 'cancelled' ? $validated['cancellation_reason'] : null,
+        ]);
 
         // Send email notification to customer if status changed
         if ($previousStatus !== $validated['status']) {

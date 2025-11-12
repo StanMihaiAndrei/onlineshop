@@ -12,6 +12,7 @@
         .completed { background: #10b981; color: white; }
         .cancelled { background: #ef4444; color: white; }
         .order-details { background: #f8f9fa; border-radius: 8px; padding: 20px; }
+        .cancellation-reason { background: #fee2e2; border: 1px solid #fecaca; border-radius: 8px; padding: 15px; margin: 15px 0; }
         .footer { margin-top: 20px; padding-top: 20px; border-top: 1px solid #ddd; color: #666; }
     </style>
 </head>
@@ -43,6 +44,13 @@
                 Anulată - comanda a fost anulată
             @endif
         </p>
+
+        @if($order->status === 'cancelled' && $order->cancellation_reason)
+            <div class="cancellation-reason">
+                <h3>Motivul anulării:</h3>
+                <p>{{ $order->cancellation_reason }}</p>
+            </div>
+        @endif
 
         <div class="order-details">
             <h3>Detalii comandă:</h3>
