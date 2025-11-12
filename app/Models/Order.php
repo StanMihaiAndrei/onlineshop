@@ -27,6 +27,7 @@ class Order extends Model
         'payment_status',
         'stripe_session_id',
         'notes',
+        'cancellation_reason',
     ];
 
     protected static function boot()
