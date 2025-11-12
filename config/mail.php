@@ -115,4 +115,15 @@ return [
         'name' => env('MAIL_FROM_NAME', 'Example'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Admin Email
+    |--------------------------------------------------------------------------
+    |
+    | Email address used for admin notifications
+    |
+    */
+
+    'admin_email' => env('ADMIN_EMAIL', 'contact@craftgits.ro'),
+
 ];

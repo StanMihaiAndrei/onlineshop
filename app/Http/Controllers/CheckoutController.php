@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\OrderConfirmationMail;
+use App\Mail\OrderCreatedMail;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Stripe\Stripe;
 use Stripe\Checkout\Session as StripeSession;
-
 
 class CheckoutController extends Controller
 {
@@ -28,7 +30,7 @@ class CheckoutController extends Controller
         return view('checkout.index', compact('cartItems', 'cartTotal'));
     }
 
-     public function store(Request $request)
+    public function store(Request $request)
     {
         $validated = $request->validate([
             'shipping_name' => 'required|string|max:255',
@@ -93,6 +95,12 @@ class CheckoutController extends Controller
                 $product->decrement('stock', $item['quantity']);
             }
 
+            // Load order items for emails
+            $order->load('items');
+
+            // Send emails using queue
+            $this->sendOrderEmails($order);
+
             DB::commit();
 
             // If card payment, redirect to Stripe
@@ -107,6 +115,23 @@ class CheckoutController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Error placing order: ' . $e->getMessage())->withInput();
+        }
+    }
+
+      private function sendOrderEmails(Order $order)
+    {
+        try {
+            // Queue customer email first (no delay)
+            Mail::to($order->shipping_email)
+                ->queue(new OrderConfirmationMail($order));
+
+            // Queue admin email after (15 seconds delay)
+            Mail::to(config('mail.admin_email'))
+                ->queue(new OrderCreatedMail($order));
+
+        } catch (\Exception $e) {
+            // Log email errors but don't fail the order
+            \Log::error('Failed to queue order emails: ' . $e->getMessage());
         }
     }
 
