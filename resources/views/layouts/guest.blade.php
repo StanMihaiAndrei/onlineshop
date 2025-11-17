@@ -15,14 +15,15 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gray-100">
-            <!-- Navigation pentru clienți și guest -->
-            <livewire:layout.navigation />
+        <!-- Navigation pentru clienți și guest -->
+        <livewire:layout.navigation />
 
-            <!-- Page Content -->
-            <main>
-                {{ $slot }}
-            </main>
-        </div>
+        <!-- Page Content -->
+        <main class="min-h-screen bg-gray-100">
+            {{ $slot }}
+        </main>
+
+        <!-- Footer Component -->
+        <livewire:layout.footer />
     </body>
 </html>
