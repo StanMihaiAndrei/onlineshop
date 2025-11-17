@@ -354,6 +354,9 @@
         </div>
     </div>
 
+    <!-- Footer Component -->
+    <livewire:layout.footer />
+
     <script>
         function addToCart(productId, quantity) {
             Livewire.dispatch('cart-add-item', { productId: productId, quantity: quantity });
