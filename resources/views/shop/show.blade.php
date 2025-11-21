@@ -30,12 +30,12 @@
                     <div x-data="{ currentImage: 0, images: {{ json_encode($product->images ?? []) }} }">
                         @if($product->images && count($product->images) > 0)
                             <div class="relative">
-                                <div class="aspect-w-1 aspect-h-1 bg-gradient-to-br from-pink-100 to-purple-100 rounded-xl overflow-hidden mb-4 shadow-md">
+                                <div class="aspect-w-1 aspect-h-1 bg-gray-100 rounded-xl overflow-hidden mb-4 shadow-md">
                                     <template x-for="(image, index) in images" :key="index">
                                         <img :src="`/storage/${image}`" 
                                              x-show="currentImage === index"
                                              :alt="`{{ $product->title }} - Image ${index + 1}`"
-                                             class="w-full h-96 object-contain p-4">
+                                             class="w-full h-96 object-cover">
                                     </template>
                                 </div>
                                 
