@@ -13,8 +13,10 @@ class Order extends Model
 
     protected $fillable = [
         'user_id',
+        'coupon_id',
         'order_number',
         'total_amount',
+        'discount_amount',
         'status',
         'shipping_name',
         'shipping_email',
@@ -33,7 +35,7 @@ class Order extends Model
     protected static function boot()
     {
         parent::boot();
-        
+
         static::creating(function ($order) {
             $order->order_number = 'ORD-' . strtoupper(uniqid());
         });
@@ -47,5 +49,10 @@ class Order extends Model
     public function items(): HasMany
     {
         return $this->hasMany(OrderItem::class);
+    }
+
+    public function coupon()
+    {
+        return $this->belongsTo(Coupon::class);
     }
 }

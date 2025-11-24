@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AdminOrderController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ColorController;
+use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\CheckoutController;
@@ -34,6 +35,8 @@ Route::get('/shop/{categorySlug}/{productSlug}', [ShopController::class, 'showBy
 Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
 Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
 Route::get('/checkout/success/{order}', [CheckoutController::class, 'success'])->name('checkout.success');
+Route::post('/checkout/apply-coupon', [CheckoutController::class, 'applyCoupon'])->name('checkout.applyCoupon');
+Route::delete('/checkout/remove-coupon', [CheckoutController::class, 'removeCoupon'])->name('checkout.removeCoupon');
 
 // Stripe routes
 Route::get('/stripe/success/{order}', [CheckoutController::class, 'stripeSuccess'])->name('stripe.success');
@@ -65,6 +68,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     // Nomenclatoare
     Route::resource('colors', ColorController::class);
     Route::resource('categories', CategoryController::class);
+
+    Route::resource('coupons', CouponController::class);
 });
 
 require __DIR__.'/auth.php';

@@ -9,6 +9,12 @@
                 </div>
             @endif
 
+            @if(session('success'))
+                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6">
+                    {{ session('success') }}
+                </div>
+            @endif
+
             @if(!auth()->check())
                 <div class="bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3 rounded mb-6">
                     <p class="font-medium">Already have an account?</p>
@@ -183,18 +189,69 @@
                             @endforeach
                         </div>
 
+                        <!-- Coupon Section -->
+                        <div class="border-t border-gray-200 pt-4 pb-4">
+                            @if(isset($coupon) && $coupon)
+                                <div class="bg-green-50 border border-green-200 rounded-lg p-3 mb-3">
+                                    <div class="flex items-center justify-between mb-1">
+                                        <span class="text-sm font-semibold text-green-800">
+                                            🎉 Coupon Applied: {{ $coupon->code }}
+                                        </span>
+                                        <form action="{{ route('checkout.removeCoupon') }}" method="POST" class="inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="text-xs text-red-600 hover:text-red-800">Remove</button>
+                                        </form>
+                                    </div>
+                                    <p class="text-xs text-green-700">
+                                        You save ${{ number_format($discountAmount, 2) }}
+                                        @if($coupon->type === 'percentage')
+                                            ({{ $coupon->value }}% off)
+                                        @endif
+                                    </p>
+                                </div>
+                            @else
+                                <form action="{{ route('checkout.applyCoupon') }}" method="POST" class="mb-3">
+                                    @csrf
+                                    <label for="coupon_code" class="block text-sm font-medium text-gray-700 mb-2">Have a coupon?</label>
+                                    <div class="flex gap-2">
+                                        <input type="text" name="coupon_code" id="coupon_code" 
+                                               class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm uppercase"
+                                               placeholder="Enter code">
+                                        <button type="submit" 
+                                                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition">
+                                            Apply
+                                        </button>
+                                    </div>
+                                </form>
+                            @endif
+                        </div>
+
                         <div class="border-t border-gray-200 pt-4">
                             <div class="flex justify-between items-center mb-2">
                                 <span class="text-gray-600">Subtotal</span>
                                 <span class="font-medium">${{ number_format($cartTotal, 2) }}</span>
                             </div>
+                            
+                            @if(isset($discountAmount) && $discountAmount > 0)
+                                <div class="flex justify-between items-center mb-2 text-green-600">
+                                    <span>Discount</span>
+                                    <span class="font-medium">-${{ number_format($discountAmount, 2) }}</span>
+                                </div>
+                            @endif
+
                             <div class="flex justify-between items-center mb-2">
                                 <span class="text-gray-600">Shipping</span>
                                 <span class="font-medium text-green-600">FREE</span>
                             </div>
                             <div class="flex justify-between items-center pt-4 border-t border-gray-200">
                                 <span class="text-lg font-semibold">Total</span>
-                                <span class="text-2xl font-bold text-blue-600">${{ number_format($cartTotal, 2) }}</span>
+                                <div class="text-right">
+                                    @if(isset($discountAmount) && $discountAmount > 0)
+                                        <div class="text-sm text-gray-500 line-through">${{ number_format($cartTotal, 2) }}</div>
+                                    @endif
+                                    <span class="text-2xl font-bold text-blue-600">${{ number_format($finalTotal ?? $cartTotal, 2) }}</span>
+                                </div>
                             </div>
                         </div>
                     </div>

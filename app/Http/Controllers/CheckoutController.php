@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Mail\OrderConfirmationMail;
 use App\Mail\OrderCreatedMail;
 use App\Models\Order;
+use App\Models\Coupon;
 use App\Models\OrderItem;
 use App\Models\Product;
 use Illuminate\Http\Request;
@@ -27,7 +28,28 @@ class CheckoutController extends Controller
             return $item['price'] * $item['quantity'];
         });
 
-        return view('checkout.index', compact('cartItems', 'cartTotal'));
+       // Get applied coupon from session
+        $couponCode = session()->get('coupon_code');
+        $coupon = null;
+        $discountAmount = 0;
+
+        if ($couponCode) {
+            $coupon = Coupon::where('code', $couponCode)->first();
+            if ($coupon) {
+                $validation = $coupon->isValid($cartTotal);
+                if ($validation['valid']) {
+                    $discountAmount = $coupon->calculateDiscount($cartTotal);
+                } else {
+                    // Cuponul nu mai este valid, șterge-l din sesiune
+                    session()->forget('coupon_code');
+                    $coupon = null;
+                }
+            }
+        }
+
+        $finalTotal = $cartTotal - $discountAmount;
+
+        return view('checkout.index', compact('cartItems', 'cartTotal', 'coupon', 'discountAmount', 'finalTotal'));
     }
 
     public function store(Request $request)
@@ -58,10 +80,29 @@ class CheckoutController extends Controller
                 return $item['price'] * $item['quantity'];
             });
 
+            // Apply coupon if exists
+            $couponCode = session()->get('coupon_code');
+            $coupon = null;
+            $discountAmount = 0;
+
+            if ($couponCode) {
+                $coupon = Coupon::where('code', $couponCode)->first();
+                if ($coupon) {
+                    $validation = $coupon->isValid($totalAmount);
+                    if ($validation['valid']) {
+                        $discountAmount = $coupon->calculateDiscount($totalAmount);
+                    }
+                }
+            }
+
+            $finalTotal = $totalAmount - $discountAmount;
+
             // Create order
             $order = Order::create([
                 'user_id' => auth()->check() ? auth()->id() : null,
-                'total_amount' => $totalAmount,
+                'coupon_id' => $coupon?->id,
+                'total_amount' => $finalTotal,
+                'discount_amount' => $discountAmount,
                 'shipping_name' => $validated['shipping_name'],
                 'shipping_email' => $validated['shipping_email'],
                 'shipping_phone' => $validated['shipping_phone'],
@@ -95,6 +136,11 @@ class CheckoutController extends Controller
                 $product->decrement('stock', $item['quantity']);
             }
 
+            // Increment coupon usage
+            if ($coupon) {
+                $coupon->incrementUsage();
+            }
+
             // Load order items for emails
             $order->load('items');
 
@@ -107,13 +153,46 @@ class CheckoutController extends Controller
 
             // For cash on delivery, send emails and show success
             $this->sendOrderEmails($order);
-            session()->forget('cart');
+            session()->forget(['cart', 'coupon_code']);
             return redirect()->route('checkout.success', $order)->with('success', 'Order placed successfully!');
 
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Error placing order: ' . $e->getMessage())->withInput();
         }
+    }
+
+     public function applyCoupon(Request $request)
+    {
+        $request->validate([
+            'coupon_code' => 'required|string',
+        ]);
+
+        $cartItems = session()->get('cart', []);
+        $cartTotal = collect($cartItems)->sum(fn($item) => $item['price'] * $item['quantity']);
+
+        $coupon = Coupon::where('code', strtoupper($request->coupon_code))->first();
+
+        if (!$coupon) {
+            return back()->with('error', 'Coupon code not found.');
+        }
+
+        $validation = $coupon->isValid($cartTotal);
+
+        if (!$validation['valid']) {
+            return back()->with('error', $validation['message']);
+        }
+
+        // Salvează cuponul în sesiune
+        session()->put('coupon_code', $coupon->code);
+
+        return back()->with('success', 'Coupon applied successfully!');
+    }
+
+    public function removeCoupon()
+    {
+        session()->forget('coupon_code');
+        return back()->with('success', 'Coupon removed.');
     }
 
     private function sendOrderEmails(Order $order)
