@@ -212,11 +212,15 @@ class CheckoutController extends Controller
         }
     }
 
+    // ...existing code...
+
     private function createStripeSession(Order $order, array $cartItems)
     {
         Stripe::setApiKey(config('services.stripe.secret'));
 
         $lineItems = [];
+        
+        // Add products
         foreach ($cartItems as $item) {
             $lineItems[] = [
                 'price_data' => [
@@ -231,7 +235,26 @@ class CheckoutController extends Controller
             ];
         }
 
-        $session = StripeSession::create([
+        // If coupon applied, add it as a discount in Stripe (NOT as negative line item)
+        $discounts = [];
+        if ($order->discount_amount > 0 && $order->coupon) {
+            // Create a Stripe Coupon for this discount
+            try {
+                $stripeCoupon = \Stripe\Coupon::create([
+                    'amount_off' => intval($order->discount_amount * 100), // in cents
+                    'currency' => 'ron',
+                    'duration' => 'once',
+                    'name' => $order->coupon->code,
+                ]);
+                
+                $discounts[] = ['coupon' => $stripeCoupon->id];
+            } catch (\Exception $e) {
+                // If coupon creation fails, just log it
+                \Log::error('Stripe coupon creation failed: ' . $e->getMessage());
+            }
+        }
+
+        $sessionData = [
             'payment_method_types' => ['card'],
             'line_items' => $lineItems,
             'mode' => 'payment',
@@ -241,8 +264,17 @@ class CheckoutController extends Controller
             'metadata' => [
                 'order_id' => $order->id,
                 'order_number' => $order->order_number,
+                'coupon_code' => $order->coupon?->code ?? '',
+                'discount_amount' => $order->discount_amount,
             ],
-        ]);
+        ];
+
+        // Add discounts if available
+        if (!empty($discounts)) {
+            $sessionData['discounts'] = $discounts;
+        }
+
+        $session = StripeSession::create($sessionData);
 
         // Store Stripe session ID
         $order->update(['stripe_session_id' => $session->id]);

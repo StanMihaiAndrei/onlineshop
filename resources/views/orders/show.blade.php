@@ -1,4 +1,3 @@
-<!-- filepath: c:\Apache24\htdocs\onlineshop\resources\views\orders\show.blade.php -->
 <x-app-layout>
     <div class="py-12">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -23,6 +22,23 @@
                         {{ ucfirst($order->status) }}
                     </span>
                 </div>
+
+                @if($order->coupon_id && $order->discount_amount > 0)
+                    <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+                        <div class="flex items-start gap-2">
+                            <span class="text-2xl">🎉</span>
+                            <div>
+                                <p class="font-semibold text-green-800">Coupon Applied: {{ $order->coupon->code }}</p>
+                                <p class="text-sm text-green-700">
+                                    You saved ${{ number_format($order->discount_amount, 2) }}
+                                    @if($order->coupon->type === 'percentage')
+                                        ({{ $order->coupon->value }}% discount)
+                                    @endif
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                @endif
 
                 <!-- Order Items -->
                 <div class="border-t border-gray-200 pt-6 mb-6">
@@ -57,10 +73,22 @@
 
                 <!-- Order Summary -->
                 <div class="border-t border-gray-200 pt-6 mb-6">
+                    @php
+                        $subtotal = $order->items->sum('subtotal');
+                    @endphp
+                    
                     <div class="flex justify-between mb-2">
                         <span class="text-gray-600">Subtotal</span>
-                        <span class="font-medium">${{ number_format($order->total_amount, 2) }}</span>
+                        <span class="font-medium">${{ number_format($subtotal, 2) }}</span>
                     </div>
+                    
+                    @if($order->discount_amount > 0)
+                        <div class="flex justify-between mb-2 text-green-600">
+                            <span>Discount ({{ $order->coupon->code }})</span>
+                            <span class="font-medium">-${{ number_format($order->discount_amount, 2) }}</span>
+                        </div>
+                    @endif
+                    
                     <div class="flex justify-between mb-2">
                         <span class="text-gray-600">Shipping</span>
                         <span class="font-medium">FREE</span>

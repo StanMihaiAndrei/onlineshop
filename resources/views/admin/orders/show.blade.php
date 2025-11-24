@@ -22,6 +22,19 @@
                             <h3 class="text-lg font-semibold mb-3">Order Information</h3>
                             <p><strong>Order Number:</strong> {{ $order->order_number }}</p>
                             <p><strong>Date:</strong> {{ $order->created_at->format('d/m/Y H:i') }}</p>
+                            
+                            @if($order->coupon_id && $order->discount_amount > 0)
+                                <div class="bg-green-50 border border-green-200 rounded p-2 my-2">
+                                    <p class="text-green-800"><strong>🎉 Coupon Applied:</strong> {{ $order->coupon->code }}</p>
+                                    <p class="text-green-700 text-sm">
+                                        Discount: ${{ number_format($order->discount_amount, 2) }}
+                                        @if($order->coupon->type === 'percentage')
+                                            ({{ $order->coupon->value }}% off)
+                                        @endif
+                                    </p>
+                                </div>
+                            @endif
+                            
                             <p><strong>Total:</strong> ${{ number_format($order->total_amount, 2) }}</p>
                             <p><strong>Payment Method:</strong> {{ $order->payment_method === 'card' ? 'Card' : 'Cash on Delivery' }}</p>
                             <p><strong>Status:</strong> 
@@ -109,8 +122,25 @@
                                     </div>
                                 </div>
                             @endforeach
+                            
                             <div class="border-t pt-3 mt-3">
-                                <div class="flex justify-between items-center font-bold">
+                                @php
+                                    $subtotal = $order->items->sum('subtotal');
+                                @endphp
+                                
+                                <div class="flex justify-between items-center mb-2">
+                                    <span>Subtotal:</span>
+                                    <span>${{ number_format($subtotal, 2) }}</span>
+                                </div>
+                                
+                                @if($order->discount_amount > 0)
+                                    <div class="flex justify-between items-center mb-2 text-green-600">
+                                        <span>Discount ({{ $order->coupon->code }}):</span>
+                                        <span>-${{ number_format($order->discount_amount, 2) }}</span>
+                                    </div>
+                                @endif
+                                
+                                <div class="flex justify-between items-center font-bold text-lg pt-2 border-t">
                                     <span>Total:</span>
                                     <span>${{ number_format($order->total_amount, 2) }}</span>
                                 </div>
