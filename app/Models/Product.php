@@ -16,6 +16,7 @@ class Product extends Model
         'slug',
         'description',
         'price',
+        'discount_price',
         'images',
         'is_active',
         'stock',
@@ -57,5 +58,23 @@ class Product extends Model
     public function categories(): BelongsToMany
     {
         return $this->belongsToMany(Category::class);
+    }
+
+    public function getFinalPriceAttribute()
+    {
+        return $this->discount_price > 0 ? $this->discount_price : $this->price;
+    }
+
+    public function hasDiscount()
+    {
+        return $this->discount_price > 0 && $this->discount_price < $this->price;
+    }
+
+    public function getDiscountPercentageAttribute()
+    {
+        if (!$this->hasDiscount()) {
+            return 0;
+        }
+        return round((($this->price - $this->discount_price) / $this->price) * 100);
     }
 }

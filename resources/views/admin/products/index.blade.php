@@ -45,8 +45,24 @@
                                 <div class="text-sm font-medium text-gray-900">{{ $product->title }}</div>
                                 <div class="text-sm text-gray-500">{{ Str::limit($product->description, 50) }}</div>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                ${{ number_format($product->price, 2) }}
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                @if($product->hasDiscount())
+                                    <div class="flex flex-col">
+                                        <span class="text-xs line-through text-gray-400">
+                                            ${{ number_format($product->price, 2) }}
+                                        </span>
+                                        <span class="text-sm font-bold text-red-600">
+                                            ${{ number_format($product->final_price, 2) }}
+                                        </span>
+                                        <span class="text-xs bg-red-100 text-red-800 px-1.5 py-0.5 rounded font-bold inline-block w-fit mt-1">
+                                            -{{ $product->discount_percentage }}%
+                                        </span>
+                                    </div>
+                                @else
+                                    <span class="text-sm text-gray-900">
+                                        ${{ number_format($product->price, 2) }}
+                                    </span>
+                                @endif
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                 {{ $product->stock }}
@@ -107,7 +123,23 @@
                         <div class="grid grid-cols-2 gap-3 mb-3">
                             <div>
                                 <p class="text-xs text-gray-500">Price</p>
-                                <p class="text-sm font-semibold text-gray-900">${{ number_format($product->price, 2) }}</p>
+                                @if($product->hasDiscount())
+                                    <div class="flex flex-col">
+                                        <span class="text-xs line-through text-gray-400">
+                                            ${{ number_format($product->price, 2) }}
+                                        </span>
+                                        <span class="text-sm font-bold text-red-600">
+                                            ${{ number_format($product->final_price, 2) }}
+                                        </span>
+                                        <span class="text-xs bg-red-100 text-red-800 px-1.5 py-0.5 rounded font-bold inline-block w-fit mt-0.5">
+                                            -{{ $product->discount_percentage }}%
+                                        </span>
+                                    </div>
+                                @else
+                                    <p class="text-sm font-semibold text-gray-900">
+                                        ${{ number_format($product->price, 2) }}
+                                    </p>
+                                @endif
                             </div>
                             <div>
                                 <p class="text-xs text-gray-500">Stock</p>

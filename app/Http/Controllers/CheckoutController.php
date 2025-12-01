@@ -25,7 +25,7 @@ class CheckoutController extends Controller
         }
 
         $cartTotal = collect($cartItems)->sum(function ($item) {
-            return $item['price'] * $item['quantity'];
+            return $item['final_price'] * $item['quantity'];
         });
 
        // Get applied coupon from session
@@ -77,7 +77,7 @@ class CheckoutController extends Controller
 
             // Calculate total
             $totalAmount = collect($cartItems)->sum(function ($item) {
-                return $item['price'] * $item['quantity'];
+                return $item['final_price'] * $item['quantity'];
             });
 
             // Apply coupon if exists
@@ -127,9 +127,9 @@ class CheckoutController extends Controller
                     'order_id' => $order->id,
                     'product_id' => $product->id,
                     'product_title' => $product->title,
-                    'price' => $item['price'],
+                    'price' => $item['final_price'],
                     'quantity' => $item['quantity'],
-                    'subtotal' => $item['price'] * $item['quantity'],
+                    'subtotal' => $item['final_price'] * $item['quantity'],
                 ]);
 
                 // Update stock
@@ -229,7 +229,7 @@ class CheckoutController extends Controller
                         'name' => $item['title'],
                         'images' => $item['image'] ? [asset('storage/' . $item['image'])] : [],
                     ],
-                    'unit_amount' => intval($item['price'] * 100), // Convert to cents
+                    'unit_amount' => intval($item['final_price'] * 100), // Convert to cents
                 ],
                 'quantity' => $item['quantity'],
             ];

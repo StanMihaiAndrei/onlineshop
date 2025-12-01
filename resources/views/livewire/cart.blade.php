@@ -15,7 +15,7 @@
     <div x-show="$wire.isOpen" 
          x-transition.opacity
          @click="$wire.toggleCart()"
-         class="fixed inset-0 bg-black bg-opacity-50 z-40"
+         class="fixed inset-0 bg-black bg-opacity-50 z-[60]"
          style="display: none;">
     </div>
 
@@ -27,7 +27,7 @@
          x-transition:leave="transition ease-in duration-200"
          x-transition:leave-start="translate-x-0"
          x-transition:leave-end="translate-x-full"
-         class="fixed right-0 top-0 h-full w-full max-w-md bg-white shadow-2xl z-50 flex flex-col"
+         class="fixed right-0 top-0 h-full w-full max-w-md bg-white shadow-2xl z-[70] flex flex-col"
          style="display: none;">
         
         <!-- Header -->
@@ -63,7 +63,21 @@
                                    class="text-sm font-semibold text-gray-800 hover:text-blue-600 line-clamp-2">
                                     {{ $item['title'] }}
                                 </a>
-                                <p class="text-sm text-gray-600 mt-1">${{ number_format($item['price'], 2) }}</p>
+                                
+                                <!-- Price Display with Discount -->
+                                <div class="mt-1">
+                                    @if($item['has_discount'] ?? false)
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-xs line-through text-gray-400">${{ number_format($item['price'], 2) }}</span>
+                                            <span class="text-sm font-bold text-red-600">${{ number_format($item['final_price'], 2) }}</span>
+                                            <span class="text-xs bg-red-100 text-red-800 px-1.5 py-0.5 rounded font-bold">
+                                                -{{ $item['discount_percentage'] }}%
+                                            </span>
+                                        </div>
+                                    @else
+                                        <p class="text-sm text-gray-600">${{ number_format($item['final_price'], 2) }}</p>
+                                    @endif
+                                </div>
                                 
                                 <!-- Quantity Controls -->
                                 <div class="flex items-center gap-2 mt-2">
@@ -92,9 +106,24 @@
                                     </button>
                                 </div>
                                 
-                                <p class="text-sm font-semibold text-gray-800 mt-2">
-                                    Subtotal: ${{ number_format($item['price'] * $item['quantity'], 2) }}
-                                </p>
+                                <!-- Subtotal -->
+                                <div class="mt-2">
+                                    @if($item['has_discount'] ?? false)
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-xs text-gray-500">Subtotal:</span>
+                                            <span class="text-xs line-through text-gray-400">
+                                                ${{ number_format($item['price'] * $item['quantity'], 2) }}
+                                            </span>
+                                            <span class="text-sm font-bold text-gray-800">
+                                                ${{ number_format($item['final_price'] * $item['quantity'], 2) }}
+                                            </span>
+                                        </div>
+                                    @else
+                                        <p class="text-sm font-semibold text-gray-800">
+                                            Subtotal: ${{ number_format($item['final_price'] * $item['quantity'], 2) }}
+                                        </p>
+                                    @endif
+                                </div>
                             </div>
                         </div>
                     @endforeach

@@ -100,9 +100,23 @@
                         @endif
                         
                         <div class="flex items-center gap-4 mb-6">
-                            <span class="text-3xl font-bold text-primary">
-                                ${{ number_format($product->price, 2) }}
-                            </span>
+                            @if($product->hasDiscount())
+                                <div class="flex flex-col">
+                                    <span class="text-xl line-through text-gray-400">
+                                        ${{ number_format($product->price, 2) }}
+                                    </span>
+                                    <span class="text-3xl font-bold text-red-600">
+                                        ${{ number_format($product->final_price, 2) }}
+                                    </span>
+                                </div>
+                                <span class="px-4 py-2 bg-red-100 text-red-800 rounded-full font-bold text-sm shadow-sm">
+                                    Save {{ $product->discount_percentage }}%
+                                </span>
+                            @else
+                                <span class="text-3xl font-bold text-primary">
+                                    ${{ number_format($product->price, 2) }}
+                                </span>
+                            @endif
                             <span class="px-3 py-1.5 text-xs font-bold rounded-full shadow-sm
                                 {{ $product->stock > 10 ? 'bg-green-100 text-green-800' : ($product->stock > 0 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}">
                                 @if($product->stock > 10)

@@ -84,7 +84,23 @@
                 <div class="grid grid-cols-2 gap-4 md:gap-6 mb-6">
                     <div>
                         <p class="text-sm text-gray-600 mb-1">Price</p>
-                        <p class="text-xl md:text-2xl font-bold text-gray-800">${{ number_format($product->price, 2) }}</p>
+                        @if($product->hasDiscount())
+                            <div class="flex flex-col gap-1">
+                                <span class="text-lg line-through text-gray-400">
+                                    ${{ number_format($product->price, 2) }}
+                                </span>
+                                <span class="text-xl md:text-2xl font-bold text-red-600">
+                                    ${{ number_format($product->final_price, 2) }}
+                                </span>
+                                <span class="text-sm bg-red-100 text-red-800 px-2 py-1 rounded font-bold inline-block w-fit">
+                                    Save {{ $product->discount_percentage }}% (-${{ number_format($product->price - $product->final_price, 2) }})
+                                </span>
+                            </div>
+                        @else
+                            <p class="text-xl md:text-2xl font-bold text-gray-800">
+                                ${{ number_format($product->price, 2) }}
+                            </p>
+                        @endif
                     </div>
                     <div>
                         <p class="text-sm text-gray-600 mb-1">Stock</p>

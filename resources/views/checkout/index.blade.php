@@ -177,13 +177,23 @@
                                         @endif
                                     </a>
                                     
-                                    <div class="flex-1">
+                                     <div class="flex-1">
                                         <a href="{{ route('shop.product', [$item['category_slug'] ?? 'uncategorized', $item['slug']]) }}" 
                                            class="text-sm font-medium text-gray-900 hover:text-blue-600 line-clamp-2">
                                             {{ $item['title'] }}
                                         </a>
                                         <p class="text-sm text-gray-600">Qty: {{ $item['quantity'] }}</p>
-                                        <p class="text-sm font-semibold text-gray-900">${{ number_format($item['price'] * $item['quantity'], 2) }}</p>
+                                        @if($item['has_discount'] ?? false)
+                                            <div class="flex items-center gap-2 text-xs">
+                                                <span class="line-through text-gray-400">${{ number_format($item['price'], 2) }}</span>
+                                                <span class="text-red-600 font-bold">${{ number_format($item['final_price'], 2) }}</span>
+                                                <span class="bg-red-100 text-red-800 px-1.5 py-0.5 rounded font-bold">
+                                                    -{{ $item['discount_percentage'] }}%
+                                                </span>
+                                            </div>
+                                        @else
+                                            <p class="text-sm font-semibold text-gray-900">${{ number_format($item['final_price'] * $item['quantity'], 2) }}</p>
+                                        @endif
                                     </div>
                                 </div>
                             @endforeach

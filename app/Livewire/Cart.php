@@ -24,7 +24,7 @@ class Cart extends Component
         $this->cartItems = session()->get('cart', []);
         $this->cartCount = array_sum(array_column($this->cartItems, 'quantity'));
         $this->cartTotal = collect($this->cartItems)->sum(function ($item) {
-            return $item['price'] * $item['quantity'];
+            return $item['final_price'] * $item['quantity'];
         });
     }
 
@@ -64,6 +64,9 @@ class Cart extends Component
                 'slug' => $product->slug,
                 'category_slug' => $categorySlug,
                 'price' => $product->price,
+                'final_price' => $product->final_price,
+                'has_discount' => $product->hasDiscount(),
+                'discount_percentage' => $product->discount_percentage,
                 'quantity' => $quantity,
                 'image' => $product->first_image,
                 'stock' => $product->stock
