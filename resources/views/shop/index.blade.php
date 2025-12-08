@@ -342,10 +342,9 @@
                                         @if($product->categories->count() > 0)
                                             <div class="flex flex-wrap gap-1">
                                                 @foreach($product->categories->take(2) as $cat)
-                                                    <a href="{{ route('shop.category', $cat->slug) }}" 
-                                                       class="text-xs bg-pink-50 text-primary px-2 py-0.5 rounded-full hover:bg-pink-100 transition font-medium">
+                                                    <span class="text-xs bg-pink-50 text-primary px-2 py-0.5 rounded-full font-medium">
                                                         {{ $cat->name }}
-                                                    </a>
+                                                    </span>
                                                 @endforeach
                                             </div>
                                         @endif

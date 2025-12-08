@@ -20,7 +20,10 @@ class ProductController extends Controller
 
     public function create()
     {
-        $categories = Category::where('is_active', true)->orderBy('name')->get();
+        $categories = Category::with('parent')
+            ->where('is_active', true)
+            ->orderBy('name')
+            ->get();
         $colors = Color::where('is_active', true)->orderBy('name')->get();
         return view('admin.products.create', compact('categories', 'colors'));
     }
@@ -58,10 +61,12 @@ class ProductController extends Controller
             'images' => $images,
         ]);
 
-        // Atașăm categoriile și culorile
+        // Procesează categoriile - adaugă automat categoria părinte dacă e selectată o subcategorie
         if (!empty($validated['categories'])) {
-            $product->categories()->attach($validated['categories']);
+            $categoriesToAttach = $this->processCategories($validated['categories']);
+            $product->categories()->attach($categoriesToAttach);
         }
+        
         if (!empty($validated['colors'])) {
             $product->colors()->attach($validated['colors']);
         }
@@ -79,7 +84,10 @@ class ProductController extends Controller
     public function edit(Product $product)
     {
         $product->load(['categories', 'colors']);
-        $categories = Category::where('is_active', true)->orderBy('name')->get();
+        $categories = Category::with('parent')
+            ->where('is_active', true)
+            ->orderBy('name')
+            ->get();
         $colors = Color::where('is_active', true)->orderBy('name')->get();
         return view('admin.products.edit', compact('product', 'categories', 'colors'));
     }
@@ -120,8 +128,12 @@ class ProductController extends Controller
             'is_active' => $request->has('is_active') ? true : false,
         ]);
 
-        // Sincronizăm categoriile și culorile
-        $product->categories()->sync($validated['categories'] ?? []);
+        // Procesează categoriile - adaugă automat categoria părinte dacă e selectată o subcategorie
+        $categoriesToSync = !empty($validated['categories']) 
+            ? $this->processCategories($validated['categories']) 
+            : [];
+        $product->categories()->sync($categoriesToSync);
+        
         $product->colors()->sync($validated['colors'] ?? []);
 
         return redirect()->route('admin.products.index')
@@ -158,5 +170,24 @@ class ProductController extends Controller
         }
 
         return back()->with('error', 'Image not found!');
+    }
+
+    /**
+     * Procesează categoriile pentru a include automat categoria părinte
+     * dacă e selectată o subcategorie
+     */
+    private function processCategories(array $categoryIds): array
+    {
+        $categories = Category::with('parent')->whereIn('id', $categoryIds)->get();
+        $finalCategories = collect($categoryIds);
+
+        foreach ($categories as $category) {
+            // Dacă categoria are părinte (e subcategorie), adaugă și părintele
+            if ($category->parent_id && !$finalCategories->contains($category->parent_id)) {
+                $finalCategories->push($category->parent_id);
+            }
+        }
+
+        return $finalCategories->unique()->values()->toArray();
     }
 }

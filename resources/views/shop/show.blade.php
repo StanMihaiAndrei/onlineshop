@@ -67,19 +67,18 @@
                         <h1 class="text-2xl lg:text-3xl font-bold text-gray-900 mb-4">{{ $product->title }}</h1>
                         
                         <!-- Categories -->
-                        @if($product->categories->count() > 0)
-                            <div class="flex flex-wrap gap-2 mb-4">
-                                @foreach($product->categories as $cat)
-                                    <a href="{{ route('shop.category', $cat->slug) }}" 
-                                       class="inline-flex items-center px-3 py-1.5 bg-pink-50 text-primary rounded-full text-xs hover:bg-pink-100 transition font-semibold shadow-sm">
-                                        <svg class="w-3 h-3 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
-                                        </svg>
-                                        {{ $cat->name }}
-                                    </a>
-                                @endforeach
-                            </div>
-                        @endif
+                       @if($product->categories->count() > 0)
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            @foreach($product->categories as $cat)
+                                <span class="inline-flex items-center px-3 py-1.5 bg-pink-50 text-primary rounded-full text-xs font-semibold shadow-sm">
+                                    <svg class="w-3 h-3 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                                    </svg>
+                                    {{ $cat->name }}
+                                </span>
+                            @endforeach
+                        </div>
+                    @endif
 
                         <!-- Colors -->
                         @if($product->colors->count() > 0)
