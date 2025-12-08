@@ -1,4 +1,3 @@
-{{-- filepath: resources/views/admin/categories/create.blade.php --}}
 <x-app-layout>
     <div class="container mx-auto px-4 py-6 max-w-2xl">
         <div class="mb-6">
@@ -12,6 +11,24 @@
 
             <form action="{{ route('admin.categories.store') }}" method="POST">
                 @csrf
+
+                <div class="mb-4">
+                    <label for="parent_id" class="block text-sm font-medium text-gray-700 mb-2">Parent Category (Optional)</label>
+                    <select name="parent_id" 
+                            id="parent_id"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="">None - Make this a main category</option>
+                        @foreach($parentCategories as $parent)
+                            <option value="{{ $parent->id }}" {{ old('parent_id') == $parent->id ? 'selected' : '' }}>
+                                {{ $parent->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('parent_id')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                    <p class="text-xs text-gray-500 mt-1">Leave empty to create a main category, or select a parent to create a subcategory</p>
+                </div>
 
                 <div class="mb-4">
                     <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Category Name *</label>

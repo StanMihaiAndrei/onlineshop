@@ -15,11 +15,23 @@ class ShopController extends Controller
         $query = Product::with(['categories', 'colors'])
             ->where('is_active', true);
 
-        // Filtru după categorie
+        // Filtru după categorie (inclusiv subcategorii)
         if ($request->has('category') && $request->category) {
-            $query->whereHas('categories', function($q) use ($request) {
-                $q->where('categories.id', $request->category);
-            });
+            $category = Category::find($request->category);
+            if ($category) {
+                // Dacă este categorie părinte, include și produsele din subcategorii
+                if ($category->isParent() && $request->get('include_subcategories', true)) {
+                    $categoryIds = $category->children->pluck('id')->push($category->id);
+                    $query->whereHas('categories', function($q) use ($categoryIds) {
+                        $q->whereIn('categories.id', $categoryIds);
+                    });
+                } else {
+                    // Doar categoria specificată
+                    $query->whereHas('categories', function($q) use ($request) {
+                        $q->where('categories.id', $request->category);
+                    });
+                }
+            }
         }
 
         // Filtru după culoare
@@ -29,7 +41,7 @@ class ShopController extends Controller
             });
         }
 
-        // Filtru search text (fără SKU)
+        // Filtru search text
         if ($request->has('search') && $request->search) {
             $searchTerm = $request->search;
             $query->where(function($q) use ($searchTerm) {
@@ -75,7 +87,12 @@ class ShopController extends Controller
         // Obține range-ul de prețuri pentru filtre
         $priceRange = Product::where('is_active', true)->selectRaw('MIN(price) as min, MAX(price) as max')->first();
         
-        $categories = Category::where('is_active', true)
+        // Obține categoriile principale cu subcategoriile lor
+        $categories = Category::with(['children' => function($query) {
+                $query->withCount('products');
+            }])
+            ->whereNull('parent_id')
+            ->where('is_active', true)
             ->withCount('products')
             ->orderBy('name')
             ->get();
@@ -84,7 +101,7 @@ class ShopController extends Controller
             ->orderBy('name')
             ->get();
 
-        $selectedCategory = $request->category ? Category::find($request->category) : null;
+        $selectedCategory = $request->category ? Category::with('parent', 'children')->find($request->category) : null;
         $selectedColor = $request->color ? Color::find($request->color) : null;
         
         return view('shop.index', compact('products', 'categories', 'colors', 'selectedCategory', 'selectedColor', 'priceRange'));
@@ -95,13 +112,42 @@ class ShopController extends Controller
     {
         $category = Category::where('slug', $categorySlug)
             ->where('is_active', true)
+            ->with(['children' => function($query) {
+                $query->where('is_active', true)->withCount('products');
+            }])
             ->firstOrFail();
         
-        $query = Product::whereHas('categories', function($q) use ($category) {
-                $q->where('categories.id', $category->id);
-            })
-            ->where('is_active', true)
-            ->with(['categories', 'colors']);
+        // Filtru după subcategorie dacă e specificată
+        if ($request->has('subcategory') && $request->subcategory) {
+            $subcategory = Category::where('id', $request->subcategory)
+                ->where('parent_id', $category->id)
+                ->where('is_active', true)
+                ->first();
+            
+            if ($subcategory) {
+                $query = Product::whereHas('categories', function($q) use ($subcategory) {
+                        $q->where('categories.id', $subcategory->id);
+                    })
+                    ->where('is_active', true)
+                    ->with(['categories', 'colors']);
+            } else {
+                // Subcategorie invalidă, afișează produsele categoriei principale
+                $categoryIds = $category->children->pluck('id')->push($category->id);
+                $query = Product::whereHas('categories', function($q) use ($categoryIds) {
+                        $q->whereIn('categories.id', $categoryIds);
+                    })
+                    ->where('is_active', true)
+                    ->with(['categories', 'colors']);
+            }
+        } else {
+            // Include produsele din categoria principală și subcategorii
+            $categoryIds = $category->children->pluck('id')->push($category->id);
+            $query = Product::whereHas('categories', function($q) use ($categoryIds) {
+                    $q->whereIn('categories.id', $categoryIds);
+                })
+                ->where('is_active', true)
+                ->with(['categories', 'colors']);
+        }
 
         // Filtru după culoare
         if ($request->has('color') && $request->color) {
@@ -110,7 +156,7 @@ class ShopController extends Controller
             });
         }
 
-        // Filtru search text (fără SKU)
+        // Filtru search text
         if ($request->has('search') && $request->search) {
             $searchTerm = $request->search;
             $query->where(function($q) use ($searchTerm) {
@@ -154,14 +200,20 @@ class ShopController extends Controller
         $products = $query->paginate(12)->withQueryString();
         
         // Obține range-ul de prețuri pentru categoria curentă
-        $priceRange = Product::whereHas('categories', function($q) use ($category) {
-                $q->where('categories.id', $category->id);
+        $categoryIds = $category->children->pluck('id')->push($category->id);
+        $priceRange = Product::whereHas('categories', function($q) use ($categoryIds) {
+                $q->whereIn('categories.id', $categoryIds);
             })
             ->where('is_active', true)
             ->selectRaw('MIN(price) as min, MAX(price) as max')
             ->first();
         
-        $categories = Category::where('is_active', true)
+        // Categorii pentru sidebar
+        $categories = Category::with(['children' => function($query) {
+                $query->withCount('products');
+            }])
+            ->whereNull('parent_id')
+            ->where('is_active', true)
             ->withCount('products')
             ->orderBy('name')
             ->get();
@@ -171,8 +223,9 @@ class ShopController extends Controller
             ->get();
 
         $selectedColor = $request->color ? Color::find($request->color) : null;
+        $selectedSubcategory = $request->subcategory ? Category::find($request->subcategory) : null;
         
-        return view('shop.category', compact('products', 'category', 'categories', 'colors', 'selectedColor', 'priceRange'));
+        return view('shop.category', compact('products', 'category', 'categories', 'colors', 'selectedColor', 'selectedSubcategory', 'priceRange'));
     }
 
     // Detalii produs cu categorie - /shop/animale/lesa
