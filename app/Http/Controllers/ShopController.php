@@ -51,24 +51,24 @@ class ShopController extends Controller
             });
         }
 
-        // Filtru preț minim
+        // Filtru preț minim (folosește prețul final - cu reducere dacă există)
         if ($request->has('min_price') && $request->min_price !== null && $request->min_price !== '') {
-            $query->where('price', '>=', $request->min_price);
+            $query->whereRaw('CASE WHEN discount_price > 0 THEN discount_price ELSE price END >= ?', [$request->min_price]);
         }
 
-        // Filtru preț maxim
+        // Filtru preț maxim (folosește prețul final - cu reducere dacă există)
         if ($request->has('max_price') && $request->max_price !== null && $request->max_price !== '') {
-            $query->where('price', '<=', $request->max_price);
+            $query->whereRaw('CASE WHEN discount_price > 0 THEN discount_price ELSE price END <= ?', [$request->max_price]);
         }
 
         // Sortare
         if ($request->has('sort')) {
             switch ($request->sort) {
                 case 'price_asc':
-                    $query->orderBy('price', 'asc');
+                    $query->orderByRaw('CASE WHEN discount_price > 0 THEN discount_price ELSE price END ASC');
                     break;
                 case 'price_desc':
-                    $query->orderBy('price', 'desc');
+                    $query->orderByRaw('CASE WHEN discount_price > 0 THEN discount_price ELSE price END DESC');
                     break;
                 case 'name_asc':
                     $query->orderBy('title', 'asc');
@@ -85,8 +85,10 @@ class ShopController extends Controller
 
         $products = $query->paginate(12)->withQueryString();
         
-        // Obține range-ul de prețuri pentru filtre
-        $priceRange = Product::where('is_active', true)->selectRaw('MIN(price) as min, MAX(price) as max')->first();
+        // Obține range-ul de prețuri pentru filtre (folosește prețul final)
+        $priceRange = Product::where('is_active', true)
+            ->selectRaw('MIN(CASE WHEN discount_price > 0 THEN discount_price ELSE price END) as min, MAX(CASE WHEN discount_price > 0 THEN discount_price ELSE price END) as max')
+            ->first();
         
         // Obține categoriile principale cu subcategoriile lor
         $categories = Category::with(['children' => function($query) {
@@ -178,24 +180,24 @@ class ShopController extends Controller
             });
         }
 
-        // Filtru preț minim
+        // Filtru preț minim (folosește prețul final - cu reducere dacă există)
         if ($request->has('min_price') && $request->min_price !== null && $request->min_price !== '') {
-            $query->where('price', '>=', $request->min_price);
+            $query->whereRaw('CASE WHEN discount_price > 0 THEN discount_price ELSE price END >= ?', [$request->min_price]);
         }
 
-        // Filtru preț maxim
+        // Filtru preț maxim (folosește prețul final - cu reducere dacă există)
         if ($request->has('max_price') && $request->max_price !== null && $request->max_price !== '') {
-            $query->where('price', '<=', $request->max_price);
+            $query->whereRaw('CASE WHEN discount_price > 0 THEN discount_price ELSE price END <= ?', [$request->max_price]);
         }
 
         // Sortare
         if ($request->has('sort')) {
             switch ($request->sort) {
                 case 'price_asc':
-                    $query->orderBy('price', 'asc');
+                    $query->orderByRaw('CASE WHEN discount_price > 0 THEN discount_price ELSE price END ASC');
                     break;
                 case 'price_desc':
-                    $query->orderBy('price', 'desc');
+                    $query->orderByRaw('CASE WHEN discount_price > 0 THEN discount_price ELSE price END DESC');
                     break;
                 case 'name_asc':
                     $query->orderBy('title', 'asc');
@@ -212,14 +214,14 @@ class ShopController extends Controller
 
         $products = $query->paginate(12)->withQueryString();
         
-        // Obține range-ul de prețuri pentru categoria curentă
+        // Obține range-ul de prețuri pentru categoria curentă (folosește prețul final)
         if ($category->isParent() && !$request->has('subcategory')) {
             $categoryIds = $category->children->pluck('id')->push($category->id);
             $priceRange = Product::whereHas('categories', function($q) use ($categoryIds) {
                     $q->whereIn('categories.id', $categoryIds);
                 })
                 ->where('is_active', true)
-                ->selectRaw('MIN(price) as min, MAX(price) as max')
+                ->selectRaw('MIN(CASE WHEN discount_price > 0 THEN discount_price ELSE price END) as min, MAX(CASE WHEN discount_price > 0 THEN discount_price ELSE price END) as max')
                 ->first();
         } else {
             $categoryId = $request->has('subcategory') 
@@ -230,7 +232,7 @@ class ShopController extends Controller
                     $q->where('categories.id', $categoryId);
                 })
                 ->where('is_active', true)
-                ->selectRaw('MIN(price) as min, MAX(price) as max')
+                ->selectRaw('MIN(CASE WHEN discount_price > 0 THEN discount_price ELSE price END) as min, MAX(CASE WHEN discount_price > 0 THEN discount_price ELSE price END) as max')
                 ->first();
         }
         
