@@ -16,7 +16,7 @@
          x-transition.opacity
          @click="$wire.toggleCart()"
          class="fixed inset-0 bg-black bg-opacity-50 z-[60]"
-         style="display: none;">
+         x-cloak>
     </div>
 
     <!-- Cart Sidebar -->
@@ -27,11 +27,20 @@
          x-transition:leave="transition ease-in duration-200"
          x-transition:leave-start="translate-x-0"
          x-transition:leave-end="translate-x-full"
-         class="fixed right-0 top-0 h-full w-full max-w-md bg-white shadow-2xl z-[70] flex flex-col"
-         style="display: none;">
+         x-init="$watch('$wire.isOpen', value => {
+             if (value) {
+                 document.body.style.overflow = 'hidden';
+                 document.body.style.paddingRight = (window.innerWidth - document.documentElement.clientWidth) + 'px';
+             } else {
+                 document.body.style.overflow = '';
+                 document.body.style.paddingRight = '';
+             }
+         })"
+         class="fixed right-0 top-0 h-screen w-full max-w-md bg-white shadow-2xl z-[70] flex flex-col"
+         x-cloak>
         
         <!-- Header -->
-        <div class="flex items-center justify-between p-6 border-b">
+        <div class="flex items-center justify-between p-6 border-b flex-shrink-0">
             <h2 class="text-xl font-bold text-gray-800">Shopping Cart ({{ $cartCount }})</h2>
             <button @click="$wire.toggleCart()" class="text-gray-500 hover:text-gray-700">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -152,7 +161,7 @@
 
         <!-- Footer -->
         @if(count($cartItems) > 0)
-            <div class="border-t p-6 bg-gray-50">
+            <div class="border-t p-6 bg-gray-50 flex-shrink-0">
                 <div class="flex justify-between items-center mb-4">
                     <span class="text-lg font-semibold text-gray-800">Total:</span>
                     <span class="text-2xl font-bold text-blue-600">${{ number_format($cartTotal, 2) }}</span>
