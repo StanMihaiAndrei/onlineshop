@@ -103,6 +103,60 @@
                     </div>
                 </div>
 
+                    <!-- Dimensions -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <div>
+                        <label for="width" class="block text-sm font-medium text-gray-700 mb-2">
+                            Width (cm)
+                            <span class="text-xs text-gray-500">(Optional)</span>
+                        </label>
+                        <input type="number" 
+                            name="width" 
+                            id="width" 
+                            value="{{ old('width', $product->width) }}"
+                            step="0.01"
+                            min="0"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        @error('width')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label for="height" class="block text-sm font-medium text-gray-700 mb-2">
+                            Height (cm)
+                            <span class="text-xs text-gray-500">(Optional)</span>
+                        </label>
+                        <input type="number" 
+                            name="height" 
+                            id="height" 
+                            value="{{ old('height', $product->height) }}"
+                            step="0.01"
+                            min="0"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        @error('height')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label for="length" class="block text-sm font-medium text-gray-700 mb-2">
+                            Length (cm)
+                            <span class="text-xs text-gray-500">(Optional)</span>
+                        </label>
+                        <input type="number" 
+                            name="length" 
+                            id="length" 
+                            value="{{ old('length', $product->length) }}"
+                            step="0.01"
+                            min="0"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        @error('length')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+
                 <!-- Categories -->
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700 mb-2">Categories</label>

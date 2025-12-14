@@ -20,12 +20,18 @@ class Product extends Model
         'images',
         'is_active',
         'stock',
+        'width',
+        'height',
+        'length',
     ];
 
     protected $casts = [
         'images' => 'array',
         'price' => 'decimal:2',
         'is_active' => 'boolean',
+        'width' => 'decimal:2',
+        'height' => 'decimal:2',
+        'length' => 'decimal:2',
     ];
 
     protected static function boot()
@@ -76,5 +82,13 @@ class Product extends Model
             return 0;
         }
         return round((($this->price - $this->discount_price) / $this->price) * 100);
+    }
+
+    public function getDimensionsAttribute()
+    {
+        if ($this->width && $this->height && $this->length) {
+            return "{$this->width} × {$this->height} × {$this->length} cm";
+        }
+        return null;
     }
 }

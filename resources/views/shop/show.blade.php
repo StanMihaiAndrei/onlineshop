@@ -97,6 +97,19 @@
                                 </div>
                             </div>
                         @endif
+
+                        <!-- Dimensions -->
+                        @if($product->dimensions)
+                            <div class="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-4 mb-6 border border-blue-100 shadow-sm">
+                                <h3 class="text-sm font-bold text-gray-800 mb-2 flex items-center">
+                                    <svg class="w-4 h-4 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
+                                    </svg>
+                                    Product Dimensions:
+                                </h3>
+                                <p class="text-lg font-bold text-gray-900">{{ $product->dimensions }}</p>
+                            </div>
+                        @endif
                         
                         <div class="flex items-center gap-4 mb-6">
                             @if($product->hasDiscount())
