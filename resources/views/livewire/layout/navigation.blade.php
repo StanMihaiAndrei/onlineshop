@@ -69,6 +69,28 @@ new class extends Component
                                         <span class="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-3/4 h-0.5 bg-gradient-to-r from-pink-600 to-purple-600 rounded-full"></span>
                                     @endif
                                 </a>
+
+                                <a href="{{ route('about') }}" wire:navigate 
+                                   class="inline-flex items-center px-4 py-2 text-sm font-medium transition-all duration-200 relative {{ request()->routeIs('about') ? 'text-pink-600 font-bold' : 'text-gray-700 hover:text-pink-600' }}">
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    {{ __('Despre Noi') }}
+                                    @if(request()->routeIs('about'))
+                                        <span class="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-3/4 h-0.5 bg-gradient-to-r from-pink-600 to-purple-600 rounded-full"></span>
+                                    @endif
+                                </a>
+
+                                <a href="{{ route('contact') }}" wire:navigate 
+                                   class="inline-flex items-center px-4 py-2 text-sm font-medium transition-all duration-200 relative {{ request()->routeIs('contact') ? 'text-pink-600 font-bold' : 'text-gray-700 hover:text-pink-600' }}">
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                    </svg>
+                                    {{ __('Contact') }}
+                                    @if(request()->routeIs('contact'))
+                                        <span class="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-3/4 h-0.5 bg-gradient-to-r from-pink-600 to-purple-600 rounded-full"></span>
+                                    @endif
+                                </a>
                                 
                                 <a href="{{ route('orders.index') }}" wire:navigate 
                                    class="inline-flex items-center px-4 py-2 text-sm font-medium transition-all duration-200 relative {{ request()->routeIs('orders*') ? 'text-pink-600 font-bold' : 'text-gray-700 hover:text-pink-600' }}">
@@ -105,20 +127,26 @@ new class extends Component
                                 @endif
                             </a>
                             
-                            <a href="#despre" 
-                               class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 hover:text-pink-600 transition-all duration-200 relative">
+                            <a href="{{ route('about') }}" wire:navigate 
+                               class="inline-flex items-center px-4 py-2 text-sm font-medium transition-all duration-200 relative {{ request()->routeIs('about') ? 'text-pink-600 font-bold' : 'text-gray-700 hover:text-pink-600' }}">
                                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                 </svg>
-                                {{ __('About Us') }}
+                                {{ __('Despre Noi') }}
+                                @if(request()->routeIs('about'))
+                                    <span class="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-3/4 h-0.5 bg-gradient-to-r from-pink-600 to-purple-600 rounded-full"></span>
+                                @endif
                             </a>
                             
-                            <a href="#contact" 
-                               class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 hover:text-pink-600 transition-all duration-200 relative">
+                            <a href="{{ route('contact') }}" wire:navigate 
+                               class="inline-flex items-center px-4 py-2 text-sm font-medium transition-all duration-200 relative {{ request()->routeIs('contact') ? 'text-pink-600 font-bold' : 'text-gray-700 hover:text-pink-600' }}">
                                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                                 </svg>
                                 {{ __('Contact') }}
+                                @if(request()->routeIs('contact'))
+                                    <span class="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-3/4 h-0.5 bg-gradient-to-r from-pink-600 to-purple-600 rounded-full"></span>
+                                @endif
                             </a>
                         @endauth
                     </div>
@@ -242,6 +270,20 @@ new class extends Component
                             </svg>
                             {{ __('Shop') }}
                         </x-responsive-nav-link>
+                        <x-responsive-nav-link :href="route('about')" :active="request()->routeIs('about')" wire:navigate
+                            class="{{ request()->routeIs('about') ? 'bg-pink-50 text-pink-600 border-l-4 border-pink-600' : '' }}">
+                            <svg class="w-5 h-5 mr-3 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            {{ __('Despre Noi') }}
+                        </x-responsive-nav-link>
+                        <x-responsive-nav-link :href="route('contact')" :active="request()->routeIs('contact')" wire:navigate
+                            class="{{ request()->routeIs('contact') ? 'bg-pink-50 text-pink-600 border-l-4 border-pink-600' : '' }}">
+                            <svg class="w-5 h-5 mr-3 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                            </svg>
+                            {{ __('Contact') }}
+                        </x-responsive-nav-link>
                         <x-responsive-nav-link :href="route('orders.index')" :active="request()->routeIs('orders*')" wire:navigate
                             class="{{ request()->routeIs('orders*') ? 'bg-pink-50 text-pink-600 border-l-4 border-pink-600' : '' }}">
                             <svg class="w-5 h-5 mr-3 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -266,34 +308,36 @@ new class extends Component
                         </svg>
                         {{ __('Shop') }}
                     </x-responsive-nav-link>
-                    <a href="#despre" @click="open = false" class="block px-4 py-3 text-base font-medium text-gray-700 hover:text-pink-600 hover:bg-pink-50 transition-colors duration-200 rounded-lg border-l-4 border-transparent hover:border-pink-600">
+                    <x-responsive-nav-link :href="route('about')" :active="request()->routeIs('about')" wire:navigate
+                        class="{{ request()->routeIs('about') ? 'bg-pink-50 text-pink-600 border-l-4 border-pink-600' : '' }}">
                         <svg class="w-5 h-5 mr-3 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
-                        {{ __('About Us') }}
-                    </a>
-                    <a href="#contact" @click="open = false" class="block px-4 py-3 text-base font-medium text-gray-700 hover:text-pink-600 hover:bg-pink-50 transition-colors duration-200 rounded-lg border-l-4 border-transparent hover:border-pink-600">
+                        {{ __('Despre Noi') }}
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('contact')" :active="request()->routeIs('contact')" wire:navigate
+                        class="{{ request()->routeIs('contact') ? 'bg-pink-50 text-pink-600 border-l-4 border-pink-600' : '' }}">
                         <svg class="w-5 h-5 mr-3 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                         </svg>
                         {{ __('Contact') }}
-                    </a>
+                    </x-responsive-nav-link>
 
                     <!-- Auth Buttons Mobile -->
                     <div class="pt-4 border-t border-gray-200 space-y-2">
-    <x-responsive-nav-link :href="route('login')" wire:navigate>
-        <svg class="w-5 h-5 mr-3 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
-        </svg>
-        {{ __('Login') }}
-    </x-responsive-nav-link>
-    <x-responsive-nav-link :href="route('register')" wire:navigate class="!bg-gradient-to-r !from-pink-600 !to-purple-600 !text-white hover:!shadow-lg">
-        <svg class="w-5 h-5 mr-3 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
-        </svg>
-        {{ __('Register') }}
-    </x-responsive-nav-link>
-</div>
+                        <x-responsive-nav-link :href="route('login')" wire:navigate>
+                            <svg class="w-5 h-5 mr-3 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
+                            </svg>
+                            {{ __('Login') }}
+                        </x-responsive-nav-link>
+                        <x-responsive-nav-link :href="route('register')" wire:navigate class="!bg-gradient-to-r !from-pink-600 !to-purple-600 !text-white hover:!shadow-lg">
+                            <svg class="w-5 h-5 mr-3 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
+                            </svg>
+                            {{ __('Register') }}
+                        </x-responsive-nav-link>
+                    </div>
                 @endauth
             </div>
 
