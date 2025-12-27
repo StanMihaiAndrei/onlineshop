@@ -447,5 +447,15 @@
         function toggleWishlist(productId) {
             Livewire.dispatch('wishlist-toggle', { productId: productId });
         }
+
+         // Listen for wishlist updates from Livewire
+    document.addEventListener('livewire:init', () => {
+        Livewire.on('wishlist-icon-updated', () => {
+            // Refresh page data to sync wishlist state
+            setTimeout(() => {
+                window.location.reload();
+            }, 300);
+        });
+    });
     </script>
 </x-guest-layout>
