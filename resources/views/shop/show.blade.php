@@ -146,40 +146,62 @@
                             <p class="text-gray-600 leading-relaxed text-sm">{{ $product->description }}</p>
                         </div>
 
-                        @if($product->stock > 0)
-                            <div class="flex gap-3 mb-6">
-                                <div class="flex items-center border-2 border-gray-300 rounded-lg shadow-sm bg-white">
-                                    <button @click="quantity = Math.max(1, quantity - 1)" 
-                                            class="px-4 py-2 hover:bg-gray-100 transition">
-                                        <svg class="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M20 12H4"></path>
-                                        </svg>
-                                    </button>
-                                    <input type="number" 
-                                           x-model="quantity" 
-                                           min="1" 
-                                           :max="{{ $product->stock }}"
-                                           class="w-16 text-center text-base font-bold border-0 focus:ring-0">
-                                    <button @click="quantity = Math.min({{ $product->stock }}, quantity + 1)" 
-                                            class="px-4 py-2 hover:bg-gray-100 transition">
-                                        <svg class="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"></path>
-                                        </svg>
-                                    </button>
-                                </div>
-                                <button @click="addToCart({{ $product->id }}, quantity)" 
-                                        class="flex-1 bg-primary hover:bg-primary-dark text-white px-6 py-3 rounded-lg font-bold text-sm transition transform hover:scale-105 flex items-center justify-center shadow-md">
-                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                       @if($product->stock > 0)
+                        <div class="flex gap-3 mb-6">
+                            <div class="flex items-center border-2 border-gray-300 rounded-lg shadow-sm bg-white">
+                                <button @click="quantity = Math.max(1, quantity - 1)" 
+                                        class="px-4 py-2 hover:bg-gray-100 transition">
+                                    <svg class="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M20 12H4"></path>
                                     </svg>
-                                    Add to Cart
+                                </button>
+                                <input type="number" 
+                                    x-model="quantity" 
+                                    min="1" 
+                                    :max="{{ $product->stock }}"
+                                    class="w-16 text-center text-base font-bold border-0 focus:ring-0">
+                                <button @click="quantity = Math.min({{ $product->stock }}, quantity + 1)" 
+                                        class="px-4 py-2 hover:bg-gray-100 transition">
+                                    <svg class="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"></path>
+                                    </svg>
                                 </button>
                             </div>
-                        @else
-                            <div class="bg-red-50 border-2 border-red-200 rounded-lg p-4 mb-6 shadow-sm">
-                                <p class="text-red-800 font-bold text-sm">⚠ This product is currently out of stock</p>
-                            </div>
-                        @endif
+                            <button @click="addToCart({{ $product->id }}, quantity)" 
+                                    class="flex-1 bg-primary hover:bg-primary-dark text-white px-6 py-3 rounded-lg font-bold text-sm transition transform hover:scale-105 flex items-center justify-center shadow-md">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                </svg>
+                                Add to Cart
+                            </button>
+                        </div>
+                        
+                        <!-- Wishlist Button -->
+                        <div class="mb-6">
+                            <button onclick="toggleWishlist({{ $product->id }})"
+                                    class="w-full border-2 border-pink-600 text-pink-600 hover:bg-pink-50 px-6 py-3 rounded-lg font-bold text-sm transition flex items-center justify-center shadow-md">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                                </svg>
+                                Add to Wishlist
+                            </button>
+                        </div>
+                    @else
+                        <div class="bg-red-50 border-2 border-red-200 rounded-lg p-4 mb-6 shadow-sm">
+                            <p class="text-red-800 font-bold text-sm">⚠ This product is currently out of stock</p>
+                        </div>
+                        
+                        <!-- Wishlist Button for Out of Stock -->
+                        <div class="mb-6">
+                            <button onclick="toggleWishlist({{ $product->id }})"
+                                    class="w-full border-2 border-pink-600 text-pink-600 hover:bg-pink-50 px-6 py-3 rounded-lg font-bold text-sm transition flex items-center justify-center shadow-md">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                                </svg>
+                                Save to Wishlist
+                            </button>
+                        </div>
+                    @endif
 
                         <!-- Product Meta -->
                         <div class="border-t border-gray-200 pt-6 space-y-3 text-sm">
@@ -203,6 +225,10 @@
     <script>
         function addToCart(productId, quantity) {
             Livewire.dispatch('cart-add-item', { productId: productId, quantity: quantity });
+        }
+
+         function toggleWishlist(productId) {
+            Livewire.dispatch('wishlist-toggle', { productId: productId });
         }
     </script>
 </x-guest-layout>

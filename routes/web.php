@@ -35,6 +35,10 @@ Route::get('/hello', function () {
     return view('hello');
 })->name('hello');
 
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/wishlist', [App\Http\Controllers\WishlistController::class, 'index'])->name('wishlist.index');
+});
+
 // Rute publice pentru Shop
 Route::get('/shop', [ShopController::class, 'index'])->name('shop');
 Route::get('/shop/{categorySlug}', [ShopController::class, 'category'])->name('shop.category');

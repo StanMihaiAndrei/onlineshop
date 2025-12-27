@@ -154,6 +154,9 @@ new class extends Component
 
                 <!-- Right Side - Cart & Auth Buttons -->
                 <div class="flex items-center gap-3">
+                     <!-- Wishlist -->
+                    <livewire:wishlist-component />
+                    
                     <!-- Shopping Cart -->
                     <livewire:cart />
 

@@ -309,27 +309,36 @@
                                         : route('shop.product', ['uncategorized', $product->slug]);
                                 @endphp
                                 
-                                <a href="{{ $productUrl }}" class="block">
-                                    <div class="bg-gradient-to-br from-pink-100 to-purple-100 relative overflow-hidden h-64">
-                                        @if($product->first_image)
-                                            <img src="{{ asset('storage/' . $product->first_image) }}" 
-                                                 alt="{{ $product->title }}"
-                                                 class="w-full h-64 object-cover group-hover:scale-110 transition duration-500">
-                                        @else
-                                            <div class="w-full h-64 flex items-center justify-center">
-                                                <svg class="w-16 h-16 text-primary opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                                </svg>
-                                            </div>
-                                        @endif
-                                        
-                                        @if($product->stock <= 0)
-                                            <div class="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center">
-                                                <span class="bg-red-600 text-white px-3 py-1.5 rounded-full font-bold text-xs shadow-lg">Out of Stock</span>
-                                            </div>
-                                        @endif
+                                <!-- Imagine container cu poziție relativă pentru wishlist button -->
+                                <div class="relative">
+                                    <a href="{{ $productUrl }}" class="block">
+                                        <div class="bg-gradient-to-br from-pink-100 to-purple-100 relative overflow-hidden h-64">
+                                            @if($product->first_image)
+                                                <img src="{{ asset('storage/' . $product->first_image) }}" 
+                                                    alt="{{ $product->title }}"
+                                                    class="w-full h-64 object-cover group-hover:scale-110 transition duration-500">
+                                            @else
+                                                <div class="w-full h-64 flex items-center justify-center">
+                                                    <svg class="w-16 h-16 text-primary opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                                    </svg>
+                                                </div>
+                                            @endif
+                                            
+                                            @if($product->stock <= 0)
+                                                <div class="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center">
+                                                    <span class="bg-red-600 text-white px-3 py-1.5 rounded-full font-bold text-xs shadow-lg">Out of Stock</span>
+                                                </div>
+                                            @endif
+                                        </div>
+                                    </a>
+                                    
+                                    <!-- Wishlist Button - OUTSIDE the <a> tag but positioned absolutely -->
+                                    <div class="absolute top-3 right-3 z-10" onclick="event.stopPropagation();">
+                                        <x-wishlist-icon :productId="$product->id" 
+                                                        class="p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all" />
                                     </div>
-                                </a>
+                                </div>
                                 
                                 <div class="p-4 flex flex-col flex-grow">
                                     <a href="{{ $productUrl }}">
@@ -433,6 +442,10 @@
     <script>
         function addToCart(productId, quantity) {
             Livewire.dispatch('cart-add-item', { productId: productId, quantity: quantity });
+        }
+
+        function toggleWishlist(productId) {
+            Livewire.dispatch('wishlist-toggle', { productId: productId });
         }
     </script>
 </x-guest-layout>
