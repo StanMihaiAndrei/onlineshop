@@ -109,7 +109,7 @@
                         <div class="flex items-center justify-between border-b pb-2 gap-2">
                             <div class="min-w-0 flex-1">
                                 <p class="font-semibold text-gray-900 text-xs sm:text-base truncate">{{ $product->title }}</p>
-                                <p class="text-xs text-gray-600 truncate">SKU: {{ $product->sku }}</p>
+                                <p class="text-xs text-gray-600 truncate">SKU: {{ $product->id }}</p>
                             </div>
                             <span class="px-2 py-0.5 text-xs font-semibold rounded-full whitespace-nowrap {{ $product->stock == 0 ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800' }}">
                                 {{ $product->stock }} rămase
