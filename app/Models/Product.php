@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Str;
+use App\Models\Review;
 
 class Product extends Model
 {
@@ -66,6 +67,16 @@ class Product extends Model
         return $this->belongsToMany(Category::class);
     }
 
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    public function approvedReviews()
+    {
+        return $this->hasMany(Review::class)->where('is_approved', true);
+    }
+
     public function getFinalPriceAttribute()
     {
         return $this->discount_price > 0 ? $this->discount_price : $this->price;
@@ -90,5 +101,59 @@ class Product extends Model
             return "{$this->width} × {$this->height} × {$this->length} cm";
         }
         return null;
+    }
+
+    /**
+     * Calculează rating-ul produsului folosind un algoritm care avantajează produsul
+     * Formula: Media ponderată care tinde către 5 stele
+     * Exemplu: 5 + 4 = 4.8 (în loc de 4.5)
+     */
+    public function getAverageRatingAttribute()
+    {
+        $reviews = $this->approvedReviews;
+        
+        if ($reviews->count() === 0) {
+            return 0;
+        }
+
+        // Algoritmul optimist: (suma + număr_reviews * bonus) / (număr_reviews + bonus_weight)
+        // Bonus-ul adaugă "review-uri implicite" de 5 stele pentru a avantaja produsul
+        $totalRating = $reviews->sum('rating');
+        $reviewCount = $reviews->count();
+        
+        // Parametrii algoritmului optimist
+        $bonusStars = 5; // Stelele implicite pentru bonus
+        $bonusWeight = 1; // Câte "review-uri bonus" adăugăm (scade pe măsură ce crește numărul de review-uri reale)
+        
+        // Formula optimistă
+        $optimisticRating = ($totalRating + ($bonusStars * $bonusWeight)) / ($reviewCount + $bonusWeight);
+        
+        return round($optimisticRating, 1);
+    }
+
+    /**
+     * Returnează numărul total de review-uri aprobate
+     */
+    public function getReviewsCountAttribute()
+    {
+        return $this->approvedReviews()->count();
+    }
+
+    /**
+     * Returnează distribuția stelelor (câte review-uri pentru fiecare nivel de rating)
+     */
+    public function getRatingDistributionAttribute()
+    {
+        $distribution = $this->approvedReviews()
+            ->selectRaw('rating, COUNT(*) as count')
+            ->groupBy('rating')
+            ->pluck('count', 'rating')
+            ->toArray();
+
+        // Asigură că avem toate valorile de la 1 la 5
+        return array_merge(
+            [1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0],
+            $distribution
+        );
     }
 }

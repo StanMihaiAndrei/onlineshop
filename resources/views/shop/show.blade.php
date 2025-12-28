@@ -222,6 +222,195 @@
         </div>
     </div>
 
+    <!-- Reviews Section -->
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100 p-6 lg:p-8">
+        
+        <!-- Rating Summary -->
+        <div class="border-b border-gray-200 pb-6 mb-6">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">Customer Reviews</h2>
+            
+            @if($product->reviews_count > 0)
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Overall Rating -->
+                    <div class="flex items-center gap-4">
+                        <div class="text-center">
+                            <div class="text-5xl font-bold text-primary">{{ $product->average_rating }}</div>
+                            <div class="flex justify-center mt-2">
+                                @for($i = 1; $i <= 5; $i++)
+                                    @if($i <= floor($product->average_rating))
+                                        <svg class="w-5 h-5 text-yellow-400 fill-current" viewBox="0 0 20 20">
+                                            <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                        </svg>
+                                    @elseif($i - 0.5 <= $product->average_rating)
+                                        <svg class="w-5 h-5 text-yellow-400" viewBox="0 0 20 20">
+                                            <defs>
+                                                <linearGradient id="half-{{ $product->id }}">
+                                                    <stop offset="50%" stop-color="#FBBF24"/>
+                                                    <stop offset="50%" stop-color="#D1D5DB"/>
+                                                </linearGradient>
+                                            </defs>
+                                            <path fill="url(#half-{{ $product->id }})" d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                        </svg>
+                                    @else
+                                        <svg class="w-5 h-5 text-gray-300 fill-current" viewBox="0 0 20 20">
+                                            <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                        </svg>
+                                    @endif
+                                @endfor
+                            </div>
+                            <div class="text-sm text-gray-600 mt-1">{{ $product->reviews_count }} {{ $product->reviews_count == 1 ? 'review' : 'reviews' }}</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Rating Distribution -->
+                    <div class="space-y-2">
+                        @foreach(range(5, 1) as $stars)
+                            @php
+                                $count = $product->rating_distribution[$stars] ?? 0;
+                                $percentage = $product->reviews_count > 0 ? ($count / $product->reviews_count) * 100 : 0;
+                            @endphp
+                            <div class="flex items-center gap-2">
+                                <span class="text-sm font-medium text-gray-700 w-16">{{ $stars }} stars</span>
+                                <div class="flex-1 bg-gray-200 rounded-full h-3">
+                                    <div class="bg-yellow-400 h-3 rounded-full transition-all" style="width: {{ $percentage }}%"></div>
+                                </div>
+                                <span class="text-sm text-gray-600 w-8">{{ $count }}</span>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            @else
+                <div class="text-center py-8">
+                    <svg class="w-16 h-16 mx-auto text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+                    </svg>
+                    <p class="text-gray-600 font-medium">No reviews yet. Be the first to review this product!</p>
+                </div>
+            @endif
+        </div>
+
+        <!-- Add Review Form -->
+        @auth
+            @if(!isset($userReview))
+                <div class="mb-8 bg-gradient-to-r from-pink-50 to-purple-50 rounded-lg p-6 border border-pink-100">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4">Write a Review</h3>
+                    
+                    <form action="{{ route('reviews.store', $product) }}" method="POST" x-data="{ rating: 0 }">
+                        @csrf
+                        
+                        <!-- Star Rating -->
+                        <div class="mb-4">
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Your Rating *</label>
+                            <div class="flex gap-2">
+                                @for($i = 1; $i <= 5; $i++)
+                                    <button type="button" 
+                                            @click="rating = {{ $i }}"
+                                            class="focus:outline-none transition-transform hover:scale-110">
+                                        <svg :class="rating >= {{ $i }} ? 'text-yellow-400' : 'text-gray-300'" 
+                                             class="w-8 h-8 fill-current" viewBox="0 0 20 20">
+                                            <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                        </svg>
+                                    </button>
+                                @endfor
+                            </div>
+                            <input type="hidden" name="rating" x-model="rating" required>
+                            @error('rating')
+                                <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        
+                        <!-- Comment -->
+                        <div class="mb-4">
+                            <label for="comment" class="block text-sm font-bold text-gray-700 mb-2">Your Review</label>
+                            <textarea name="comment" 
+                                      id="comment" 
+                                      rows="4" 
+                                      class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:border-primary"
+                                      placeholder="Share your experience with this product...">{{ old('comment') }}</textarea>
+                            @error('comment')
+                                <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        
+                        <button type="submit" 
+                                x-bind:disabled="rating === 0"
+                                :class="rating === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-primary-dark'"
+                                class="bg-primary text-white px-6 py-3 rounded-lg font-bold transition shadow-md">
+                            Submit Review
+                        </button>
+                    </form>
+                </div>
+            @else
+                <div class="mb-8 bg-green-50 border border-green-200 rounded-lg p-4">
+                    <p class="text-green-800 font-medium flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        </svg>
+                        Thank you! You've already reviewed this product.
+                    </p>
+                </div>
+            @endif
+        @else
+            <div class="mb-8 bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <p class="text-blue-800 font-medium">
+                    <a href="{{ route('login') }}" class="underline font-bold hover:text-blue-900">Log in</a> 
+                    or 
+                    <a href="{{ route('register') }}" class="underline font-bold hover:text-blue-900">create an account</a> 
+                    to leave a review.
+                </p>
+            </div>
+        @endauth
+
+        <!-- Reviews List -->
+        @if($product->approvedReviews->count() > 0)
+            <div class="space-y-6">
+                <h3 class="text-lg font-bold text-gray-900 mb-4">All Reviews ({{ $product->reviews_count }})</h3>
+                
+                @foreach($product->approvedReviews()->with('user')->latest()->get() as $review)
+                    <div class="border-b border-gray-200 pb-6 last:border-b-0">
+                        <div class="flex items-start justify-between mb-3">
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="font-bold text-gray-900">{{ $review->user->name }}</span>
+                                    @if(Auth::check() && Auth::id() === $review->user_id)
+                                        <span class="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">Your Review</span>
+                                    @endif
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div class="flex">
+                                        @for($i = 1; $i <= 5; $i++)
+                                            <svg class="w-4 h-4 {{ $i <= $review->rating ? 'text-yellow-400' : 'text-gray-300' }} fill-current" viewBox="0 0 20 20">
+                                                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                            </svg>
+                                        @endfor
+                                    </div>
+                                    <span class="text-sm text-gray-500">{{ $review->created_at->format('M d, Y') }}</span>
+                                </div>
+                            </div>
+                            
+                            @if(Auth::check() && (Auth::id() === $review->user_id || Auth::user()->isAdmin()))
+                                <form action="{{ route('reviews.destroy', $review) }}" method="POST" 
+                                      onsubmit="return confirm('Are you sure you want to delete this review?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="text-red-600 hover:text-red-800 text-sm font-medium">
+                                        Delete
+                                    </button>
+                                </form>
+                            @endif
+                        </div>
+                        
+                        @if($review->comment)
+                            <p class="text-gray-700 leading-relaxed">{{ $review->comment }}</p>
+                        @endif
+                    </div>
+                @endforeach
+            </div>
+        @endif
+    </div>
+</div>
+
     <script>
         function addToCart(productId, quantity) {
             Livewire.dispatch('cart-add-item', { productId: productId, quantity: quantity });
