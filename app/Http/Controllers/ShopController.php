@@ -264,6 +264,7 @@ class ShopController extends Controller
         if ($categorySlug === 'uncategorized') {
             $product = Product::where('slug', $productSlug)
                 ->where('is_active', true)
+                ->withCount('approvedReviews')
                 ->with(['categories', 'colors', 'approvedReviews.user'])
                 ->firstOrFail();
 
@@ -282,6 +283,7 @@ class ShopController extends Controller
         })
             ->where('slug', $productSlug)
             ->where('is_active', true)
+            ->withCount('approvedReviews')
             ->with(['categories', 'colors', 'approvedReviews.user'])
             ->firstOrFail();
 

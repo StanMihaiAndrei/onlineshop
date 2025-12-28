@@ -111,7 +111,7 @@ class Product extends Model
     public function getAverageRatingAttribute()
     {
         $reviews = $this->approvedReviews;
-        
+
         if ($reviews->count() === 0) {
             return 0;
         }
@@ -120,14 +120,14 @@ class Product extends Model
         // Bonus-ul adaugă "review-uri implicite" de 5 stele pentru a avantaja produsul
         $totalRating = $reviews->sum('rating');
         $reviewCount = $reviews->count();
-        
+
         // Parametrii algoritmului optimist
         $bonusStars = 5; // Stelele implicite pentru bonus
         $bonusWeight = 1; // Câte "review-uri bonus" adăugăm (scade pe măsură ce crește numărul de review-uri reale)
-        
+
         // Formula optimistă
         $optimisticRating = ($totalRating + ($bonusStars * $bonusWeight)) / ($reviewCount + $bonusWeight);
-        
+
         return round($optimisticRating, 1);
     }
 
@@ -136,6 +136,12 @@ class Product extends Model
      */
     public function getReviewsCountAttribute()
     {
+        // Verifică dacă avem deja count-ul încărcat din query (mai rapid)
+        if (array_key_exists('approved_reviews_count', $this->attributes)) {
+            return $this->attributes['approved_reviews_count'];
+        }
+
+        // Altfel, calculează manual (mai lent dar funcțional)
         return $this->approvedReviews()->count();
     }
 
@@ -144,16 +150,22 @@ class Product extends Model
      */
     public function getRatingDistributionAttribute()
     {
-        $distribution = $this->approvedReviews()
-            ->selectRaw('rating, COUNT(*) as count')
-            ->groupBy('rating')
-            ->pluck('count', 'rating')
-            ->toArray();
+        // Folosește relația deja încărcată dacă există, altfel face query
+        $reviews = $this->relationLoaded('approvedReviews')
+            ? $this->approvedReviews
+            : $this->approvedReviews()->get();
 
-        // Asigură că avem toate valorile de la 1 la 5
-        return array_merge(
-            [1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0],
-            $distribution
-        );
+        // Inițializează array-ul cu toate valorile de la 1 la 5
+        $distribution = [1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0];
+
+        // Grupează review-urile după rating și actualizează array-ul
+        foreach ($reviews as $review) {
+            $rating = (int) $review->rating;
+            if ($rating >= 1 && $rating <= 5) {
+                $distribution[$rating]++;
+            }
+        }
+
+        return $distribution;
     }
 }
