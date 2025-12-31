@@ -4,26 +4,20 @@ namespace App\Notifications;
 
 use Illuminate\Auth\Notifications\ResetPassword as ResetPasswordBase;
 use Illuminate\Notifications\Messages\MailMessage;
+use App\Mail\ResetPasswordMail;
 
 class CustomResetPassword extends ResetPasswordBase
 {
-    /**
-     * Get the mail representation of the notification.
-     */
-    public function toMail($notifiable): MailMessage
+    public function toMail($notifiable)
     {
         $url = url(route('password.reset', [
             'token' => $this->token,
             'email' => $notifiable->getEmailForPasswordReset(),
         ], false));
 
-        return (new MailMessage)
-            ->subject('Resetare Parolă - ' . config('app.name'))
-            ->greeting('Bună, ' . $notifiable->name . '!')
-            ->line('Primești acest email pentru că am primit o cerere de resetare a parolei pentru contul tău.')
-            ->action('Resetează Parola', $url)
-            ->line('Acest link de resetare va expira în ' . config('auth.passwords.'.config('auth.defaults.passwords').'.expire') . ' minute.')
-            ->line('Dacă nu ai solicitat resetarea parolei, te rugăm să ignori acest email. Parola ta nu va fi schimbată.')
-            ->salutation('Cu respect, Echipa ' . config('app.name'));
+        $expiresIn = config('auth.passwords.'.config('auth.defaults.passwords').'.expire');
+
+        return (new ResetPasswordMail($notifiable, $url, $expiresIn))
+            ->to($notifiable->email);
     }
 }
