@@ -5,7 +5,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
         </svg>
         @if($cartCount > 0)
-            <span class="absolute -top-1 -right-1 bg-blue-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+            <span class="absolute -top-1 -right-1 bg-primary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                 {{ $cartCount }}
             </span>
         @endif
@@ -152,7 +152,7 @@
                     <p class="text-gray-500 text-lg">Your cart is empty</p>
                     <a href="{{ route('shop') }}" 
                        @click="$wire.toggleCart()"
-                       class="inline-block mt-4 text-blue-600 hover:text-blue-800">
+                       class="inline-block mt-4 text-primary hover:text-primary-dark">
                         Continue Shopping
                     </a>
                 </div>
@@ -164,11 +164,11 @@
             <div class="border-t p-6 bg-gray-50 flex-shrink-0">
                 <div class="flex justify-between items-center mb-4">
                     <span class="text-lg font-semibold text-gray-800">Total:</span>
-                    <span class="text-2xl font-bold text-blue-600">${{ number_format($cartTotal, 2) }}</span>
+                    <span class="text-2xl font-bold text-primary">${{ number_format($cartTotal, 2) }}</span>
                 </div>
                 
                 <a href="{{ route('checkout') }}" 
-                   class="block w-full bg-blue-600 hover:bg-blue-700 text-white text-center font-semibold py-3 px-6 rounded-lg transition">
+                   class="block w-full bg-primary hover:bg-primary-dark text-white text-center font-semibold py-3 px-6 rounded-lg transition">
                     Proceed to Checkout
                 </a>
                 
