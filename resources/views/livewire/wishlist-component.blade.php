@@ -37,7 +37,7 @@
                     <svg class="w-5 h-5 mr-2 text-pink-600" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/>
                     </svg>
-                    My Wishlist
+                    Lista mea de dorințe
                     @if($wishlistCount > 0)
                         <span class="ml-2 text-sm text-pink-600">({{ $wishlistCount }})</span>
                     @endif
@@ -102,7 +102,7 @@
                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
                                         </svg>
-                                        Add to Cart
+                                        Adaugă în coș
                                     </button>
                                     <button wire:click="removeFromWishlist({{ $item['id'] }})"
                                             class="px-3 py-1.5 bg-gray-200 text-gray-700 text-xs font-semibold rounded-lg hover:bg-red-100 hover:text-red-600 transition">
@@ -116,7 +116,7 @@
                                     <span class="text-xs text-red-600 font-semibold">Out of Stock</span>
                                     <button wire:click="removeFromWishlist({{ $item['id'] }})"
                                             class="ml-auto px-3 py-1.5 bg-gray-200 text-gray-700 text-xs font-semibold rounded-lg hover:bg-red-100 hover:text-red-600 transition">
-                                        Remove
+                                        Șterge
                                     </button>
                                 </div>
                             @endif
@@ -130,7 +130,7 @@
                 <button wire:click="clearWishlist"
                         wire:confirm="Are you sure you want to clear your wishlist?"
                         class="w-full px-4 py-2 bg-gray-200 text-gray-700 text-sm font-semibold rounded-lg hover:bg-gray-300 transition">
-                    Clear Wishlist
+                    Golește lista de dorințe
                 </button>
             </div>
         @else
@@ -139,11 +139,11 @@
                 <svg class="w-16 h-16 mx-auto text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
                 </svg>
-                <p class="text-gray-500 font-medium mb-4">Your wishlist is empty</p>
+                <p class="text-gray-500 font-medium mb-4">Lista ta de dorințe este goală</p>
                 <a href="{{ route('shop') }}" 
                    @click="open = false"
                    class="inline-block px-6 py-2 bg-pink-600 text-white text-sm font-semibold rounded-lg hover:bg-pink-700 transition">
-                    Start Shopping
+                    Începe cumpărăturile
                 </a>
             </div>
         @endif

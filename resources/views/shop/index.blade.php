@@ -10,11 +10,11 @@
                             expandedCategories: {{ request('category') ? '[' . request('category') . ']' : '[]' }}
                          }">
                         <div class="flex justify-between items-center mb-4">
-                            <h3 class="text-base font-bold text-gray-900">Filters</h3>
+                            <h3 class="text-base font-bold text-gray-900">Filtre</h3>
                             @if(request()->hasAny(['category', 'color', 'search', 'min_price', 'max_price']))
                                 <a href="{{ route('shop') }}" 
                                    class="text-xs text-primary hover:text-primary-dark underline font-medium">
-                                    Clear All
+                                    Eliminați toate filtrele
                                 </a>
                             @endif
                         </div>
@@ -23,14 +23,14 @@
                             <!-- Search Bar -->
                             <div>
                                 <label for="search" class="block text-xs font-semibold text-gray-700 mb-2">
-                                    Search Products
+                                    Caută produse
                                 </label>
                                 <div class="relative">
                                     <input type="text" 
                                            name="search" 
                                            id="search"
                                            value="{{ request('search') }}"
-                                           placeholder="Search..."
+                                           placeholder="Caută..."
                                            class="w-full px-3 py-2 text-sm border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition">
                                     @if(request('search'))
                                         <button type="button" 
@@ -47,7 +47,7 @@
                             <!-- Price Range Filter -->
                             <div class="pb-4 border-b border-gray-200">
                                 <label class="block text-xs font-semibold text-gray-700 mb-2">
-                                    Price Range
+                                    Interval preț
                                 </label>
                                 <div class="flex gap-2 items-center">
                                     <input type="number" 
@@ -70,7 +70,7 @@
                                 </div>
                                 @if($priceRange)
                                     <p class="text-xs text-gray-500 mt-1.5">
-                                        Range: ${{ number_format($priceRange->min, 2) }} - ${{ number_format($priceRange->max, 2) }}
+                                        Interval: ${{ number_format($priceRange->min, 2) }} - ${{ number_format($priceRange->max, 2) }}
                                     </p>
                                 @endif
                             </div>
@@ -78,7 +78,7 @@
                             <!-- Categories Filter with Subcategories -->
                             <div class="pb-4 border-b border-gray-200">
                                 <label class="block text-xs font-semibold text-gray-700 mb-2">
-                                    Categories
+                                    Categorii
                                 </label>
                                 <input type="hidden" name="category" x-model="selectedCategory">
                                 
@@ -88,7 +88,7 @@
                                             @click="selectedCategory = null; $nextTick(() => $el.closest('form').submit())"
                                             class="w-full text-left px-3 py-2 rounded-lg transition text-sm flex items-center justify-between"
                                             :class="selectedCategory === null ? 'bg-primary text-white font-semibold' : 'hover:bg-gray-50 text-gray-700'">
-                                        <span>All Products</span>
+                                        <span>Toate produsele</span>
                                     </button>
 
                                     <!-- Parent Categories with Subcategories -->
@@ -161,12 +161,12 @@
                             @if($colors->count() > 0)
                                 <div class="pb-4 border-b border-gray-200">
                                     <label for="color" class="block text-xs font-semibold text-gray-700 mb-2">
-                                        Color
+                                        Culoare
                                     </label>
                                     <select name="color" 
                                             id="color"
                                             class="w-full px-3 py-2 text-sm border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition">
-                                        <option value="">All Colors</option>
+                                        <option value="">Toate culorile</option>
                                         @foreach($colors as $color)
                                             <option value="{{ $color->id }}" 
                                                     {{ request('color') == $color->id ? 'selected' : '' }}>
@@ -180,17 +180,17 @@
                             <!-- Apply Filters Button -->
                             <button type="submit" 
                                     class="w-full bg-primary hover:bg-primary-dark text-white px-4 py-2.5 rounded-lg transition transform hover:scale-105 font-semibold text-sm shadow-md">
-                                Apply Filters
+                                Aplică filtrele
                             </button>
 
                             <!-- Active Filters Display -->
                             @if(request()->hasAny(['category', 'color', 'search', 'min_price', 'max_price']))
                                 <div class="pt-4 border-t border-gray-200">
-                                    <p class="text-xs font-semibold text-gray-700 mb-2">Active Filters:</p>
+                                    <p class="text-xs font-semibold text-gray-700 mb-2">Filtre active:</p>
                                     <div class="space-y-1.5">
                                         @if(request('search'))
                                             <div class="flex items-center justify-between text-xs bg-pink-50 px-2 py-1.5 rounded border border-pink-200">
-                                                <span class="text-gray-700 truncate font-medium">Search: "{{ request('search') }}"</span>
+                                                <span class="text-gray-700 truncate font-medium">Căutare: "{{ request('search') }}"</span>
                                                 <a href="{{ route('shop', array_filter(['category' => request('category'), 'color' => request('color'), 'min_price' => request('min_price'), 'max_price' => request('max_price')])) }}" 
                                                    class="text-primary hover:text-primary-dark ml-1">
                                                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -267,14 +267,14 @@
                                         <span class="text-sm text-gray-500 font-normal">in {{ $selectedCategory->parent->name }}</span>
                                     @endif
                                 @elseif(isset($selectedColor))
-                                    Products in <span class="text-primary">{{ $selectedColor->name }}</span>
+                                    Produse în <span class="text-primary">{{ $selectedColor->name }}</span>
                                 @elseif(request('search'))
-                                    Search: "<span class="text-primary">{{ request('search') }}</span>"
+                                    Căutare: "<span class="text-primary">{{ request('search') }}</span>"
                                 @else
-                                    Our Products
+                                    Produsele noastre
                                 @endif
                             </h1>
-                            <p class="text-sm text-gray-600">{{ $products->count() }} of {{ $products->total() }} products</p>
+                            <p class="text-sm text-gray-600">{{ $products->count() }} din {{ $products->total() }} produse</p>
                         </div>
 
                         <!-- Sort Dropdown -->
@@ -289,11 +289,11 @@
                                 <select name="sort" 
                                         onchange="document.getElementById('sortForm').submit()"
                                         class="px-3 py-2 text-sm border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition font-medium">
-                                    <option value="">Sort by</option>
-                                    <option value="price_asc" {{ request('sort') === 'price_asc' ? 'selected' : '' }}>Price: Low to High</option>
-                                    <option value="price_desc" {{ request('sort') === 'price_desc' ? 'selected' : '' }}>Price: High to Low</option>
-                                    <option value="name_asc" {{ request('sort') === 'name_asc' ? 'selected' : '' }}>Name: A to Z</option>
-                                    <option value="name_desc" {{ request('sort') === 'name_desc' ? 'selected' : '' }}>Name: Z to A</option>
+                                    <option value="">Sortează după</option>
+                                    <option value="price_asc" {{ request('sort') === 'price_asc' ? 'selected' : '' }}>Preț: Crescător</option>
+                                    <option value="price_desc" {{ request('sort') === 'price_desc' ? 'selected' : '' }}>Preț: Descrescător</option>
+                                    <option value="name_asc" {{ request('sort') === 'name_asc' ? 'selected' : '' }}>Nume: A la Z</option>
+                                    <option value="name_desc" {{ request('sort') === 'name_desc' ? 'selected' : '' }}>Nume: Z la A</option>
                                 </select>
                             </form>
                         </div>
@@ -327,7 +327,7 @@
                                             
                                             @if($product->stock <= 0)
                                                 <div class="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center">
-                                                    <span class="bg-red-600 text-white px-3 py-1.5 rounded-full font-bold text-xs shadow-lg">Out of Stock</span>
+                                                    <span class="bg-red-600 text-white px-3 py-1.5 rounded-full font-bold text-xs shadow-lg">Stoc epuizat</span>
                                                 </div>
                                             @endif
                                         </div>
@@ -398,7 +398,7 @@
                                             @endif
                                         </div>
                                         <span class="text-xs text-gray-500">
-                                            Stock: {{ $product->stock }}
+                                            Stoc: {{ $product->stock }}
                                         </span>
                                     </div>
                                     
@@ -409,12 +409,12 @@
                                                 <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
                                                 </svg>
-                                                Add to Cart
+                                                Adaugă în coș
                                             </button>
                                         @else
                                             <button disabled 
                                                     class="w-full bg-gray-200 text-gray-500 px-4 py-2 rounded-lg cursor-not-allowed font-semibold text-sm">
-                                                Out of Stock
+                                                Stoc epuizat
                                             </button>
                                         @endif
                                     </div>
@@ -425,8 +425,8 @@
                                 <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
                                 </svg>
-                                <p class="text-gray-600 text-sm font-medium mb-2">No products found.</p>
-                                <a href="{{ route('shop') }}" class="text-primary hover:text-primary-dark font-semibold text-sm underline">Clear filters</a>
+                                <p class="text-gray-600 text-sm font-medium mb-2">Nu s-au găsit produse.</p>
+                                <a href="{{ route('shop') }}" class="text-primary hover:text-primary-dark font-semibold text-sm underline">Eliminați filtrele</a>
                             </div>
                         @endforelse
                     </div>

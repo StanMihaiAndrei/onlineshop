@@ -179,8 +179,8 @@
         @else
         <!-- Client Dashboard -->
         <div class="mb-3 sm:mb-6">
-            <h2 class="text-xl sm:text-3xl font-bold text-gray-900">My Dashboard</h2>
-            <p class="text-gray-600 mt-1 text-xs sm:text-base">{{ __("Welcome back!") }}</p>
+            <h2 class="text-xl sm:text-3xl font-bold text-gray-900">Panoul meu</h2>
+            <p class="text-gray-600 mt-1 text-xs sm:text-base">{{ __("Bine ai revenit!") }}</p>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-4 sm:mb-8">
@@ -212,7 +212,7 @@
                         <div class="flex justify-between items-start mb-2 gap-2">
                             <div class="min-w-0 flex-1">
                                 <p class="font-semibold text-gray-900 text-sm">Comanda #{{ $order->order_number }}</p>
-                                <p class="text-xs text-gray-500">{{ $order->created_at->format('d M Y, H:i') }}</p>
+                                <p class="text-xs text-gray-500">{{ $order->created_at->format('d.m.Y, H:i') }}</p>
                             </div>
                             <span class="px-2 py-0.5 text-xs font-semibold rounded-full whitespace-nowrap
                                 @if($order->status === 'completed') bg-green-100 text-green-800

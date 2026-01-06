@@ -20,18 +20,18 @@ new class extends Component
             <div>
                 <h1 class="text-2xl font-semibold text-gray-800">
                     @if(request()->routeIs('dashboard'))
-                        Admin Dashboard
+                        Panou Admin
                     @elseif(request()->routeIs('admin.products'))
-                        Products Management
+                        Management Produse
                     @elseif(request()->routeIs('admin.orders'))
-                        Orders Management
+                        Comenzi Management
                     @else
-                        Admin Panel
+                        Panou Admin
                     @endif
                 </h1>
             </div>
             <div class="flex items-center space-x-4">
-                <span class="text-sm text-gray-600">Welcome, {{ auth()->user()->name }}</span>
+                <span class="text-sm text-gray-600">Salut, {{ auth()->user()->name }}</span>
             </div>
         </div>
     </div>

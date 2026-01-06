@@ -42,7 +42,7 @@ new class extends Component
                                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
                                     </svg>
-                                    {{ __('Home') }}
+                                    Acasă
                                     @if(request()->routeIs('home'))
                                         <span class="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-3/4 h-0.5 bg-gradient-to-r from-pink-600 to-purple-600 rounded-full"></span>
                                     @endif
@@ -53,7 +53,7 @@ new class extends Component
                                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                                     </svg>
-                                    {{ __('My Account') }}
+                                    Contul meu
                                     @if(request()->routeIs('dashboard'))
                                         <span class="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-3/4 h-0.5 bg-gradient-to-r from-pink-600 to-purple-600 rounded-full"></span>
                                     @endif
@@ -64,7 +64,7 @@ new class extends Component
                                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
                                     </svg>
-                                    {{ __('Shop') }}
+                                    Magazin
                                     @if(request()->routeIs('shop*'))
                                         <span class="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-3/4 h-0.5 bg-gradient-to-r from-pink-600 to-purple-600 rounded-full"></span>
                                     @endif
@@ -75,7 +75,7 @@ new class extends Component
                                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                     </svg>
-                                    {{ __('Despre Noi') }}
+                                    Despre noi
                                     @if(request()->routeIs('about'))
                                         <span class="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-3/4 h-0.5 bg-gradient-to-r from-pink-600 to-purple-600 rounded-full"></span>
                                     @endif
@@ -86,7 +86,7 @@ new class extends Component
                                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                                     </svg>
-                                    {{ __('Contact') }}
+                                    Contact
                                     @if(request()->routeIs('contact'))
                                         <span class="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-3/4 h-0.5 bg-gradient-to-r from-pink-600 to-purple-600 rounded-full"></span>
                                     @endif
@@ -97,7 +97,7 @@ new class extends Component
                                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
                                     </svg>
-                                    {{ __('My Orders') }}
+                                    Comenzile mele
                                     @if(request()->routeIs('orders*'))
                                         <span class="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-3/4 h-0.5 bg-gradient-to-r from-pink-600 to-purple-600 rounded-full"></span>
                                     @endif
@@ -110,7 +110,7 @@ new class extends Component
                                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
                                 </svg>
-                                {{ __('Home') }}
+                                Acasă
                                 @if(request()->routeIs('home'))
                                     <span class="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-3/4 h-0.5 bg-gradient-to-r from-pink-600 to-purple-600 rounded-full"></span>
                                 @endif
@@ -121,7 +121,7 @@ new class extends Component
                                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
                                 </svg>
-                                {{ __('Shop') }}
+                                Magazin
                                 @if(request()->routeIs('shop*'))
                                     <span class="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-3/4 h-0.5 bg-gradient-to-r from-pink-600 to-purple-600 rounded-full"></span>
                                 @endif
@@ -132,7 +132,7 @@ new class extends Component
                                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                 </svg>
-                                {{ __('Despre Noi') }}
+                                Despre noi
                                 @if(request()->routeIs('about'))
                                     <span class="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-3/4 h-0.5 bg-gradient-to-r from-pink-600 to-purple-600 rounded-full"></span>
                                 @endif
@@ -143,7 +143,7 @@ new class extends Component
                                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                                 </svg>
-                                {{ __('Contact') }}
+                                Contact
                                 @if(request()->routeIs('contact'))
                                     <span class="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-3/4 h-0.5 bg-gradient-to-r from-pink-600 to-purple-600 rounded-full"></span>
                                 @endif
@@ -168,14 +168,14 @@ new class extends Component
                                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
                                 </svg>
-                                {{ __('Login') }}
+                                Autentificare
                             </a>
                             <a href="{{ route('register') }}" wire:navigate 
                                class="inline-flex items-center px-6 py-2.5 bg-gradient-to-r from-pink-600 to-purple-600 text-white text-sm font-semibold rounded-full hover:shadow-lg hover:scale-105 transition-all duration-200">
                                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
                                 </svg>
-                                {{ __('Register') }}
+                                Înregistrare
                             </a>
                         </div>
                     @else
@@ -199,14 +199,14 @@ new class extends Component
                                         <svg class="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                                         </svg>
-                                        {{ __('Profile') }}
+                                        Profilul meu
                                     </x-dropdown-link>
                                     <button wire:click="logout" class="w-full text-start">
                                         <x-dropdown-link>
                                             <svg class="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
                                             </svg>
-                                            {{ __('Log Out') }}
+                                            Logout
                                         </x-dropdown-link>
                                     </button>
                                 </x-slot>
@@ -257,42 +257,42 @@ new class extends Component
                             <svg class="w-5 h-5 mr-3 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
                             </svg>
-                            {{ __('Home') }}
+                            Acasă
                         </x-responsive-nav-link>
                         <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate
                             class="{{ request()->routeIs('dashboard') ? 'bg-pink-50 text-pink-600 border-l-4 border-pink-600' : '' }}">
                             <svg class="w-5 h-5 mr-3 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                             </svg>
-                            {{ __('My Account') }}
+                            Contul meu
                         </x-responsive-nav-link>
                         <x-responsive-nav-link :href="route('shop')" :active="request()->routeIs('shop*')" wire:navigate
                             class="{{ request()->routeIs('shop*') ? 'bg-pink-50 text-pink-600 border-l-4 border-pink-600' : '' }}">
                             <svg class="w-5 h-5 mr-3 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
                             </svg>
-                            {{ __('Shop') }}
+                            Magazin
                         </x-responsive-nav-link>
                         <x-responsive-nav-link :href="route('about')" :active="request()->routeIs('about')" wire:navigate
                             class="{{ request()->routeIs('about') ? 'bg-pink-50 text-pink-600 border-l-4 border-pink-600' : '' }}">
                             <svg class="w-5 h-5 mr-3 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
-                            {{ __('Despre Noi') }}
+                            Despre noi
                         </x-responsive-nav-link>
                         <x-responsive-nav-link :href="route('contact')" :active="request()->routeIs('contact')" wire:navigate
                             class="{{ request()->routeIs('contact') ? 'bg-pink-50 text-pink-600 border-l-4 border-pink-600' : '' }}">
                             <svg class="w-5 h-5 mr-3 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                             </svg>
-                            {{ __('Contact') }}
+                            Contact
                         </x-responsive-nav-link>
                         <x-responsive-nav-link :href="route('orders.index')" :active="request()->routeIs('orders*')" wire:navigate
                             class="{{ request()->routeIs('orders*') ? 'bg-pink-50 text-pink-600 border-l-4 border-pink-600' : '' }}">
                             <svg class="w-5 h-5 mr-3 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
                             </svg>
-                            {{ __('My Orders') }}
+                            Comenzile mele
                         </x-responsive-nav-link>
                     @endif
                 @else
@@ -302,28 +302,28 @@ new class extends Component
                         <svg class="w-5 h-5 mr-3 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
                         </svg>
-                        {{ __('Home') }}
+                        Acasă
                     </x-responsive-nav-link>
                     <x-responsive-nav-link :href="route('shop')" :active="request()->routeIs('shop*')" wire:navigate
                         class="{{ request()->routeIs('shop*') ? 'bg-pink-50 text-pink-600 border-l-4 border-pink-600' : '' }}">
                         <svg class="w-5 h-5 mr-3 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
                         </svg>
-                        {{ __('Shop') }}
+                       Magazin
                     </x-responsive-nav-link>
                     <x-responsive-nav-link :href="route('about')" :active="request()->routeIs('about')" wire:navigate
                         class="{{ request()->routeIs('about') ? 'bg-pink-50 text-pink-600 border-l-4 border-pink-600' : '' }}">
                         <svg class="w-5 h-5 mr-3 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
-                        {{ __('Despre Noi') }}
+                        Despre noi
                     </x-responsive-nav-link>
                     <x-responsive-nav-link :href="route('contact')" :active="request()->routeIs('contact')" wire:navigate
                         class="{{ request()->routeIs('contact') ? 'bg-pink-50 text-pink-600 border-l-4 border-pink-600' : '' }}">
                         <svg class="w-5 h-5 mr-3 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                         </svg>
-                        {{ __('Contact') }}
+                        Contact
                     </x-responsive-nav-link>
 
                     <!-- Auth Buttons Mobile -->
@@ -332,13 +332,13 @@ new class extends Component
                             <svg class="w-5 h-5 mr-3 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
                             </svg>
-                            {{ __('Login') }}
+                            Autentificare
                         </x-responsive-nav-link>
                         <x-responsive-nav-link :href="route('register')" wire:navigate class="!bg-gradient-to-r !from-pink-600 !to-purple-600 !text-white hover:!shadow-lg">
                             <svg class="w-5 h-5 mr-3 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
                             </svg>
-                            {{ __('Register') }}
+                            Înregistrare
                         </x-responsive-nav-link>
                     </div>
                 @endauth
@@ -367,14 +367,14 @@ new class extends Component
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                         </svg>
-                        {{ __('Profile') }}
+                        Profilul meu
                     </x-responsive-nav-link>
                     <button wire:click="logout" class="w-full text-start">
                         <x-responsive-nav-link>
                             <svg class="w-5 h-5 mr-3 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
                             </svg>
-                            {{ __('Log Out') }}
+                            Logout
                         </x-responsive-nav-link>
                     </button>
                 </div>

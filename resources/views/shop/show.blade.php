@@ -4,7 +4,7 @@
             <!-- Breadcrumb -->
             <nav class="mb-6 text-sm">
                 <ol class="flex items-center space-x-2 text-gray-600">
-                    <li><a href="{{ route('shop') }}" class="hover:text-primary font-medium transition">Shop</a></li>
+                    <li><a href="{{ route('shop') }}" class="hover:text-primary font-medium transition">Magazin</a></li>
                     @if(isset($category))
                         <li><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg></li>
                         <li><a href="{{ route('shop.category', $category->slug) }}" class="hover:text-primary font-medium transition">{{ $category->name }}</a></li>
@@ -83,7 +83,7 @@
                         <!-- Colors -->
                         @if($product->colors->count() > 0)
                             <div class="mb-6">
-                                <h3 class="text-sm font-bold text-gray-800 mb-3">Available Colors:</h3>
+                                <h3 class="text-sm font-bold text-gray-800 mb-3">Culori disponibile:</h3>
                                 <div class="flex flex-wrap gap-3">
                                     @foreach($product->colors as $color)
                                         <div class="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200">
@@ -105,7 +105,7 @@
                                     <svg class="w-4 h-4 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
                                     </svg>
-                                    Product Dimensions:
+                                    Dimensiuni produs:
                                 </h3>
                                 <p class="text-lg font-bold text-gray-900">{{ $product->dimensions }}</p>
                             </div>
@@ -132,17 +132,17 @@
                             <span class="px-3 py-1.5 text-xs font-bold rounded-full shadow-sm
                                 {{ $product->stock > 10 ? 'bg-green-100 text-green-800' : ($product->stock > 0 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}">
                                 @if($product->stock > 10)
-                                    ✓ In Stock ({{ $product->stock }})
+                                    ✓ În stoc ({{ $product->stock }})
                                 @elseif($product->stock > 0)
-                                    ⚠ Only {{ $product->stock }} left
+                                    ⚠ Doar {{ $product->stock }} rămase
                                 @else
-                                    ✕ Out of Stock
+                                    ✕ Stoc epuizat
                                 @endif
                             </span>
                         </div>
 
                         <div class="mb-6 pb-6 border-b border-gray-200">
-                            <h3 class="text-base font-bold text-gray-900 mb-3">Description</h3>
+                            <h3 class="text-base font-bold text-gray-900 mb-3">Descriere</h3>
                             <p class="text-gray-600 leading-relaxed text-sm">{{ $product->description }}</p>
                         </div>
 
@@ -172,7 +172,7 @@
                                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
                                 </svg>
-                                Add to Cart
+                                Adaugă în coș
                             </button>
                         </div>
                         
@@ -183,12 +183,12 @@
                                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
                                 </svg>
-                                Add to Wishlist
+                                Adaugă la lista de dorințe
                             </button>
                         </div>
                     @else
                         <div class="bg-red-50 border-2 border-red-200 rounded-lg p-4 mb-6 shadow-sm">
-                            <p class="text-red-800 font-bold text-sm">⚠ This product is currently out of stock</p>
+                            <p class="text-red-800 font-bold text-sm">⚠ Acest produs este în prezent epuizat</p>
                         </div>
                         
                         <!-- Wishlist Button for Out of Stock -->
@@ -198,7 +198,7 @@
                                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
                                 </svg>
-                                Save to Wishlist
+                                Adaugă la lista de dorințe
                             </button>
                         </div>
                     @endif
@@ -211,7 +211,7 @@
                             </div>
                             @if($product->categories->count() > 0)
                                 <div class="flex justify-between">
-                                    <span class="text-gray-600 font-medium">Categories:</span>
+                                    <span class="text-gray-600 font-medium">Categorii:</span>
                                     <span class="font-bold text-gray-900">{{ $product->categories->pluck('name')->join(', ') }}</span>
                                 </div>
                             @endif
@@ -228,7 +228,7 @@
         
         <!-- Rating Summary -->
         <div class="border-b border-gray-200 pb-6 mb-6">
-            <h2 class="text-2xl font-bold text-gray-900 mb-4">Customer Reviews</h2>
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">Recenzii clienți</h2>
             
             @if($product->reviews_count > 0)
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -285,7 +285,7 @@
                     <svg class="w-16 h-16 mx-auto text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
                     </svg>
-                    <p class="text-gray-600 font-medium">No reviews yet. Be the first to review this product!</p>
+                    <p class="text-gray-600 font-medium">Nicio recenzie încă. Fii primul care scrie o recenzie pentru acest produs!</p>
                 </div>
             @endif
         </div>
@@ -294,14 +294,14 @@
         @auth
             @if(!isset($userReview))
                 <div class="mb-8 bg-gradient-to-r from-pink-50 to-purple-50 rounded-lg p-6 border border-pink-100">
-                    <h3 class="text-lg font-bold text-gray-900 mb-4">Write a Review</h3>
+                    <h3 class="text-lg font-bold text-gray-900 mb-4">Scrie o recenzie</h3>
                     
                     <form action="{{ route('reviews.store', $product) }}" method="POST" x-data="{ rating: 0 }">
                         @csrf
                         
                         <!-- Star Rating -->
                         <div class="mb-4">
-                            <label class="block text-sm font-bold text-gray-700 mb-2">Your Rating *</label>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Evaluarea ta *</label>
                             <div class="flex gap-2">
                                 @for($i = 1; $i <= 5; $i++)
                                     <button type="button" 
@@ -322,12 +322,12 @@
                         
                         <!-- Comment -->
                         <div class="mb-4">
-                            <label for="comment" class="block text-sm font-bold text-gray-700 mb-2">Your Review</label>
+                            <label for="comment" class="block text-sm font-bold text-gray-700 mb-2">Recenzia ta</label>
                             <textarea name="comment" 
                                       id="comment" 
                                       rows="4" 
                                       class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:border-primary"
-                                      placeholder="Share your experience with this product...">{{ old('comment') }}</textarea>
+                                      placeholder="Împărtășește-ți experiența cu acest produs...">{{ old('comment') }}</textarea>
                             @error('comment')
                                 <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
                             @enderror
@@ -337,7 +337,7 @@
                                 x-bind:disabled="rating === 0"
                                 :class="rating === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-primary-dark'"
                                 class="bg-primary text-white px-6 py-3 rounded-lg font-bold transition shadow-md">
-                            Submit Review
+                            Trimite recenzia
                         </button>
                     </form>
                 </div>
@@ -347,17 +347,17 @@
                         <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                         </svg>
-                        Thank you! You've already reviewed this product.
+                        Mulțumim! Ai deja o recenzie pentru acest produs.
                     </p>
                 </div>
             @endif
         @else
             <div class="mb-8 bg-blue-50 border border-blue-200 rounded-lg p-4">
                 <p class="text-blue-800 font-medium">
-                    <a href="{{ route('login') }}" class="underline font-bold hover:text-blue-900">Log in</a> 
-                    or 
-                    <a href="{{ route('register') }}" class="underline font-bold hover:text-blue-900">create an account</a> 
-                    to leave a review.
+                    <a href="{{ route('login') }}" class="underline font-bold hover:text-blue-900">Autentificare</a> 
+                    sau 
+                    <a href="{{ route('register') }}" class="underline font-bold hover:text-blue-900">creează un cont</a> 
+                    pentru a lăsa o recenzie.
                 </p>
             </div>
         @endauth
@@ -365,7 +365,7 @@
         <!-- Reviews List -->
         @if($product->approvedReviews->count() > 0)
             <div class="space-y-6">
-                <h3 class="text-lg font-bold text-gray-900 mb-4">All Reviews ({{ $product->reviews_count }})</h3>
+                <h3 class="text-lg font-bold text-gray-900 mb-4">Toate recenziile ({{ $product->reviews_count }})</h3>
                 
                 @foreach($product->approvedReviews()->with('user')->latest()->get() as $review)
                     <div class="border-b border-gray-200 pb-6 last:border-b-0">
@@ -395,7 +395,7 @@
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="text-red-600 hover:text-red-800 text-sm font-medium">
-                                        Delete
+                                        Șterge
                                     </button>
                                 </form>
                             @endif
