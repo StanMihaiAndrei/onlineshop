@@ -34,18 +34,40 @@
                         </div>
 
                         <div>
-                            <label class="block text-gray-700 text-sm font-bold mb-2">Email Verified At</label>
-                            <p class="text-gray-900">{{ $user->email_verified_at ? $user->email_verified_at->format('d/m/Y H:i') : 'Not verified' }}</p>
+                            <label class="block text-gray-700 text-sm font-bold mb-2">Email Verification Status</label>
+                            <div class="flex items-center gap-3">
+                                @if($user->email_verified_at)
+                                    <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                        ✓ Verified
+                                    </span>
+                                    <span class="text-sm text-gray-600">
+                                        on {{ $user->email_verified_at->format('d.m.Y H:i') }}
+                                    </span>
+                                @else
+                                    <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                        ✗ Not Verified
+                                    </span>
+                                @endif
+                                
+                                <!-- Toggle Button -->
+                                <form action="{{ route('admin.users.toggle-email-verification', $user) }}" method="POST" class="inline">
+                                    @csrf
+                                    <button type="submit" 
+                                            class="text-xs px-3 py-1 rounded {{ $user->email_verified_at ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600' }} text-white font-semibold transition">
+                                        {{ $user->email_verified_at ? 'Remove Verification' : 'Mark as Verified' }}
+                                    </button>
+                                </form>
+                            </div>
                         </div>
 
                         <div>
                             <label class="block text-gray-700 text-sm font-bold mb-2">Created At</label>
-                            <p class="text-gray-900">{{ $user->created_at->format('d/m/Y H:i') }}</p>
+                            <p class="text-gray-900">{{ $user->created_at->format('d.m.Y H:i') }}</p>
                         </div>
 
                         <div>
                             <label class="block text-gray-700 text-sm font-bold mb-2">Updated At</label>
-                            <p class="text-gray-900">{{ $user->updated_at->format('d/m/Y H:i') }}</p>
+                            <p class="text-gray-900">{{ $user->updated_at->format('d.m.Y H:i') }}</p>
                         </div>
                     </div>
 

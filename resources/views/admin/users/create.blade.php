@@ -41,7 +41,7 @@
                                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
                         </div>
 
-                        <div class="mb-6">
+                        <div class="mb-4">
                             <label for="role" class="block text-gray-700 text-sm font-bold mb-2">Role</label>
                             <select name="role" id="role" 
                                     class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('role') border-red-500 @enderror">
@@ -51,6 +51,18 @@
                             @error('role')
                                 <p class="text-red-500 text-xs italic mt-1">{{ $message }}</p>
                             @enderror
+                        </div>
+
+                        <div class="mb-6">
+                            <label class="flex items-center">
+                                <input type="checkbox" 
+                                       name="email_verified" 
+                                       value="1" 
+                                       {{ old('email_verified') ? 'checked' : '' }}
+                                       class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
+                                <span class="ml-2 text-sm text-gray-700">Mark Email as Verified</span>
+                            </label>
+                            <p class="text-xs text-gray-500 mt-1">Check this if you want to create a user with verified email.</p>
                         </div>
 
                         <div class="flex items-center justify-between">

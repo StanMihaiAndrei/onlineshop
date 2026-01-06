@@ -28,6 +28,7 @@ class UserController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'role' => ['required', 'in:client,admin'],
+            'email_verified' => ['boolean'],
         ]);
 
         User::create([
@@ -35,6 +36,7 @@ class UserController extends Controller
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'role' => $validated['role'],
+            'email_verified_at' => $request->has('email_verified') ? now() : null,
         ]);
 
         return redirect()->route('admin.users.index')->with('success', 'User created successfully.');
@@ -57,11 +59,19 @@ class UserController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
             'password' => ['nullable', 'confirmed', Rules\Password::defaults()],
             'role' => ['required', 'in:client,admin'],
+            'email_verified' => ['boolean'],
         ]);
 
         $user->name = $validated['name'];
         $user->email = $validated['email'];
         $user->role = $validated['role'];
+
+        // Update email verification status
+        if ($request->has('email_verified')) {
+            $user->email_verified_at = $user->email_verified_at ?? now();
+        } else {
+            $user->email_verified_at = null;
+        }
 
         if (!empty($validated['password'])) {
             $user->password = Hash::make($validated['password']);
@@ -82,5 +92,20 @@ class UserController extends Controller
         $user->delete();
 
         return redirect()->route('admin.users.index')->with('success', 'User deleted successfully.');
+    }
+    
+    public function toggleEmailVerification(User $user)
+    {
+        if ($user->email_verified_at) {
+            $user->email_verified_at = null;
+            $message = 'Email verification removed successfully.';
+        } else {
+            $user->email_verified_at = now();
+            $message = 'Email verified successfully.';
+        }
+        
+        $user->save();
+        
+        return back()->with('success', $message);
     }
 }

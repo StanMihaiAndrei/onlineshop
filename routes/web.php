@@ -82,6 +82,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     // User management routes
     Route::resource('users', UserController::class);
+    Route::post('users/{user}/toggle-email-verification', [UserController::class, 'toggleEmailVerification'])
+        ->name('users.toggle-email-verification');
 
     // Nomenclatoare
     Route::resource('colors', ColorController::class);
