@@ -282,14 +282,16 @@
                                 </div>
                             @endif
 
-                            <div class="flex justify-between mb-2" id="shipping-cost-row" style="display: none;">
-                                <span class="text-gray-600">Shipping</span>
-                                <span class="font-medium" id="shipping-cost-display">$0.00</span>
+                            <div class="flex justify-between mb-2" id="shipping-cost-row">
+                                <span class="text-gray-600">Shipping:</span>
+                                <span class="font-medium text-gray-500 text-sm" id="shipping-cost-display">
+                                    Selectați localitatea
+                                </span>
                             </div>
 
                             <div class="flex justify-between text-lg font-bold text-gray-900 pt-2 border-t">
                                 <span>Total:</span>
-                                <span>${{ number_format($finalTotal, 2) }}</span>
+                                <span id="total-display">${{ number_format($cartTotal - $discountAmount, 2) }}</span>
                             </div>
                         </div>
 
@@ -820,7 +822,7 @@
 let countySelect, citySelect, lockerSelect, deliveryHome, deliveryLocker;
 let currentCartTotal = {{ $cartTotal }};
 let currentDiscount = {{ $discountAmount }};
-let currentShippingCost = {{ $shippingCost }};
+let currentShippingCost = 0;
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
@@ -1062,25 +1064,26 @@ function calculateShipping() {
             locker_id: lockerId ? parseInt(lockerId) : null
         })
     })
-    .then(response => response.json())
+     .then(response => response.json())
     .then(data => {
-        console.log('Shipping calculation response:', data);
         if (data.success) {
             currentShippingCost = data.shipping_cost;
             
             // Update shipping cost display
-            const shippingRow = document.getElementById('shipping-cost-row');
             const shippingDisplay = document.getElementById('shipping-cost-display');
             
-            shippingRow.style.display = 'flex';
-            shippingDisplay.textContent = '$' + data.formatted;
+            if (currentShippingCost > 0) {
+                shippingDisplay.innerHTML = '<span class="text-blue-600 font-semibold">$' + currentShippingCost.toFixed(2) + '</span>';
+            } else {
+                shippingDisplay.innerHTML = '<span class="text-green-600 font-semibold">GRATUIT</span>';
+            }
             
             // Update total
             updateTotal();
             
-            console.log('Shipping cost updated:', data.shipping_cost);
+            console.log('Shipping calculated:', currentShippingCost);
         } else {
-            console.error('Shipping calculation failed:', data.error);
+            console.error('Shipping calculation failed:', data.message);
         }
     })
     .catch(error => {
@@ -1093,13 +1096,13 @@ function updateTotal() {
     const finalTotal = currentCartTotal - currentDiscount + currentShippingCost;
     
     // Update the total display
-    const totalElements = document.querySelectorAll('.border-t.pt-2 span:last-child');
-    if (totalElements.length > 0) {
-        totalElements[totalElements.length - 1].textContent = '$' + finalTotal.toFixed(2);
+    const totalDisplay = document.getElementById('total-display');
+    if (totalDisplay) {
+        totalDisplay.textContent = '$' + finalTotal.toFixed(2);
     }
     
     console.log('Total updated:', {
-        cart: currentCartTotal,
+        cartTotal: currentCartTotal,
         discount: currentDiscount,
         shipping: currentShippingCost,
         total: finalTotal

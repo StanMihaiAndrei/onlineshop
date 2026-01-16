@@ -245,8 +245,6 @@ class CheckoutController extends Controller
         }
     }
 
-    // ...existing code...
-
     private function createStripeSession(Order $order, array $cartItems)
     {
         Stripe::setApiKey(config('services.stripe.secret'));
@@ -337,13 +335,13 @@ class CheckoutController extends Controller
         $order->update(['payment_status' => 'paid']);
 
         // Load order items for emails
-        $order->load('items');
+         $order = $order->fresh(['items', 'coupon']);
 
         // NOW send emails after successful payment
         $this->sendOrderEmails($order);
 
         // Clear cart
-        session()->forget('cart');
+        session()->forget(['cart', 'coupon_code', 'shipping_cost']);
 
         return redirect()->route('checkout.success', $order)
             ->with('success', 'Payment successful! Order placed successfully!');
