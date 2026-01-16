@@ -9,6 +9,7 @@
         .container { max-width: 600px; margin: 0 auto; padding: 20px; background: #fff; }
         .header { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; padding: 30px 20px; border-radius: 8px; margin-bottom: 20px; text-align: center; }
         .order-details { background: #f8f9fa; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin-bottom: 15px; }
+        .shipping-section { background: #dbeafe; border: 2px solid #3b82f6; border-radius: 8px; padding: 20px; margin-bottom: 15px; }
         .coupon-admin { 
             background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
             border: 3px solid #f59e0b; 
@@ -31,6 +32,12 @@
         .discount-row { 
             color: #f59e0b; 
             font-weight: bold;
+            font-size: 16px;
+            margin: 8px 0;
+        }
+        .shipping-row { 
+            color: #3b82f6; 
+            font-weight: 600;
             font-size: 16px;
             margin: 8px 0;
         }
@@ -79,16 +86,10 @@
                 <h3 style="margin: 0 0 10px 0; color: #374151; font-size: 16px;">👤 Informații client:</h3>
                 <p style="margin: 5px 0;"><strong>Nume:</strong> {{ $order->shipping_name }}</p>
                 <p style="margin: 5px 0;"><strong>Email:</strong> <a href="mailto:{{ $order->shipping_email }}" style="color: #2563eb;">{{ $order->shipping_email }}</a></p>
-                <p style="margin: 5px 0;"><strong>Telefon:</strong> {{ $order->shipping_phone }}</p>
-            </div>
-
-            <div style="background: #fff; padding: 15px; border-radius: 6px; margin: 15px 0;">
-                <h3 style="margin: 0 0 10px 0; color: #374151; font-size: 16px;">📍 Adresă livrare:</h3>
-                <p style="margin: 5px 0; line-height: 1.6;">
-                    {{ $order->shipping_address }}<br>
-                    {{ $order->shipping_city }}, {{ $order->shipping_postal_code }}<br>
-                    {{ $order->shipping_country }}
-                </p>
+                <p style="margin: 5px 0;"><strong>Telefon:</strong> <a href="tel:{{ $order->shipping_phone }}" style="color: #2563eb;">{{ $order->shipping_phone }}</a></p>
+                @if($order->is_company)
+                    <p style="margin: 5px 0; color: #f59e0b;"><strong>⚠️ FIRMĂ</strong></p>
+                @endif
             </div>
 
             <div style="background: #fff; padding: 15px; border-radius: 6px; margin: 15px 0;">
@@ -105,6 +106,73 @@
                 <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; border-radius: 4px; margin: 15px 0;">
                     <p style="margin: 0;"><strong>📝 Note comandă:</strong></p>
                     <p style="margin: 5px 0 0 0;">{{ $order->notes }}</p>
+                </div>
+            @endif
+        </div>
+
+        <!-- Shipping Section -->
+        <div class="shipping-section">
+            <h3 style="margin-top: 0; color: #1e40af;">🚚 Informații livrare Sameday</h3>
+            
+            <p style="margin: 8px 0;"><strong>Tip livrare:</strong> 
+                @if($order->delivery_type === 'home')
+                    🏠 <strong style="color: #2563eb;">Livrare la domiciliu</strong>
+                @else
+                    📦 <strong style="color: #2563eb;">Livrare la EasyBox</strong>
+                @endif
+            </p>
+
+            <p style="margin: 8px 0;"><strong>Cost livrare:</strong> 
+                @if($order->shipping_cost > 0)
+                    <span style="color: #2563eb; font-weight: bold;">${{ number_format($order->shipping_cost, 2) }}</span>
+                @else
+                    <span style="color: #10b981; font-weight: bold;">GRATUIT</span>
+                @endif
+            </p>
+
+            @if($order->delivery_type === 'home')
+                <h4 style="margin: 15px 0 10px 0; color: #1f2937; font-size: 15px;">📍 Adresă livrare:</h4>
+                <p style="margin: 5px 0; line-height: 1.6; background: #fff; padding: 10px; border-radius: 6px;">
+                    {{ $order->shipping_address }}<br>
+                    {{ $order->shipping_city }}@if($order->shipping_postal_code), {{ $order->shipping_postal_code }}@endif<br>
+                    {{ $order->shipping_country }}
+                </p>
+            @else
+                <h4 style="margin: 15px 0 10px 0; color: #1f2937; font-size: 15px;">📦 EasyBox selectat:</h4>
+                <p style="margin: 5px 0; background: #fff; padding: 10px; border-radius: 6px;">
+                    <strong>{{ $order->sameday_locker_name }}</strong><br>
+                    <span style="color: #6b7280;">{{ $order->shipping_city }}</span>
+                </p>
+            @endif
+
+            @if($order->sameday_county_id && $order->sameday_city_id)
+                <div style="margin-top: 15px; padding: 10px; background: #fef3c7; border-radius: 6px;">
+                    <p style="margin: 0; font-size: 14px;">
+                        <strong>📌 Creare AWB:</strong> Judet ID: {{ $order->sameday_county_id }}, Oras ID: {{ $order->sameday_city_id }}
+                        @if($order->sameday_locker_id)
+                            , Locker ID: {{ $order->sameday_locker_id }}
+                        @endif
+                    </p>
+                </div>
+            @endif
+
+            @if($order->sameday_awb_number)
+                <div style="margin-top: 15px; padding: 15px; background: #d1fae5; border: 2px solid #10b981; border-radius: 8px;">
+                    <p style="margin: 0;"><strong>✅ AWB Generat:</strong></p>
+                    <p style="margin: 5px 0; font-size: 20px; font-weight: bold; color: #059669;">
+                        {{ $order->sameday_awb_number }}
+                    </p>
+                    @if($order->sameday_awb_cost)
+                        <p style="margin: 5px 0; font-size: 14px; color: #047857;">
+                            Cost AWB: ${{ number_format($order->sameday_awb_cost, 2) }}
+                        </p>
+                    @endif
+                </div>
+            @else
+                <div style="margin-top: 15px; padding: 10px; background: #fee2e2; border-radius: 6px;">
+                    <p style="margin: 0; font-size: 14px; color: #991b1b;">
+                        ⚠️ AWB încă negenerat. Creează AWB din panoul admin.
+                    </p>
                 </div>
             @endif
         </div>
@@ -141,6 +209,17 @@
                     </div>
                 @endif
                 
+                <div class="shipping-row" style="display: flex; justify-content: space-between;">
+                    <span>🚚 Transport ({{ $order->delivery_type === 'home' ? 'Domiciliu' : 'EasyBox' }}):</span>
+                    <span>
+                        @if($order->shipping_cost > 0)
+                            ${{ number_format($order->shipping_cost, 2) }}
+                        @else
+                            GRATUIT
+                        @endif
+                    </span>
+                </div>
+                
                 <div class="total-row" style="display: flex; justify-content: space-between;">
                     <span>TOTAL COMANDĂ:</span>
                     <span>${{ number_format($order->total_amount, 2) }}</span>
@@ -150,7 +229,7 @@
 
         <div style="background: #dbeafe; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 4px; margin: 20px 0; text-align: center;">
             <p style="margin: 0; color: #1e40af; font-weight: bold;">
-                🔔 Accesează panoul admin pentru a gestiona această comandă
+                🔔 Accesează panoul admin pentru a gestiona această comandă și a genera AWB
             </p>
         </div>
     </div>

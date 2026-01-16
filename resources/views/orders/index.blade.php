@@ -24,6 +24,34 @@
                                 </div>
                             </div>
 
+                            <!-- Shipping Info Preview -->
+                            @if($order->status !== 'cancelled')
+                                <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
+                                    <div class="flex items-start gap-2">
+                                        <span class="text-lg">🚚</span>
+                                        <div class="flex-1">
+                                            <p class="text-sm font-semibold text-blue-900">
+                                                @if($order->delivery_type === 'home')
+                                                    Home Delivery
+                                                @else
+                                                    EasyBox Delivery
+                                                @endif
+                                                @if($order->shipping_cost > 0)
+                                                    - ${{ number_format($order->shipping_cost, 2) }}
+                                                @else
+                                                    - FREE
+                                                @endif
+                                            </p>
+                                            @if($order->sameday_awb_number)
+                                                <p class="text-xs text-blue-700 mt-1">
+                                                    📦 Tracking: <span class="font-mono font-semibold">{{ $order->sameday_awb_number }}</span>
+                                                </p>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+
                             <div class="border-t border-gray-200 pt-4">
                                 <div class="space-y-3 mb-4">
                                     @foreach($order->items as $item)

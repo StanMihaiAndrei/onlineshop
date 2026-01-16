@@ -9,6 +9,7 @@
         .container { max-width: 600px; margin: 0 auto; padding: 20px; background: #fff; }
         .header { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 30px 20px; border-radius: 8px; margin-bottom: 20px; text-align: center; }
         .order-details { background: #f8f9fa; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
+        .shipping-info { background: #dbeafe; border: 2px solid #3b82f6; border-radius: 8px; padding: 20px; margin: 20px 0; }
         .coupon-highlight { 
             background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
             border: 3px solid #10b981; 
@@ -43,6 +44,13 @@
             color: #10b981; 
             font-weight: bold;
             font-size: 16px;
+        }
+        .shipping-row { 
+            display: flex; 
+            justify-content: space-between; 
+            margin: 8px 0;
+            color: #3b82f6;
+            font-weight: 600;
         }
         .total-row { 
             display: flex; 
@@ -98,14 +106,51 @@
                     {{ $order->payment_status === 'paid' ? '✓ Plătit' : '⏳ În așteptare' }}
                 </span>
             </p>
+        </div>
 
-            <h4 style="margin: 20px 0 10px 0; color: #1f2937;">📍 Adresa de livrare:</h4>
-            <p style="margin: 5px 0; line-height: 1.6;">
-                {{ $order->shipping_address }}<br>
-                {{ $order->shipping_city }}, {{ $order->shipping_postal_code }}<br>
-                {{ $order->shipping_country }}<br>
-                📞 Tel: {{ $order->shipping_phone }}
+        <!-- Shipping Information -->
+        <div class="shipping-info">
+            <h3 style="margin-top: 0; color: #1e40af;">🚚 Informații livrare</h3>
+            
+            <p style="margin: 8px 0;"><strong>Tip livrare:</strong> 
+                @if($order->delivery_type === 'home')
+                    🏠 Livrare la domiciliu
+                @else
+                    📦 Livrare la EasyBox
+                @endif
             </p>
+
+            @if($order->delivery_type === 'home')
+                <h4 style="margin: 15px 0 10px 0; color: #1f2937;">📍 Adresa de livrare:</h4>
+                <p style="margin: 5px 0; line-height: 1.6;">
+                    {{ $order->shipping_address }}<br>
+                    {{ $order->shipping_city }}@if($order->shipping_postal_code), {{ $order->shipping_postal_code }}@endif<br>
+                    {{ $order->shipping_country }}<br>
+                    📞 Tel: {{ $order->shipping_phone }}
+                </p>
+            @else
+                <h4 style="margin: 15px 0 10px 0; color: #1f2937;">📦 Punct EasyBox:</h4>
+                <p style="margin: 5px 0; line-height: 1.6;">
+                    <strong>{{ $order->sameday_locker_name }}</strong><br>
+                    {{ $order->shipping_city }}<br>
+                    📞 Tel contact: {{ $order->shipping_phone }}
+                </p>
+                <p style="margin-top: 10px; padding: 10px; background: #fef3c7; border-radius: 6px; font-size: 14px;">
+                    <strong>💡 Notă:</strong> Vei primi un SMS/email cu codul de deschidere a EasyBox-ului când coletul va ajunge la destinație.
+                </p>
+            @endif
+
+            @if($order->sameday_awb_number)
+                <div style="margin-top: 15px; padding: 15px; background: #d1fae5; border-radius: 6px;">
+                    <p style="margin: 0;"><strong>📋 AWB (Nr. Colet):</strong></p>
+                    <p style="margin: 5px 0 0 0; font-size: 18px; font-weight: bold; color: #059669;">
+                        {{ $order->sameday_awb_number }}
+                    </p>
+                    <p style="margin: 10px 0 0 0; font-size: 14px; color: #047857;">
+                        Poți urmări coletul pe <a href="https://sameday.ro/tracking" style="color: #059669; text-decoration: underline;">sameday.ro/tracking</a>
+                    </p>
+                </div>
+            @endif
         </div>
 
         <div class="order-details">
@@ -140,9 +185,15 @@
                     </div>
                 @endif
                 
-                <div class="subtotal-row">
-                    <span style="color: #6b7280;">Transport:</span>
-                    <span style="color: #10b981; font-weight: 600;">GRATUIT</span>
+                <div class="shipping-row">
+                    <span>🚚 Transport ({{ $order->delivery_type === 'home' ? 'Domiciliu' : 'EasyBox' }}):</span>
+                    <span>
+                        @if($order->shipping_cost > 0)
+                            ${{ number_format($order->shipping_cost, 2) }}
+                        @else
+                            GRATUIT
+                        @endif
+                    </span>
                 </div>
                 
                 <div class="total-row">
@@ -154,7 +205,7 @@
 
         <div style="background: #eff6ff; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 4px; margin: 20px 0;">
             <p style="margin: 0; color: #1e40af;">
-                <strong>📧 Vei primi un email</strong> cu actualizarea statusului comenzii când aceasta va fi procesată.
+                <strong>📧 Vei primi un email</strong> cu actualizarea statusului comenzii și numărul AWB când coletul va fi preluat de curier.
             </p>
         </div>
 

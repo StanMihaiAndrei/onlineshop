@@ -56,6 +56,11 @@ Route::get('/checkout/success/{order}', [CheckoutController::class, 'success'])-
 Route::post('/checkout/apply-coupon', [CheckoutController::class, 'applyCoupon'])->name('checkout.applyCoupon');
 Route::delete('/checkout/remove-coupon', [CheckoutController::class, 'removeCoupon'])->name('checkout.removeCoupon');
 
+Route::get('/checkout/counties', [CheckoutController::class, 'getCounties'])->name('checkout.counties');
+Route::get('/checkout/cities', [CheckoutController::class, 'getCities'])->name('checkout.cities');
+Route::get('/checkout/lockers', [CheckoutController::class, 'getLockers'])->name('checkout.lockers');
+Route::post('/checkout/calculate-shipping', [CheckoutController::class, 'calculateShipping'])->name('checkout.calculateShipping');
+
 // Stripe routes
 Route::get('/stripe/success/{order}', [CheckoutController::class, 'stripeSuccess'])->name('stripe.success');
 Route::get('/stripe/cancel/{order}', [CheckoutController::class, 'stripeCancel'])->name('stripe.cancel');
@@ -80,6 +85,13 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::patch('/orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.updateStatus');
     Route::patch('/orders/{order}/payment', [AdminOrderController::class, 'updatePaymentStatus'])->name('orders.updatePayment');
 
+     Route::prefix('orders')->name('orders.')->group(function () {
+        Route::post('/{order}/awb/home', [AdminOrderController::class, 'createHomeAwb'])->name('createHomeAwb');
+        Route::post('/{order}/awb/locker', [AdminOrderController::class, 'createLockerAwb'])->name('createLockerAwb');
+        Route::post('/{order}/awb/sync', [AdminOrderController::class, 'syncAwbStatus'])->name('syncAwbStatus');
+        Route::get('/{order}/awb/download', [AdminOrderController::class, 'downloadAwbPdf'])->name('downloadAwbPdf');
+    });
+
     // User management routes
     Route::resource('users', UserController::class);
     Route::post('users/{user}/toggle-email-verification', [UserController::class, 'toggleEmailVerification'])
@@ -90,6 +102,33 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::resource('categories', CategoryController::class);
 
     Route::resource('coupons', CouponController::class);
+});
+
+Route::get('/test-sameday', function() {
+    $service = new \App\Services\SamedayService();
+    
+    // Clear cache pentru testing
+    $service->clearCache();
+    
+    // Test authentication
+    $token = $service->authenticate();
+    
+    // Get EVERYTHING from DEMO environment
+    $pickupPoints = $service->getPickupPoints();
+    $services = $service->getServices();
+    $counties = $service->getCounties();
+    
+    // Get lockers for Bucuresti (county 1)
+    $lockers = $service->getLockers(0, 1, null);
+    
+    return response()->json([
+        'token' => $token ? 'OK' : 'FAILED',
+        'pickup_points' => $pickupPoints,
+        'services' => $services,
+        'counties' => $counties,
+        'lockers_sample' => array_slice($lockers, 0, 5), // First 5 lockers
+        'message' => 'Check all IDs - these are DEMO IDs, not production!'
+    ]);
 });
 
 require __DIR__.'/auth.php';

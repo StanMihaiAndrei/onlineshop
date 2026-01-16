@@ -39,5 +39,10 @@ return [
         'secret' => env('STRIPE_SECRET'),
         'webhook_secret' => env('STRIPE_WEBHOOK_SECRET'),
     ],
+    'sameday' => [
+        'base_url' => env('SAMEDAY_BASE_URL'),
+        'username' => env('SAMEDAY_USERNAME'),
+        'password' => env('SAMEDAY_PASSWORD'),
+    ],
 
 ];
