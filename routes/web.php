@@ -14,111 +14,139 @@ use App\Http\Controllers\ShopController;
 use App\Http\Controllers\WelcomeController;
 use Illuminate\Support\Facades\Route;
 
+/*
+|--------------------------------------------------------------------------
+| Public Routes (Guest)
+|--------------------------------------------------------------------------
+*/
+
+// Homepage
 Route::get('/', [WelcomeController::class, 'index'])->name('home');
 
-// Despre noi
+// Informational Pages
 Route::get('/despre-noi', [AboutController::class, 'index'])->name('about');
-
-// Contact
 Route::get('/contact', [ContactController::class, 'index'])->name('contact');
 Route::post('/contact', [ContactController::class, 'send'])->name('contact.send');
 
-Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
+// Shop (Public)
+Route::prefix('shop')->name('shop')->group(function () {
+    Route::get('/', [ShopController::class, 'index']);
+    Route::get('/{categorySlug}', [ShopController::class, 'category'])->name('.category');
+    Route::get('/{categorySlug}/{productSlug}', [ShopController::class, 'showByCategory'])->name('.product');
+});
 
-Route::view('profile', 'profile')
-    ->middleware(['auth'])
-    ->name('profile');
+// Checkout (Public - oricine poate comanda)
+Route::prefix('checkout')->name('checkout')->group(function () {
+    Route::get('/', [CheckoutController::class, 'index']);
+    Route::post('/', [CheckoutController::class, 'store'])->name('.store');
+    Route::get('/success/{order}', [CheckoutController::class, 'success'])->name('.success');
+    
+    // Coupon Management
+    Route::post('/apply-coupon', [CheckoutController::class, 'applyCoupon'])->name('.applyCoupon');
+    Route::delete('/remove-coupon', [CheckoutController::class, 'removeCoupon'])->name('.removeCoupon');
+    
+    // Shipping Data (AJAX)
+    Route::get('/counties', [CheckoutController::class, 'getCounties'])->name('.counties');
+    Route::get('/cities', [CheckoutController::class, 'getCities'])->name('.cities');
+    Route::get('/lockers', [CheckoutController::class, 'getLockers'])->name('.lockers');
+    Route::post('/calculate-shipping', [CheckoutController::class, 'calculateShipping'])->name('.calculateShipping');
+});
 
-Route::get('/hello', function () {
-    return view('hello');
-})->name('hello');
+// Stripe Payment Routes
+Route::prefix('stripe')->name('stripe.')->group(function () {
+    Route::get('/success/{order}', [CheckoutController::class, 'stripeSuccess'])->name('success');
+    Route::get('/cancel/{order}', [CheckoutController::class, 'stripeCancel'])->name('cancel');
+    Route::post('/webhook', [CheckoutController::class, 'webhook'])->name('webhook');
+});
+
+// Legal pages
+Route::view('/termeni-si-conditii', 'legal.terms')->name('legal.terms');
+Route::view('/politica-de-confidentialitate', 'legal.privacy')->name('legal.privacy');
+Route::view('/politica-de-returnare', 'legal.delivery')->name('legal.delivery');
+Route::view('/politica-de-cookies', 'legal.cookies')->name('legal.cookies');
+
+/*
+|--------------------------------------------------------------------------
+| Authenticated User Routes
+|--------------------------------------------------------------------------
+*/
 
 Route::middleware(['auth', 'verified'])->group(function () {
+    // Dashboard & Profile
+    Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
+    Route::view('profile', 'profile')->name('profile');
+    
+    // Cart
+    Route::view('/cart', 'cart')->name('cart');
+    
+    // Wishlist
+    Route::get('/wishlist', [App\Http\Controllers\WishlistController::class, 'index'])->name('wishlist.index');
+    
+    // Reviews
     Route::post('/products/{product}/reviews', [App\Http\Controllers\ReviewController::class, 'store'])->name('reviews.store');
     Route::delete('/reviews/{review}', [App\Http\Controllers\ReviewController::class, 'destroy'])->name('reviews.destroy');
+    
+    // Orders History
+    Route::prefix('orders')->name('orders.')->group(function () {
+        Route::get('/', [OrderController::class, 'index'])->name('index');
+        Route::get('/{order}', [OrderController::class, 'show'])->name('show');
+    });
 });
 
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/wishlist', [App\Http\Controllers\WishlistController::class, 'index'])->name('wishlist.index');
-});
+/*
+|--------------------------------------------------------------------------
+| Admin Routes
+|--------------------------------------------------------------------------
+*/
 
-// Rute publice pentru Shop
-Route::get('/shop', [ShopController::class, 'index'])->name('shop');
-Route::get('/shop/{categorySlug}', [ShopController::class, 'category'])->name('shop.category');
-Route::get('/shop/{categorySlug}/{productSlug}', [ShopController::class, 'showByCategory'])->name('shop.product');
-
-// Checkout routes (fără auth - oricine poate comanda)
-Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
-Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
-Route::get('/checkout/success/{order}', [CheckoutController::class, 'success'])->name('checkout.success');
-Route::post('/checkout/apply-coupon', [CheckoutController::class, 'applyCoupon'])->name('checkout.applyCoupon');
-Route::delete('/checkout/remove-coupon', [CheckoutController::class, 'removeCoupon'])->name('checkout.removeCoupon');
-
-Route::get('/checkout/counties', [CheckoutController::class, 'getCounties'])->name('checkout.counties');
-Route::get('/checkout/cities', [CheckoutController::class, 'getCities'])->name('checkout.cities');
-Route::get('/checkout/lockers', [CheckoutController::class, 'getLockers'])->name('checkout.lockers');
-Route::post('/checkout/calculate-shipping', [CheckoutController::class, 'calculateShipping'])->name('checkout.calculateShipping');
-
-// Stripe routes
-Route::get('/stripe/success/{order}', [CheckoutController::class, 'stripeSuccess'])->name('stripe.success');
-Route::get('/stripe/cancel/{order}', [CheckoutController::class, 'stripeCancel'])->name('stripe.cancel');
-Route::post('/stripe/webhook', [CheckoutController::class, 'webhook'])->name('stripe.webhook');
-
-// Orders history - doar pentru utilizatori autentificați
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
-    Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
-    Route::view('/cart', 'cart')->name('cart');
-});
-
-// Rute admin (protejate cu middleware custom)
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    
+    // Products Management
     Route::resource('products', ProductController::class);
     Route::delete('products/{product}/images', [ProductController::class, 'deleteImage'])
         ->name('products.delete-image');
-
-    // Admin Orders
-    Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');
-    Route::get('/orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
-    Route::patch('/orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.updateStatus');
-    Route::patch('/orders/{order}/payment', [AdminOrderController::class, 'updatePaymentStatus'])->name('orders.updatePayment');
-
-     Route::prefix('orders')->name('orders.')->group(function () {
+    
+    // Orders Management
+    Route::prefix('orders')->name('orders.')->group(function () {
+        Route::get('/', [AdminOrderController::class, 'index'])->name('index');
+        Route::get('/{order}', [AdminOrderController::class, 'show'])->name('show');
+        Route::patch('/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('updateStatus');
+        Route::patch('/{order}/payment', [AdminOrderController::class, 'updatePaymentStatus'])->name('updatePayment');
+        
+        // AWB Management (Sameday)
         Route::post('/{order}/awb/home', [AdminOrderController::class, 'createHomeAwb'])->name('createHomeAwb');
         Route::post('/{order}/awb/locker', [AdminOrderController::class, 'createLockerAwb'])->name('createLockerAwb');
         Route::post('/{order}/awb/sync', [AdminOrderController::class, 'syncAwbStatus'])->name('syncAwbStatus');
         Route::get('/{order}/awb/download', [AdminOrderController::class, 'downloadAwbPdf'])->name('downloadAwbPdf');
     });
-
-    // User management routes
+    
+    // Users Management
     Route::resource('users', UserController::class);
     Route::post('users/{user}/toggle-email-verification', [UserController::class, 'toggleEmailVerification'])
         ->name('users.toggle-email-verification');
-
-    // Nomenclatoare
-    Route::resource('colors', ColorController::class);
+    
+    // Nomenclatoare (Settings)
     Route::resource('categories', CategoryController::class);
-
+    Route::resource('colors', ColorController::class);
     Route::resource('coupons', CouponController::class);
 });
 
+/*
+|--------------------------------------------------------------------------
+| Development/Testing Routes
+|--------------------------------------------------------------------------
+*/
+
+// Test route - remove in production
 Route::get('/test-sameday', function() {
     $service = new \App\Services\SamedayService();
     
-    // Clear cache pentru testing
     $service->clearCache();
-    
-    // Test authentication
     $token = $service->authenticate();
     
-    // Get EVERYTHING from DEMO environment
     $pickupPoints = $service->getPickupPoints();
     $services = $service->getServices();
     $counties = $service->getCounties();
-    
-    // Get lockers for Bucuresti (county 1)
     $lockers = $service->getLockers(0, 1, null);
     
     return response()->json([
@@ -126,9 +154,20 @@ Route::get('/test-sameday', function() {
         'pickup_points' => $pickupPoints,
         'services' => $services,
         'counties' => $counties,
-        'lockers_sample' => array_slice($lockers, 0, 5), // First 5 lockers
+        'lockers_sample' => array_slice($lockers, 0, 5),
         'message' => 'Check all IDs - these are DEMO IDs, not production!'
     ]);
 });
+
+// Hello test route - remove in production
+Route::get('/hello', function () {
+    return view('hello');
+})->name('hello');
+
+/*
+|--------------------------------------------------------------------------
+| Authentication Routes
+|--------------------------------------------------------------------------
+*/
 
 require __DIR__.'/auth.php';

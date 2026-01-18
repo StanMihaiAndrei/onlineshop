@@ -1,7 +1,6 @@
-
 <footer id="contact" class="bg-gray-900 text-white py-16">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid md:grid-cols-4 gap-8 mb-12">
+        <div class="grid md:grid-cols-5 gap-8 mb-12">
             <div class="col-span-2 md:col-span-1">
                 <img src="{{ asset('images/transparent.png') }}" alt="Craft Gifts" class="h-16 mb-4">
                 <p class="text-gray-400 leading-relaxed">
@@ -30,10 +29,10 @@
             <div>
                 <h3 class="font-bold text-lg mb-4">Informații</h3>
                 <ul class="space-y-2">
-                    <li><a href="#" class="text-gray-400 hover:text-pink-500 transition-colors">Livrare</a></li>
-                    <li><a href="#" class="text-gray-400 hover:text-pink-500 transition-colors">Returnări</a></li>
-                    <li><a href="#" class="text-gray-400 hover:text-pink-500 transition-colors">Termeni și Condiții</a></li>
-                    <li><a href="#" class="text-gray-400 hover:text-pink-500 transition-colors">Politică Confidențialitate</a></li>
+                    <li><a href="{{ route('legal.delivery') }}" class="text-gray-400 hover:text-pink-500 transition-colors">Livrare si anulare comenzi</a></li>
+                    <li><a href="{{ route('legal.cookies') }}" class="text-gray-400 hover:text-pink-500 transition-colors">Politică Cookies</a></li>
+                    <li><a href="{{ route('legal.terms') }}" class="text-gray-400 hover:text-pink-500 transition-colors">Termeni și Condiții</a></li>
+                    <li><a href="{{ route('legal.privacy') }}" class="text-gray-400 hover:text-pink-500 transition-colors">Politică Confidențialitate</a></li>
                 </ul>
             </div>
             
@@ -44,6 +43,18 @@
                     <li>Telefon: <a href="tel:0722739278" class="text-gray-400 hover:text-pink-500 transition-colors">0722 739 278</a></li>
                     <li>Program: L-V 9:00-18:00</li>
                 </ul>
+            </div>
+
+            <div>
+                <h3 class="font-bold text-lg mb-4">Protecția Consumatorului</h3>
+                <div class="space-y-3">
+                    <a href="https://anpc.ro/ce-este-sal/" target="_blank" rel="noopener noreferrer" class="block hover:opacity-80 transition-opacity">
+                        <img src="{{ asset('images/anpc/SAL-PICTOGRAMA.png') }}" alt="Soluționarea Online a Litigiilor" class="h-12 w-auto">
+                    </a>
+                    <a href="https://ec.europa.eu/consumers/odr" target="_blank" rel="noopener noreferrer" class="block hover:opacity-80 transition-opacity">
+                        <img src="{{ asset('images/anpc/pictogramaSOL.png') }}" alt="ANPC Soluționarea Alternativă" class="h-12 w-auto">
+                    </a>
+                </div>
             </div>
         </div>
         
