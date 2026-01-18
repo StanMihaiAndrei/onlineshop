@@ -2,11 +2,11 @@
     <div class="py-6">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl sm:text-3xl font-bold text-gray-800">Colors</h2>
+                <h2 class="text-2xl sm:text-3xl font-bold text-gray-800">Culori</h2>
                 <a href="{{ route('admin.colors.create') }}" 
                    class="bg-blue-600 hover:bg-blue-700 text-white px-3 sm:px-6 py-2 rounded-lg transition text-sm sm:text-base">
-                    <span class="hidden sm:inline">+ Add New Color</span>
-                    <span class="sm:hidden">+ Add</span>
+                    <span class="hidden sm:inline">Adaugă Culoare</span>
+                    <span class="sm:hidden">Adaugă</span>
                 </a>
             </div>
 
@@ -21,11 +21,11 @@
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Color</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Hex Code</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Culoare</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nume</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Cod Hex</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Stare</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Acțiuni</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
@@ -44,12 +44,12 @@
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
                                         {{ $color->is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                        {{ $color->is_active ? 'Active' : 'Inactive' }}
+                                        {{ $color->is_active ? 'Activ' : 'Inactiv' }}
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <a href="{{ route('admin.colors.edit', $color) }}" 
-                                       class="text-indigo-600 hover:text-indigo-900 mr-3">Edit</a>
+                                       class="text-indigo-600 hover:text-indigo-900 mr-3">Editează</a>
                                     <form id="delete-form-{{ $color->id }}" 
                                           action="{{ route('admin.colors.destroy', $color) }}" 
                                           method="POST" 
@@ -61,7 +61,7 @@
                                         <button type="button" 
                                                 @click="$dispatch('open-modal', 'color-{{ $color->id }}')"
                                                 class="text-red-600 hover:text-red-900">
-                                            Delete
+                                            Șterge
                                         </button>
                                     </form>
                                 </td>
@@ -69,7 +69,7 @@
                         @empty
                             <tr>
                                 <td colspan="5" class="px-6 py-4 text-center text-gray-500">
-                                    No colors found. <a href="{{ route('admin.colors.create') }}" class="text-blue-600">Add your first color</a>
+                                    Nu s-au găsit culori. <a href="{{ route('admin.colors.create') }}" class="text-blue-600">Adaugă prima ta culoare</a>
                                 </td>
                             </tr>
                         @endforelse
@@ -88,7 +88,7 @@
                                 <h3 class="font-bold text-gray-900 text-base">{{ $color->name }}</h3>
                                 <p class="text-sm text-gray-500 font-mono">{{ $color->hex_code }}</p>
                                 <span class="inline-block mt-1 px-2 py-0.5 text-xs rounded-full {{ $color->is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                    {{ $color->is_active ? 'Active' : 'Inactive' }}
+                                    {{ $color->is_active ? 'Activ' : 'Inactiv' }}
                                 </span>
                             </div>
                         </div>
@@ -96,7 +96,7 @@
                         <div class="flex gap-2">
                             <a href="{{ route('admin.colors.edit', $color) }}" 
                                class="flex-1 text-center bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded text-sm">
-                                Edit
+                                Editează
                             </a>
                             <form id="delete-form-mobile-{{ $color->id }}" 
                                   action="{{ route('admin.colors.destroy', $color) }}" 
@@ -109,14 +109,14 @@
                                 <button type="button" 
                                         @click="$dispatch('open-modal', 'color-mobile-{{ $color->id }}')"
                                         class="w-full bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded text-sm">
-                                    Delete
+                                    Șterge
                                 </button>
                             </form>
                         </div>
                     </div>
                 @empty
                     <div class="text-center py-8 text-gray-500 bg-white rounded-lg border border-gray-200">
-                        No colors found. <a href="{{ route('admin.colors.create') }}" class="text-blue-600">Add your first color</a>
+                        Nu s-au găsit culori. <a href="{{ route('admin.colors.create') }}" class="text-blue-600">Adaugă prima ta culoare</a>
                     </div>
                 @endforelse
             </div>
@@ -131,12 +131,12 @@
     @foreach($colors as $color)
         <x-delete-confirmation-modal 
             modalId="color-{{ $color->id }}"
-            title="Delete Color"
-            message="Are you sure you want to delete color '{{ $color->name }}'? This action cannot be undone." />
+            title="Șterge Culoare"
+            message="Ești sigur că vrei să ștergi culoarea '{{ $color->name }}'? Această acțiune nu poate fi anulată." />
         
         <x-delete-confirmation-modal 
             modalId="color-mobile-{{ $color->id }}"
-            title="Delete Color"
-            message="Are you sure you want to delete color '{{ $color->name }}'? This action cannot be undone." />
+            title="Șterge Culoare"
+            message="Ești sigur că vrei să ștergi culoarea '{{ $color->name }}'? Această acțiune nu poate fi anulată." />
     @endforeach
 </x-app-layout>

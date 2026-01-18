@@ -78,7 +78,7 @@ class ProductController extends Controller
         }
 
         return redirect()->route('admin.products.index')
-            ->with('success', 'Product created successfully!');
+            ->with('success', 'Produs creat cu succes!');
     }
 
     public function show(Product $product)
@@ -149,7 +149,7 @@ class ProductController extends Controller
         $product->colors()->sync($validated['colors'] ?? []);
 
         return redirect()->route('admin.products.index')
-            ->with('success', 'Product updated successfully!');
+            ->with('success', 'Produs actualizat cu succes!');
     }
 
     public function destroy(Product $product)
@@ -164,7 +164,7 @@ class ProductController extends Controller
         $product->delete();
 
         return redirect()->route('admin.products.index')
-            ->with('success', 'Product deleted successfully!');
+            ->with('success', 'Produs șters cu succes!');
     }
 
     public function deleteImage(Request $request, Product $product)
@@ -178,10 +178,10 @@ class ProductController extends Controller
             $images = array_values($images);
             $product->update(['images' => $images]);
             
-            return back()->with('success', 'Image deleted successfully!');
+            return back()->with('success', 'Imagine ștearsă cu succes!');
         }
 
-        return back()->with('error', 'Image not found!');
+        return back()->with('error', 'Imaginea nu a fost găsită!');
     }
 
     /**

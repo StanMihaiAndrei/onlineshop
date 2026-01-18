@@ -3,14 +3,14 @@
         <div class="max-w-3xl mx-auto">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Edit User: {{ $user->name }}</h2>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Editează Utilizator: {{ $user->name }}</h2>
 
                     <form action="{{ route('admin.users.update', $user) }}" method="POST">
                         @csrf
                         @method('PUT')
 
                         <div class="mb-4">
-                            <label for="name" class="block text-gray-700 text-sm font-bold mb-2">Name</label>
+                            <label for="name" class="block text-gray-700 text-sm font-bold mb-2">Nume</label>
                             <input type="text" name="name" id="name" value="{{ old('name', $user->name) }}" 
                                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('name') border-red-500 @enderror">
                             @error('name')
@@ -28,7 +28,7 @@
                         </div>
 
                         <div class="mb-4">
-                            <label for="password" class="block text-gray-700 text-sm font-bold mb-2">Password (leave blank to keep current)</label>
+                            <label for="password" class="block text-gray-700 text-sm font-bold mb-2">Parolă (lasă necompletat pentru a păstra actuala)</label>
                             <input type="password" name="password" id="password" 
                                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('password') border-red-500 @enderror">
                             @error('password')
@@ -37,13 +37,13 @@
                         </div>
 
                         <div class="mb-4">
-                            <label for="password_confirmation" class="block text-gray-700 text-sm font-bold mb-2">Confirm Password</label>
+                            <label for="password_confirmation" class="block text-gray-700 text-sm font-bold mb-2">Confirmă Parola</label>
                             <input type="password" name="password_confirmation" id="password_confirmation" 
                                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
                         </div>
 
                         <div class="mb-4">
-                            <label for="role" class="block text-gray-700 text-sm font-bold mb-2">Role</label>
+                            <label for="role" class="block text-gray-700 text-sm font-bold mb-2">Rol</label>
                             <select name="role" id="role" 
                                     class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('role') border-red-500 @enderror">
                                 <option value="client" {{ old('role', $user->role) === 'client' ? 'selected' : '' }}>Client</option>
@@ -61,18 +61,18 @@
                                        value="1" 
                                        {{ old('email_verified', $user->email_verified_at ? true : false) ? 'checked' : '' }}
                                        class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
-                                <span class="ml-2 text-sm text-gray-700">Email Verified</span>
+                                <span class="ml-2 text-sm text-gray-700">Email Verificat</span>
                             </label>
                             @if($user->email_verified_at)
-                                <p class="text-xs text-gray-500 mt-1">Verified on: {{ $user->email_verified_at->format('d.m.Y H:i') }}</p>
+                                <p class="text-xs text-gray-500 mt-1">Verificat la: {{ $user->email_verified_at->format('d.m.Y H:i') }}</p>
                             @endif
                         </div>
 
                         <div class="flex items-center justify-between">
                             <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                                Update User
+                                Actualizează Utilizator
                             </button>
-                            <a href="{{ route('admin.users.index') }}" class="text-gray-600 hover:text-gray-800">Cancel</a>
+                            <a href="{{ route('admin.users.index') }}" class="text-gray-600 hover:text-gray-800">Anulează</a>
                         </div>
                     </form>
                 </div>

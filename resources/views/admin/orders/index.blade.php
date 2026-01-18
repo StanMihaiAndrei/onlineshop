@@ -5,7 +5,7 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
                     <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-2xl font-bold text-gray-800">All Orders</h2>
+                        <h2 class="text-2xl font-bold text-gray-800">Toate comenzile</h2>
                     </div>
 
                     @if(session('success'))
@@ -19,13 +19,13 @@
                         <table class="min-w-full table-auto">
                             <thead class="bg-gray-100">
                                 <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Order #</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Customer</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Comanda #</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Client</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Payment</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Stare</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Plată</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Data</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Acțiuni</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
@@ -38,7 +38,7 @@
                                             @if($order->user)
                                                 {{ $order->user->name }}
                                             @else
-                                                <span class="text-gray-500">Guest</span>
+                                                <span class="text-gray-500">Invitat</span>
                                             @endif
                                             <br>
                                             <span class="text-xs text-gray-500">{{ $order->shipping_email }}</span>
@@ -67,12 +67,12 @@
                                             {{ $order->created_at->format('d/m/Y H:i') }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                            <a href="{{ route('admin.orders.show', $order) }}" class="text-blue-600 hover:text-blue-900">View Details</a>
+                                            <a href="{{ route('admin.orders.show', $order) }}" class="text-blue-600 hover:text-blue-900">Vezi detalii</a>
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="7" class="px-6 py-4 text-center text-gray-500">No orders found.</td>
+                                        <td colspan="7" class="px-6 py-4 text-center text-gray-500">Nu s-au găsit comenzi.</td>
                                     </tr>
                                 @endforelse
                             </tbody>
@@ -90,7 +90,7 @@
                                             @if($order->user)
                                                 {{ $order->user->name }}
                                             @else
-                                                Guest
+                                                Invitat
                                             @endif
                                         </p>
                                     </div>
@@ -109,7 +109,7 @@
                                         </span>
                                     </div>
                                     <div class="flex justify-between text-sm">
-                                        <span class="text-gray-500">Payment:</span>
+                                        <span class="text-gray-500">Plată:</span>
                                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
                                             {{ $order->payment_status === 'paid' ? 'bg-green-100 text-green-800' : '' }}
                                             {{ $order->payment_status === 'pending' ? 'bg-yellow-100 text-yellow-800' : '' }}
@@ -118,17 +118,17 @@
                                         </span>
                                     </div>
                                     <div class="flex justify-between text-sm">
-                                        <span class="text-gray-500">Date:</span>
+                                        <span class="text-gray-500">Data:</span>
                                         <span class="text-gray-900">{{ $order->created_at->format('d/m/Y') }}</span>
                                     </div>
                                 </div>
 
                                 <a href="{{ route('admin.orders.show', $order) }}" class="block w-full text-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                                    View Details
+                                    Vezi detalii
                                 </a>
                             </div>
                         @empty
-                            <div class="text-center py-8 text-gray-500">No orders found.</div>
+                            <div class="text-center py-8 text-gray-500">Nu s-au găsit comenzi.</div>
                         @endforelse
                     </div>
 

@@ -2,11 +2,11 @@
     <div class="py-6">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center mb-6">
-                <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">Coupons</h1>
+                <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">Cupoane reducere</h1>
                 <a href="{{ route('admin.coupons.create') }}" 
                    class="bg-blue-600 hover:bg-blue-700 text-white px-3 sm:px-4 py-2 rounded-lg font-medium transition text-sm sm:text-base">
-                    <span class="hidden sm:inline">+ Add New Coupon</span>
-                    <span class="sm:hidden">+ Add</span>
+                    <span class="hidden sm:inline">Adaugă cupon</span>
+                    <span class="sm:hidden">Adaugă</span>
                 </a>
             </div>
 
@@ -21,13 +21,13 @@
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Code</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Value</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Valid Period</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Usage</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Cod</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tip</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Valoare</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Perioadă Valabilă</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Utilizare</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Stare</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Acțiuni</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
@@ -52,10 +52,10 @@
                                     @if($coupon->valid_from || $coupon->valid_until)
                                         <div>
                                             @if($coupon->valid_from)
-                                                From: {{ $coupon->valid_from->format('M d, Y') }}<br>
+                                                De la: {{ $coupon->valid_from->format('M d, Y') }}<br>
                                             @endif
                                             @if($coupon->valid_until)
-                                                Until: {{ $coupon->valid_until->format('M d, Y') }}
+                                                Până la: {{ $coupon->valid_until->format('M d, Y') }}
                                             @endif
                                         </div>
                                     @else
@@ -72,12 +72,12 @@
                                 </td>
                                 <td class="px-6 py-4">
                                     <span class="px-2 py-1 text-xs rounded-full {{ $coupon->is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                        {{ $coupon->is_active ? 'Active' : 'Inactive' }}
+                                        {{ $coupon->is_active ? 'Activ' : 'Inactiv' }}
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 text-right space-x-2">
                                     <a href="{{ route('admin.coupons.edit', $coupon) }}" 
-                                       class="text-blue-600 hover:text-blue-900">Edit</a>
+                                       class="text-blue-600 hover:text-blue-900">Editează</a>
                                     <form id="delete-form-{{ $coupon->id }}" 
                                           action="{{ route('admin.coupons.destroy', $coupon) }}" 
                                           method="POST" 
@@ -89,7 +89,7 @@
                                         <button type="button" 
                                                 @click="$dispatch('open-modal', 'coupon-{{ $coupon->id }}')"
                                                 class="text-red-600 hover:text-red-900">
-                                            Delete
+                                            Șterge
                                         </button>
                                     </form>
                                 </td>
@@ -97,7 +97,7 @@
                         @empty
                             <tr>
                                 <td colspan="7" class="px-6 py-8 text-center text-gray-500">
-                                    No coupons found. Create your first coupon!
+                                    Nu s-au găsit cupoane. Creează primul tău cupon!
                                 </td>
                             </tr>
                         @endforelse
@@ -117,7 +117,7 @@
                                         {{ ucfirst($coupon->type) }}
                                     </span>
                                     <span class="px-2 py-0.5 text-xs rounded-full {{ $coupon->is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                        {{ $coupon->is_active ? 'Active' : 'Inactive' }}
+                                        {{ $coupon->is_active ? 'Activ' : 'Inactiv' }}
                                     </span>
                                 </div>
                             </div>
@@ -146,19 +146,19 @@
                             </div>
                             @if($coupon->valid_from || $coupon->valid_until)
                                 <div class="text-sm">
-                                    <span class="text-gray-500">Valid Period:</span>
+                                    <span class="text-gray-500">Perioadă Valabilă:</span>
                                     <div class="text-gray-900 mt-1">
                                         @if($coupon->valid_from)
-                                            <div>From: {{ $coupon->valid_from->format('M d, Y') }}</div>
+                                            <div>De la: {{ $coupon->valid_from->format('M d, Y') }}</div>
                                         @endif
                                         @if($coupon->valid_until)
-                                            <div>Until: {{ $coupon->valid_until->format('M d, Y') }}</div>
+                                            <div>Până la: {{ $coupon->valid_until->format('M d, Y') }}</div>
                                         @endif
                                     </div>
                                 </div>
                             @else
                                 <div class="flex justify-between text-sm">
-                                    <span class="text-gray-500">Valid Period:</span>
+                                    <span class="text-gray-500">Perioadă Valabilă:</span>
                                     <span class="text-gray-400">Permanent</span>
                                 </div>
                             @endif
@@ -167,7 +167,7 @@
                         <div class="flex gap-2">
                             <a href="{{ route('admin.coupons.edit', $coupon) }}" 
                                class="flex-1 text-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-sm">
-                                Edit
+                                Editează
                             </a>
                             <form id="delete-form-mobile-{{ $coupon->id }}" 
                                   action="{{ route('admin.coupons.destroy', $coupon) }}" 
@@ -180,14 +180,14 @@
                                 <button type="button" 
                                         @click="$dispatch('open-modal', 'coupon-mobile-{{ $coupon->id }}')"
                                         class="w-full bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded text-sm">
-                                    Delete
+                                    Șterge
                                 </button>
                             </form>
                         </div>
                     </div>
                 @empty
                     <div class="text-center py-8 text-gray-500 bg-white rounded-lg border border-gray-200">
-                        No coupons found. Create your first coupon!
+                        Nu s-au găsit cupoane. Creează primul tău cupon!
                     </div>
                 @endforelse
             </div>

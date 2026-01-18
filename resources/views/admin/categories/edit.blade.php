@@ -2,12 +2,12 @@
     <div class="container mx-auto px-4 py-6 max-w-2xl">
         <div class="mb-6">
             <a href="{{ route('admin.categories.index') }}" class="text-blue-600 hover:text-blue-800">
-                ← Back to Categories
+                Inapoi la Categorii
             </a>
         </div>
 
         <div class="bg-white rounded-lg shadow-md p-6">
-            <h2 class="text-2xl font-bold text-gray-800 mb-6">Edit Category</h2>
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Editează Categoria</h2>
 
             <form action="{{ route('admin.categories.update', $category) }}" method="POST">
                 @csrf
@@ -16,19 +16,19 @@
                 @if($category->isParent())
                     <div class="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
                         <p class="text-sm text-blue-800">
-                            <strong>Main Category</strong> - This is a parent category
+                            <strong>Categoria Principală</strong> - Aceasta este o categorie părinte
                             @if($category->allChildren->count() > 0)
-                                with {{ $category->allChildren->count() }} subcategory(ies)
+                                cu {{ $category->allChildren->count() }} subcategorie(i)
                             @endif
                         </p>
                     </div>
                 @else
                     <div class="mb-4">
-                        <label for="parent_id" class="block text-sm font-medium text-gray-700 mb-2">Parent Category</label>
+                        <label for="parent_id" class="block text-sm font-medium text-gray-700 mb-2">Categorie Părinte</label>
                         <select name="parent_id" 
                                 id="parent_id"
                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                            <option value="">None - Make this a main category</option>
+                            <option value="">Niciuna - Creează o categorie principală</option>
                             @foreach($parentCategories as $parent)
                                 <option value="{{ $parent->id }}" {{ old('parent_id', $category->parent_id) == $parent->id ? 'selected' : '' }}>
                                     {{ $parent->name }}
@@ -42,7 +42,7 @@
                 @endif
 
                 <div class="mb-4">
-                    <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Category Name *</label>
+                    <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Nume Categorie *</label>
                     <input type="text" 
                            name="name" 
                            id="name" 
@@ -60,11 +60,11 @@
                            value="{{ $category->slug }}"
                            class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50"
                            disabled>
-                    <p class="text-xs text-gray-500 mt-1">Slug is auto-generated from name</p>
+                    <p class="text-xs text-gray-500 mt-1">Slug este generat automat din nume</p>
                 </div>
 
                 <div class="mb-4">
-                    <label for="description" class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                    <label for="description" class="block text-sm font-medium text-gray-700 mb-2">Descriere</label>
                     <textarea name="description" 
                               id="description" 
                               rows="4"
@@ -81,14 +81,14 @@
                                value="1"
                                {{ old('is_active', $category->is_active) ? 'checked' : '' }}
                                class="rounded border-gray-300 text-blue-600 shadow-sm focus:ring-blue-500">
-                        <span class="ml-2 text-sm text-gray-700">Active</span>
+                        <span class="ml-2 text-sm text-gray-700">Activ</span>
                     </label>
                 </div>
 
                 @if($category->products_count > 0)
                     <div class="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
                         <p class="text-sm text-blue-800">
-                            <strong>Note:</strong> This category is assigned to {{ $category->products_count }} product(s).
+                            <strong>Notă:</strong> Această categorie este atribuită la {{ $category->products_count }} produs(e).
                         </p>
                     </div>
                 @endif
@@ -96,11 +96,11 @@
                 <div class="flex justify-end space-x-4">
                     <a href="{{ route('admin.categories.index') }}" 
                        class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
-                        Cancel
+                        Anulează
                     </a>
                     <button type="submit" 
                             class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                        Update Category
+                        Actualizează Categoria
                     </button>
                 </div>
             </form>

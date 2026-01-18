@@ -2,11 +2,11 @@
     <div class="py-6">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl sm:text-3xl font-bold text-gray-800">Categories & Subcategories</h2>
+                <h2 class="text-2xl sm:text-3xl font-bold text-gray-800">Categorii și Subcategorii</h2>
                 <a href="{{ route('admin.categories.create') }}" 
                    class="bg-blue-600 hover:bg-blue-700 text-white px-3 sm:px-6 py-2 rounded-lg transition text-sm sm:text-base">
-                    <span class="hidden sm:inline">+ Add New Category</span>
-                    <span class="sm:hidden">+ Add</span>
+                    <span class="hidden sm:inline">Adaugă Categorie</span>
+                    <span class="sm:hidden">Adaugă</span>
                 </a>
             </div>
 
@@ -29,11 +29,11 @@
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nume</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Slug</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Products</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Produse</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Stare</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Acțiuni</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
@@ -58,18 +58,18 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                     <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-semibold">
-                                        {{ $category->products_count }} products
+                                        {{ $category->products_count }} produse
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
                                         {{ $category->is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                        {{ $category->is_active ? 'Active' : 'Inactive' }}
+                                        {{ $category->is_active ? 'Activ' : 'Inactiv' }}
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <a href="{{ route('admin.categories.edit', $category) }}" 
-                                       class="text-indigo-600 hover:text-indigo-900 mr-3">Edit</a>
+                                       class="text-indigo-600 hover:text-indigo-900 mr-3">Editează</a>
                                     <form id="delete-form-cat-{{ $category->id }}" 
                                           action="{{ route('admin.categories.destroy', $category) }}" 
                                           method="POST" 
@@ -81,7 +81,7 @@
                                         <button type="button" 
                                                 @click="$dispatch('open-modal', 'category-{{ $category->id }}')"
                                                 class="text-red-600 hover:text-red-900">
-                                            Delete
+                                            Șterge
                                         </button>
                                     </form>
                                 </td>
@@ -108,18 +108,18 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                         <span class="px-2 py-1 bg-gray-100 text-gray-800 rounded-full text-xs">
-                                            {{ $subcategory->products_count }} products
+                                            {{ $subcategory->products_count }} produse
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
                                             {{ $subcategory->is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                            {{ $subcategory->is_active ? 'Active' : 'Inactive' }}
+                                            {{ $subcategory->is_active ? 'Activ' : 'Inactiv' }}
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                         <a href="{{ route('admin.categories.edit', $subcategory) }}" 
-                                           class="text-indigo-600 hover:text-indigo-900 mr-3">Edit</a>
+                                           class="text-indigo-600 hover:text-indigo-900 mr-3">Editează</a>
                                         <form id="delete-form-subcat-{{ $subcategory->id }}" 
                                               action="{{ route('admin.categories.destroy', $subcategory) }}" 
                                               method="POST" 
@@ -131,7 +131,7 @@
                                             <button type="button" 
                                                     @click="$dispatch('open-modal', 'subcategory-{{ $subcategory->id }}')"
                                                     class="text-red-600 hover:text-red-900">
-                                                Delete
+                                                Șterge
                                             </button>
                                         </form>
                                     </td>
@@ -140,7 +140,7 @@
                         @empty
                             <tr>
                                 <td colspan="5" class="px-6 py-4 text-center text-gray-500">
-                                    No categories found. <a href="{{ route('admin.categories.create') }}" class="text-blue-600">Add your first category</a>
+                                    Nu s-au găsit categorii. <a href="{{ route('admin.categories.create') }}" class="text-blue-600">Adaugă prima categorie</a>
                                 </td>
                             </tr>
                         @endforelse
@@ -171,7 +171,7 @@
                                 <span class="text-gray-900 font-mono text-xs truncate ml-2">{{ $category->slug }}</span>
                             </div>
                             <div class="flex justify-between text-sm items-center">
-                                <span class="text-gray-600">Products:</span>
+                                <span class="text-gray-600">Produse:</span>
                                 <span class="px-2 py-0.5 bg-blue-100 text-blue-800 rounded-full text-xs font-semibold">
                                     {{ $category->products_count }}
                                 </span>
@@ -179,7 +179,7 @@
                             <div class="flex justify-between text-sm items-center">
                                 <span class="text-gray-600">Status:</span>
                                 <span class="px-2 py-0.5 text-xs rounded-full {{ $category->is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                    {{ $category->is_active ? 'Active' : 'Inactive' }}
+                                    {{ $category->is_active ? 'Activ' : 'Inactiv' }}
                                 </span>
                             </div>
                         </div>
@@ -187,7 +187,7 @@
                         <div class="flex gap-2">
                             <a href="{{ route('admin.categories.edit', $category) }}" 
                                class="flex-1 text-center bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded text-sm">
-                                Edit
+                                Editează
                             </a>
                             <form id="delete-form-cat-mobile-{{ $category->id }}" 
                                   action="{{ route('admin.categories.destroy', $category) }}" 
@@ -200,7 +200,7 @@
                                 <button type="button" 
                                         @click="$dispatch('open-modal', 'category-mobile-{{ $category->id }}')"
                                         class="w-full bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded text-sm">
-                                    Delete
+                                    Șterge
                                 </button>
                             </form>
                         </div>
@@ -227,7 +227,7 @@
                                     <span class="text-gray-900 font-mono truncate ml-2">{{ $subcategory->slug }}</span>
                                 </div>
                                 <div class="flex justify-between text-xs items-center">
-                                    <span class="text-gray-500">Products:</span>
+                                    <span class="text-gray-500">Produse:</span>
                                     <span class="px-2 py-0.5 bg-gray-100 text-gray-800 rounded-full">
                                         {{ $subcategory->products_count }}
                                     </span>
@@ -235,7 +235,7 @@
                                 <div class="flex justify-between text-xs items-center">
                                     <span class="text-gray-500">Status:</span>
                                     <span class="px-2 py-0.5 rounded-full {{ $subcategory->is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                        {{ $subcategory->is_active ? 'Active' : 'Inactive' }}
+                                        {{ $subcategory->is_active ? 'Activ' : 'Inactiv' }}
                                     </span>
                                 </div>
                             </div>
@@ -243,7 +243,7 @@
                             <div class="flex gap-2">
                                 <a href="{{ route('admin.categories.edit', $subcategory) }}" 
                                    class="flex-1 text-center bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-1.5 px-3 rounded text-xs">
-                                    Edit
+                                    Editează
                                 </a>
                                 <form id="delete-form-subcat-mobile-{{ $subcategory->id }}" 
                                       action="{{ route('admin.categories.destroy', $subcategory) }}" 
@@ -256,7 +256,7 @@
                                     <button type="button" 
                                             @click="$dispatch('open-modal', 'subcategory-mobile-{{ $subcategory->id }}')"
                                             class="w-full bg-red-500 hover:bg-red-700 text-white font-bold py-1.5 px-3 rounded text-xs">
-                                        Delete
+                                        Șterge
                                     </button>
                                 </form>
                             </div>
@@ -264,7 +264,7 @@
                     @endforeach
                 @empty
                     <div class="text-center py-8 text-gray-500 bg-white rounded-lg border border-gray-200">
-                        No categories found. <a href="{{ route('admin.categories.create') }}" class="text-blue-600">Add your first category</a>
+                        Nu s-au găsit categorii. <a href="{{ route('admin.categories.create') }}" class="text-blue-600">Adaugă prima categorie</a>
                     </div>
                 @endforelse
             </div>
@@ -279,24 +279,24 @@
     @foreach($categories as $category)
         <x-delete-confirmation-modal 
             modalId="category-{{ $category->id }}"
-            title="Delete Category"
-            message="Are you sure you want to delete category '{{ $category->name }}'? This will also delete all its subcategories. This action cannot be undone." />
+            title="Șterge Categoria"
+            message="Ești sigur că vrei să ștergi categoria '{{ $category->name }}'? Aceasta va șterge și toate subcategoriile sale. Această acțiune nu poate fi anulată." />
         
         <x-delete-confirmation-modal 
             modalId="category-mobile-{{ $category->id }}"
-            title="Delete Category"
-            message="Are you sure you want to delete category '{{ $category->name }}'? This will also delete all its subcategories. This action cannot be undone." />
+            title="Șterge Categoria"
+            message="Ești sigur că vrei să ștergi categoria '{{ $category->name }}'? Aceasta va șterge și toate subcategoriile sale. Această acțiune nu poate fi anulată." />
         
         @foreach($category->allChildren as $subcategory)
             <x-delete-confirmation-modal 
                 modalId="subcategory-{{ $subcategory->id }}"
-                title="Delete Subcategory"
-                message="Are you sure you want to delete subcategory '{{ $subcategory->name }}'? This action cannot be undone." />
+                title="Șterge Subcategoria"
+                message="Ești sigur că vrei să ștergi subcategoria '{{ $subcategory->name }}'? Această acțiune nu poate fi anulată." />
             
             <x-delete-confirmation-modal 
                 modalId="subcategory-mobile-{{ $subcategory->id }}"
-                title="Delete Subcategory"
-                message="Are you sure you want to delete subcategory '{{ $subcategory->name }}'? This action cannot be undone." />
+                title="Șterge Subcategoria"
+                message="Ești sigur că vrei să ștergi subcategoria '{{ $subcategory->name }}'? Această acțiune nu poate fi anulată." />
         @endforeach
     @endforeach
 </x-app-layout>

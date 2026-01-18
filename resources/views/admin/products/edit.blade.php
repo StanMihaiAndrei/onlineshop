@@ -2,7 +2,7 @@
     <div class="container mx-auto px-4 py-6 max-w-4xl">
         <div class="mb-6">
             <a href="{{ route('admin.products.index') }}" class="text-blue-600 hover:text-blue-800">
-                ← Back to Products
+                Înapoi la Produse
             </a>
         </div>
 
@@ -19,14 +19,14 @@
         @endif
 
         <div class="bg-white rounded-lg shadow-md p-6">
-            <h2 class="text-2xl font-bold text-gray-800 mb-6">Edit Product</h2>
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Editează Produs</h2>
 
             <form action="{{ route('admin.products.update', $product) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
 
                 <div class="mb-4">
-                    <label for="title" class="block text-sm font-medium text-gray-700 mb-2">Title *</label>
+                    <label for="title" class="block text-sm font-medium text-gray-700 mb-2">Titlu *</label>
                     <input type="text" 
                            name="title" 
                            id="title" 
@@ -39,7 +39,7 @@
                 </div>
 
                 <div class="mb-4">
-                    <label for="description" class="block text-sm font-medium text-gray-700 mb-2">Description *</label>
+                    <label for="description" class="block text-sm font-medium text-gray-700 mb-2">Descriere *</label>
                     <textarea name="description" 
                               id="description" 
                               rows="5"
@@ -52,7 +52,7 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                     <div>
-                        <label for="price" class="block text-sm font-medium text-gray-700 mb-2">Price ($) *</label>
+                        <label for="price" class="block text-sm font-medium text-gray-700 mb-2">Preț ($) *</label>
                         <input type="number" 
                                name="price" 
                                id="price" 
@@ -68,8 +68,8 @@
 
                     <div>
                         <label for="discount_price" class="block text-sm font-medium text-gray-700 mb-2">
-                            Discount Price ($)
-                            <span class="text-xs text-gray-500">(Optional - 0 = no discount)</span>
+                            Preț Discount ($)
+                            <span class="text-xs text-gray-500">(Optional - 0 = fără discount)</span>
                         </label>
                         <input type="number" 
                                name="discount_price" 
@@ -83,13 +83,13 @@
                         @enderror
                         @if($product->hasDiscount())
                             <p class="text-green-600 text-sm mt-1">
-                                Current discount: {{ $product->discount_percentage }}% off
+                                Discount curent: {{ $product->discount_percentage }}% reducere
                             </p>
                         @endif
                     </div>
 
                     <div>
-                        <label for="stock" class="block text-sm font-medium text-gray-700 mb-2">Stock *</label>
+                        <label for="stock" class="block text-sm font-medium text-gray-700 mb-2">Stoc *</label>
                         <input type="number" 
                                name="stock" 
                                id="stock" 
@@ -107,7 +107,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                     <div>
                         <label for="width" class="block text-sm font-medium text-gray-700 mb-2">
-                            Width (cm)
+                            Lățime (cm)
                             <span class="text-xs text-gray-500">(Optional)</span>
                         </label>
                         <input type="number" 
@@ -124,7 +124,7 @@
 
                     <div>
                         <label for="height" class="block text-sm font-medium text-gray-700 mb-2">
-                            Height (cm)
+                            Înălțime (cm)
                             <span class="text-xs text-gray-500">(Optional)</span>
                         </label>
                         <input type="number" 
@@ -141,7 +141,7 @@
 
                     <div>
                         <label for="length" class="block text-sm font-medium text-gray-700 mb-2">
-                            Length (cm)
+                            Lungime (cm)
                             <span class="text-xs text-gray-500">(Optional)</span>
                         </label>
                         <input type="number" 
@@ -159,7 +159,7 @@
 
                 <!-- Categories -->
                 <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Categories</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Categorii</label>
                     <div class="grid grid-cols-2 md:grid-cols-3 gap-3 p-4 border border-gray-300 rounded-lg max-h-48 overflow-y-auto">
                         @forelse($categories as $category)
                             <label class="flex items-center">
@@ -171,7 +171,7 @@
                                 <span class="ml-2 text-sm text-gray-700">{{ $category->name }}</span>
                             </label>
                         @empty
-                            <p class="text-sm text-gray-500 col-span-3">No categories available. <a href="{{ route('admin.categories.create') }}" class="text-blue-600">Create one</a></p>
+                            <p class="text-sm text-gray-500 col-span-3">Nicio categorie disponibilă. <a href="{{ route('admin.categories.create') }}" class="text-blue-600">Creează una</a></p>
                         @endforelse
                     </div>
                     @error('categories')
@@ -181,7 +181,7 @@
 
                 <!-- Colors -->
                 <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Colors</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Culori</label>
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-3 p-4 border border-gray-300 rounded-lg max-h-48 overflow-y-auto">
                         @forelse($colors as $color)
                             <label class="flex items-center">
@@ -195,7 +195,7 @@
                                 <span class="ml-2 text-sm text-gray-700">{{ $color->name }}</span>
                             </label>
                         @empty
-                            <p class="text-sm text-gray-500 col-span-4">No colors available. <a href="{{ route('admin.colors.create') }}" class="text-blue-600">Create one</a></p>
+                            <p class="text-sm text-gray-500 col-span-4">Nicio culoare disponibilă. <a href="{{ route('admin.colors.create') }}" class="text-blue-600">Creează una</a></p>
                         @endforelse
                     </div>
                     @error('colors')
@@ -210,15 +210,15 @@
                                value="1"
                                {{ old('is_active', $product->is_active) ? 'checked' : '' }}
                                class="rounded border-gray-300 text-blue-600 shadow-sm focus:ring-blue-500">
-                        <span class="ml-2 text-sm text-gray-700">Active (visible to customers)</span>
+                        <span class="ml-2 text-sm text-gray-700">Activ (vizibil pentru clienți)</span>
                     </label>
                 </div>
 
                 @if($product->images && count($product->images) > 0)
                     <div class="mb-6">
                         <label class="block text-sm font-medium text-gray-700 mb-2">
-                            Current Images 
-                            <span class="text-xs text-gray-500">({{ count($product->images) }} image(s))</span>
+                            Imagini Curente 
+                            <span class="text-xs text-gray-500">({{ count($product->images) }} imagine(i))</span>
                         </label>
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                             @foreach($product->images as $index => $image)
@@ -245,7 +245,7 @@
                 @endif
 
                 <div class="mb-6" x-data="{ files: [] }">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Add New Images</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Adaugă Imagini Noi</label>
                     <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
                         <input type="file" 
                                name="images[]" 
@@ -258,8 +258,8 @@
                             <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
                                 <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                             </svg>
-                            <p class="mt-2 text-sm text-gray-600">Click to upload images</p>
-                            <p class="text-xs text-gray-500 mt-1">PNG, JPG, GIF up to 2MB</p>
+                            <p class="mt-2 text-sm text-gray-600">Click pentru a încărca imagini</p>
+                            <p class="text-xs text-gray-500 mt-1">PNG, JPG, GIF până la 2MB</p>
                         </label>
                         <div class="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4" x-show="files.length > 0" style="display: none;">
                             <template x-for="(file, index) in files" :key="index">
@@ -279,11 +279,11 @@
                 <div class="flex justify-end space-x-4">
                     <a href="{{ route('admin.products.index') }}" 
                        class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition">
-                        Cancel
+                        Anulează
                     </a>
                     <button type="submit" 
                             class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
-                        Update Product
+                        Actualizează Produsul
                     </button>
                 </div>
             </form>

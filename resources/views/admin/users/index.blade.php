@@ -4,9 +4,9 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
                     <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-2xl font-bold text-gray-800">Users Management</h2>
+                        <h2 class="text-2xl font-bold text-gray-800">Management Conturi</h2>
                         <a href="{{ route('admin.users.create') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                            Add New User
+                            Adaugă Utilizator
                         </a>
                     </div>
 
@@ -28,11 +28,11 @@
                             <thead class="bg-gray-100">
                                 <tr>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">ID</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nume</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Role</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Created At</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Rol</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Creat La</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Acțiuni</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
@@ -48,8 +48,8 @@
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $user->created_at->format('d/m/Y') }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                                            <a href="{{ route('admin.users.show', $user) }}" class="text-blue-600 hover:text-blue-900">View</a>
-                                            <a href="{{ route('admin.users.edit', $user) }}" class="text-indigo-600 hover:text-indigo-900">Edit</a>
+                                            <a href="{{ route('admin.users.show', $user) }}" class="text-blue-600 hover:text-blue-900">Vezi</a>
+                                            <a href="{{ route('admin.users.edit', $user) }}" class="text-indigo-600 hover:text-indigo-900">Editează</a>
                                             @if($user->id !== auth()->id())
                                                 <form id="delete-form-{{ $user->id }}" 
                                                       action="{{ route('admin.users.destroy', $user) }}" 
@@ -62,7 +62,7 @@
                                                     <button type="button" 
                                                             @click="$dispatch('open-modal', 'user-{{ $user->id }}')"
                                                             class="text-red-600 hover:text-red-900">
-                                                        Delete
+                                                        Șterge
                                                     </button>
                                                 </form>
                                             @endif
@@ -70,7 +70,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="6" class="px-6 py-4 text-center text-gray-500">No users found.</td>
+                                        <td colspan="6" class="px-6 py-4 text-center text-gray-500">Nu s-au găsit utilizatori.</td>
                                     </tr>
                                 @endforelse
                             </tbody>
@@ -97,17 +97,17 @@
                                         <span class="text-gray-900">{{ $user->id }}</span>
                                     </div>
                                     <div class="flex justify-between">
-                                        <span class="text-gray-500">Created:</span>
+                                        <span class="text-gray-500">Creat La:</span>
                                         <span class="text-gray-900">{{ $user->created_at->format('d/m/Y') }}</span>
                                     </div>
                                 </div>
 
                                 <div class="flex gap-2 pt-3 border-t border-gray-200">
                                     <a href="{{ route('admin.users.show', $user) }}" class="flex-1 text-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-sm">
-                                        View
+                                        Vezi
                                     </a>
                                     <a href="{{ route('admin.users.edit', $user) }}" class="flex-1 text-center bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded text-sm">
-                                        Edit
+                                        Editează
                                     </a>
                                     @if($user->id !== auth()->id())
                                         <form id="delete-form-mobile-{{ $user->id }}" 
@@ -121,7 +121,7 @@
                                             <button type="button" 
                                                     @click="$dispatch('open-modal', 'user-mobile-{{ $user->id }}')"
                                                     class="w-full bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded text-sm">
-                                                Delete
+                                                Șterge
                                             </button>
                                         </form>
                                     @endif
@@ -129,7 +129,7 @@
                             </div>
                         @empty
                             <div class="text-center py-8 text-gray-500">
-                                No users found.
+                                Nu s-au găsit utilizatori.
                             </div>
                         @endforelse
                     </div>

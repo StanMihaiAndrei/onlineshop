@@ -1,4 +1,3 @@
-{{-- resources/views/components/delete-confirmation-modal.blade.php --}}
 @props(['modalId' => 'deleteModal'])
 
 <div x-data="{ open: false }" 
@@ -47,11 +46,11 @@
                     <!-- Content -->
                     <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left flex-1">
                         <h3 class="text-lg font-semibold leading-6 text-gray-900" id="modal-title">
-                            {{ $title ?? 'Confirm Delete' }}
+                            {{ $title ?? 'Confirma stergere' }}
                         </h3>
                         <div class="mt-2">
                             <p class="text-sm text-gray-500">
-                                {{ $message ?? 'Are you sure you want to delete this item? This action cannot be undone.' }}
+                                {{ $message ?? 'Sunteți sigur că doriți să ștergeți acest element? Această acțiune nu poate fi anulată.' }}
                             </p>
                         </div>
                     </div>
@@ -63,12 +62,12 @@
                 <button type="button"
                         @click="$dispatch('confirm-delete', '{{ $modalId }}'); open = false"
                         class="inline-flex w-full justify-center rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2 sm:w-auto transition">
-                    Delete
+                    Șterge
                 </button>
                 <button type="button"
                         @click="open = false"
                         class="mt-3 inline-flex w-full justify-center rounded-lg bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto transition">
-                    Cancel
+                    Anulează
                 </button>
             </div>
         </div>
