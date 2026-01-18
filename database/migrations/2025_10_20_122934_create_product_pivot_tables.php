@@ -13,6 +13,7 @@ return new class extends Migration
             $table->foreignId('product_id')->constrained()->onDelete('cascade');
             $table->foreignId('color_id')->constrained()->onDelete('cascade');
             $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::create('category_product', function (Blueprint $table) {
@@ -20,6 +21,7 @@ return new class extends Migration
             $table->foreignId('product_id')->constrained()->onDelete('cascade');
             $table->foreignId('category_id')->constrained()->onDelete('cascade');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

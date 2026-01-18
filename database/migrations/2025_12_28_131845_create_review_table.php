@@ -16,6 +16,7 @@ return new class extends Migration
             $table->text('comment')->nullable();
             $table->boolean('is_approved')->default(true); // pentru moderare viitoare
             $table->timestamps();
+            $table->softDeletes();
             
             // Un user poate da doar un review per produs
             $table->unique(['user_id', 'product_id']);

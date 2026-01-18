@@ -14,6 +14,7 @@ return new class extends Migration
             $table->string('hex_code', 7); // ex: #FF5733
             $table->boolean('is_active')->default(true);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

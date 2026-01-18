@@ -20,6 +20,7 @@ return new class extends Migration
             $table->integer('usage_count')->default(0); // de câte ori a fost folosit
             $table->decimal('minimum_order_amount', 10, 2)->nullable(); // comandă minimă (optional)
             $table->timestamps();
+            $table->softDeletes();
         });
 
         // Adăugăm coloana coupon_id în tabelul orders
