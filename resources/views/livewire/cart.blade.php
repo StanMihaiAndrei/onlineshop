@@ -138,12 +138,74 @@
                     @endforeach
                 </div>
 
-                <!-- Clear Cart -->
-                <button wire:click="clearCart" 
-                        wire:confirm="Are you sure you want to clear the cart?"
-                        class="w-full mt-4 text-sm text-red-600 hover:text-red-800 underline">
-                    Golește coșul
-                </button>
+                <!-- Clear Cart Button -->
+                <div x-data="{ showClearModal: false }">
+                    <button @click="showClearModal = true" 
+                            class="w-full mt-4 text-sm text-red-600 hover:text-red-800 underline">
+                        Golește coșul
+                    </button>
+
+                    <!-- Clear Cart Modal -->
+                    <div x-show="showClearModal"
+                        x-transition:enter="transition ease-out duration-200"
+                        x-transition:enter-start="opacity-0"
+                        x-transition:enter-end="opacity-100"
+                        x-transition:leave="transition ease-in duration-150"
+                        x-transition:leave-start="opacity-100"
+                        x-transition:leave-end="opacity-0"
+                        class="fixed inset-0 bg-black bg-opacity-50 z-[80] flex items-center justify-center p-4 sm:p-6"
+                        style="display: none;"
+                        @click.self="showClearModal = false"
+                        @keydown.escape.window="showClearModal = false">
+                        
+                        <div x-show="showClearModal"
+                            x-transition:enter="transition ease-out duration-200"
+                            x-transition:enter-start="opacity-0 scale-95 translate-y-4"
+                            x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                            x-transition:leave="transition ease-in duration-150"
+                            x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                            x-transition:leave-end="opacity-0 scale-95 translate-y-4"
+                            class="bg-white rounded-xl shadow-2xl max-w-sm w-full overflow-hidden relative"
+                            @click.stop>
+                            
+                            <!-- Modal Header -->
+                            <div class="bg-red-50 px-4 sm:px-6 py-4 border-b border-red-100">
+                                <div class="flex items-center gap-3">
+                                    <div class="flex-shrink-0 w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
+                                        <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-lg font-bold text-gray-900">Golește coșul?</h3>
+                                </div>
+                            </div>
+                            
+                            <!-- Modal Body -->
+                            <div class="px-4 sm:px-6 py-4">
+                                <p class="text-sm text-gray-600">
+                                    Ești sigur că vrei să ștergi toate produsele din coș? Această acțiune nu poate fi anulată.
+                                </p>
+                                <div class="mt-3 bg-gray-50 rounded-lg p-3">
+                                    <p class="text-xs text-gray-500">
+                                        <span class="font-semibold">{{ $cartCount }}</span> produs{{ $cartCount !== 1 ? 'e' : '' }} în coș
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <!-- Modal Footer -->
+                            <div class="bg-gray-50 px-4 sm:px-6 py-4 flex flex-col sm:flex-row gap-3">
+                                <button @click="showClearModal = false" 
+                                        class="flex-1 px-4 py-2.5 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium transition">
+                                    Anulează
+                                </button>
+                                <button @click="showClearModal = false; $wire.clearCart()" 
+                                        class="flex-1 px-4 py-2.5 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium transition">
+                                    Golește coșul
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             @else
                 <div class="text-center py-12">
                     <svg class="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -1,7 +1,7 @@
 <x-app-layout>
     <div class="py-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h1 class="text-3xl font-bold text-gray-900 mb-8">My Orders</h1>
+            <h1 class="text-3xl font-bold text-gray-900 mb-8">Comenzile Mele</h1>
 
             @if($orders->count() > 0)
                 <div class="space-y-4">
@@ -9,8 +9,8 @@
                         <div class="bg-white rounded-lg shadow-md p-6">
                             <div class="flex flex-col md:flex-row md:justify-between md:items-start gap-4 mb-4">
                                 <div>
-                                    <h3 class="text-lg font-bold text-gray-900">Order {{ $order->order_number }}</h3>
-                                    <p class="text-sm text-gray-600">Placed on {{ $order->created_at->format('F d, Y') }}</p>
+                                    <h3 class="text-lg font-bold text-gray-900">Comanda {{ $order->order_number }}</h3>
+                                    <p class="text-sm text-gray-600">Plasată la {{ $order->created_at->format('F d, Y') }}</p>
                                 </div>
                                 
                                 <div class="flex gap-2">
@@ -32,19 +32,19 @@
                                         <div class="flex-1">
                                             <p class="text-sm font-semibold text-blue-900">
                                                 @if($order->delivery_type === 'home')
-                                                    Home Delivery
+                                                    Livrare la domiciliu
                                                 @else
-                                                    EasyBox Delivery
+                                                    Livrare EasyBox
                                                 @endif
                                                 @if($order->shipping_cost > 0)
                                                     - ${{ number_format($order->shipping_cost, 2) }}
                                                 @else
-                                                    - FREE
+                                                    - Gratuit
                                                 @endif
                                             </p>
                                             @if($order->sameday_awb_number)
                                                 <p class="text-xs text-blue-700 mt-1">
-                                                    📦 Tracking: <span class="font-mono font-semibold">{{ $order->sameday_awb_number }}</span>
+                                                    📦 Urmărire: <span class="font-mono font-semibold">{{ $order->sameday_awb_number }}</span>
                                                 </p>
                                             @endif
                                         </div>
@@ -97,10 +97,10 @@
                     <svg class="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
                     </svg>
-                    <h3 class="text-xl font-semibold text-gray-900 mb-2">No orders yet</h3>
-                    <p class="text-gray-600 mb-6">Start shopping to create your first order!</p>
-                    <a href="{{ route('shop') }}" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition">
-                        Browse Products
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Nu aveți comenzi încă</h3>
+                    <p class="text-gray-600 mb-6">Începeți să cumpărați pentru a crea prima comandă!</p>
+                    <a href="{{ route('shop') }}" class="inline-block bg-primary hover:bg-primary-dark text-white font-semibold py-3 px-6 rounded-lg transition">
+                        Răsfoiește Produse
                     </a>
                 </div>
             @endif

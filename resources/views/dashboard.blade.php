@@ -234,7 +234,7 @@
                 </a>
             @else
                 <p class="text-gray-500 text-xs sm:text-sm">Nu ați plasat încă nicio comandă.</p>
-                <a href="{{ route('shop') }}" class="mt-3 inline-block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 text-sm">
+                <a href="{{ route('shop') }}" class="mt-3 inline-block bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-dark text-sm">
                     Începeți cumpărăturile
                 </a>
             @endif
