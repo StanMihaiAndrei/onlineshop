@@ -51,10 +51,19 @@
                                             <a href="{{ route('admin.users.show', $user) }}" class="text-blue-600 hover:text-blue-900">View</a>
                                             <a href="{{ route('admin.users.edit', $user) }}" class="text-indigo-600 hover:text-indigo-900">Edit</a>
                                             @if($user->id !== auth()->id())
-                                                <form action="{{ route('admin.users.destroy', $user) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this user?');">
+                                                <form id="delete-form-{{ $user->id }}" 
+                                                      action="{{ route('admin.users.destroy', $user) }}" 
+                                                      method="POST" 
+                                                      class="inline"
+                                                      x-data
+                                                      @confirm-delete.window="if ($event.detail === 'user-{{ $user->id }}') $el.submit()">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="text-red-600 hover:text-red-900">Delete</button>
+                                                    <button type="button" 
+                                                            @click="$dispatch('open-modal', 'user-{{ $user->id }}')"
+                                                            class="text-red-600 hover:text-red-900">
+                                                        Delete
+                                                    </button>
                                                 </form>
                                             @endif
                                         </td>
@@ -101,10 +110,17 @@
                                         Edit
                                     </a>
                                     @if($user->id !== auth()->id())
-                                        <form action="{{ route('admin.users.destroy', $user) }}" method="POST" class="flex-1" onsubmit="return confirm('Are you sure you want to delete this user?');">
+                                        <form id="delete-form-mobile-{{ $user->id }}" 
+                                              action="{{ route('admin.users.destroy', $user) }}" 
+                                              method="POST" 
+                                              class="flex-1"
+                                              x-data
+                                              @confirm-delete.window="if ($event.detail === 'user-mobile-{{ $user->id }}') $el.submit()">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="w-full bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded text-sm">
+                                            <button type="button" 
+                                                    @click="$dispatch('open-modal', 'user-mobile-{{ $user->id }}')"
+                                                    class="w-full bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded text-sm">
                                                 Delete
                                             </button>
                                         </form>
@@ -125,4 +141,19 @@
             </div>
         </div>
     </div>
+
+    <!-- Delete Confirmation Modals -->
+    @foreach($users as $user)
+        @if($user->id !== auth()->id())
+            <x-delete-confirmation-modal 
+                modalId="user-{{ $user->id }}"
+                title="Delete User"
+                message="Are you sure you want to delete user '{{ $user->name }}'? This action cannot be undone." />
+            
+            <x-delete-confirmation-modal 
+                modalId="user-mobile-{{ $user->id }}"
+                title="Delete User"
+                message="Are you sure you want to delete user '{{ $user->name }}'? This action cannot be undone." />
+        @endif
+    @endforeach
 </x-app-layout>

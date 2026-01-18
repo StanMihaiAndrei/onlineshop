@@ -33,7 +33,7 @@
                             <td class="px-6 py-4 whitespace-nowrap">
                                 @if($product->first_image)
                                     <img src="{{ asset('storage/' . $product->first_image) }}" 
-                                         alt="{{ $product->title }}" 
+                                         alt="{{ $product->title }}"
                                          class="h-12 w-12 object-cover rounded">
                                 @else
                                     <div class="h-12 w-12 bg-gray-200 rounded flex items-center justify-center">
@@ -51,11 +51,8 @@
                                         <span class="text-xs line-through text-gray-400">
                                             ${{ number_format($product->price, 2) }}
                                         </span>
-                                        <span class="text-sm font-bold text-red-600">
-                                            ${{ number_format($product->final_price, 2) }}
-                                        </span>
-                                        <span class="text-xs bg-red-100 text-red-800 px-1.5 py-0.5 rounded font-bold inline-block w-fit mt-1">
-                                            -{{ $product->discount_percentage }}%
+                                        <span class="text-sm font-semibold text-red-600">
+                                            ${{ number_format($product->discount_price, 2) }}
                                         </span>
                                     </div>
                                 @else
@@ -78,13 +75,19 @@
                                    class="text-blue-600 hover:text-blue-900 mr-3">View</a>
                                 <a href="{{ route('admin.products.edit', $product) }}" 
                                    class="text-indigo-600 hover:text-indigo-900 mr-3">Edit</a>
-                                <form action="{{ route('admin.products.destroy', $product) }}" 
+                                <form id="delete-form-{{ $product->id }}" 
+                                      action="{{ route('admin.products.destroy', $product) }}" 
                                       method="POST" 
                                       class="inline"
-                                      onsubmit="return confirm('Are you sure you want to delete this product?');">
+                                      x-data
+                                      @confirm-delete.window="if ($event.detail === 'product-{{ $product->id }}') $el.submit()">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="text-red-600 hover:text-red-900">Delete</button>
+                                    <button type="button" 
+                                            @click="$dispatch('open-modal', 'product-{{ $product->id }}')"
+                                            class="text-red-600 hover:text-red-900">
+                                        Delete
+                                    </button>
                                 </form>
                             </td>
                         </tr>
@@ -107,7 +110,7 @@
                         <div class="flex gap-4 mb-3">
                             @if($product->first_image)
                                 <img src="{{ asset('storage/' . $product->first_image) }}" 
-                                     alt="{{ $product->title }}" 
+                                     alt="{{ $product->title }}"
                                      class="h-20 w-20 object-cover rounded flex-shrink-0">
                             @else
                                 <div class="h-20 w-20 bg-gray-200 rounded flex items-center justify-center flex-shrink-0">
@@ -125,20 +128,11 @@
                                 <p class="text-xs text-gray-500">Price</p>
                                 @if($product->hasDiscount())
                                     <div class="flex flex-col">
-                                        <span class="text-xs line-through text-gray-400">
-                                            ${{ number_format($product->price, 2) }}
-                                        </span>
-                                        <span class="text-sm font-bold text-red-600">
-                                            ${{ number_format($product->final_price, 2) }}
-                                        </span>
-                                        <span class="text-xs bg-red-100 text-red-800 px-1.5 py-0.5 rounded font-bold inline-block w-fit mt-0.5">
-                                            -{{ $product->discount_percentage }}%
-                                        </span>
+                                        <span class="text-xs line-through text-gray-400">${{ number_format($product->price, 2) }}</span>
+                                        <span class="text-sm font-semibold text-red-600">${{ number_format($product->discount_price, 2) }}</span>
                                     </div>
                                 @else
-                                    <p class="text-sm font-semibold text-gray-900">
-                                        ${{ number_format($product->price, 2) }}
-                                    </p>
+                                    <p class="text-sm font-semibold text-gray-900">${{ number_format($product->price, 2) }}</p>
                                 @endif
                             </div>
                             <div>
@@ -163,13 +157,17 @@
                                class="flex-1 text-center px-3 py-2 bg-indigo-600 text-white text-sm rounded-lg hover:bg-indigo-700 transition">
                                 Edit
                             </a>
-                            <form action="{{ route('admin.products.destroy', $product) }}" 
+                            <form id="delete-form-mobile-{{ $product->id }}" 
+                                  action="{{ route('admin.products.destroy', $product) }}" 
                                   method="POST" 
                                   class="flex-1"
-                                  onsubmit="return confirm('Are you sure you want to delete this product?');">
+                                  x-data
+                                  @confirm-delete.window="if ($event.detail === 'product-mobile-{{ $product->id }}') $el.submit()">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="w-full px-3 py-2 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 transition">
+                                <button type="button" 
+                                        @click="$dispatch('open-modal', 'product-mobile-{{ $product->id }}')"
+                                        class="w-full px-3 py-2 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 transition">
                                     Delete
                                 </button>
                             </form>
@@ -189,4 +187,17 @@
             {{ $products->links() }}
         </div>
     </div>
+
+    <!-- Delete Confirmation Modals -->
+    @foreach($products as $product)
+        <x-delete-confirmation-modal 
+            modalId="product-{{ $product->id }}"
+            title="Delete Product"
+            message="Are you sure you want to delete '{{ $product->title }}'? This action cannot be undone." />
+        
+        <x-delete-confirmation-modal 
+            modalId="product-mobile-{{ $product->id }}"
+            title="Delete Product"
+            message="Are you sure you want to delete '{{ $product->title }}'? This action cannot be undone." />
+    @endforeach
 </x-app-layout>

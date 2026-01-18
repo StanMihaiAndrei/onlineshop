@@ -14,12 +14,16 @@
                    class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-center transition">
                     Edit Product
                 </a>
-                <form action="{{ route('admin.products.destroy', $product) }}" 
-                      method="POST" 
-                      onsubmit="return confirm('Are you sure you want to delete this product?');">
+                <form id="delete-form-mobile-show" 
+                      action="{{ route('admin.products.destroy', $product) }}" 
+                      method="POST"
+                      x-data
+                      @confirm-delete.window="if ($event.detail === 'product-show-mobile') $el.submit()">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
+                    <button type="button" 
+                            @click="$dispatch('open-modal', 'product-show-mobile')"
+                            class="w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
                         Delete
                     </button>
                 </form>
@@ -39,13 +43,17 @@
                    class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
                     Edit Product
                 </a>
-                <form action="{{ route('admin.products.destroy', $product) }}" 
+                <form id="delete-form-desktop-show" 
+                      action="{{ route('admin.products.destroy', $product) }}" 
                       method="POST" 
                       class="inline"
-                      onsubmit="return confirm('Are you sure you want to delete this product?');">
+                      x-data
+                      @confirm-delete.window="if ($event.detail === 'product-show-desktop') $el.submit()">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
+                    <button type="button" 
+                            @click="$dispatch('open-modal', 'product-show-desktop')"
+                            class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
                         Delete
                     </button>
                 </form>
@@ -62,6 +70,7 @@
                             <div class="bg-gray-100 rounded-lg overflow-hidden mb-4">
                                 <template x-for="(image, index) in {{ json_encode($product->images) }}" :key="index">
                                     <img :src="`/storage/${image}`" 
+                                         alt="{{ $product->title }}"
                                          x-show="currentImage === index"
                                          class="w-full h-96 object-contain">
                                 </template>
@@ -71,10 +80,12 @@
                             @if(count($product->images) > 1)
                                 <div class="grid grid-cols-4 gap-2">
                                     @foreach($product->images as $index => $image)
-                                        <button @click="currentImage = {{ $index }}"
-                                                :class="currentImage === {{ $index }} ? 'ring-2 ring-blue-500' : 'ring-1 ring-gray-300'"
-                                                class="rounded-lg overflow-hidden hover:ring-2 hover:ring-blue-400 transition">
-                                            <img src="/storage/{{ $image }}" class="w-full h-20 object-cover">
+                                        <button @click="currentImage = {{ $index }}" 
+                                                :class="currentImage === {{ $index }} ? 'ring-2 ring-blue-500' : ''"
+                                                class="bg-gray-100 rounded-lg overflow-hidden hover:opacity-75 transition">
+                                            <img src="{{ asset('storage/' . $image) }}" 
+                                                 alt="{{ $product->title }}" 
+                                                 class="w-full h-20 object-cover">
                                         </button>
                                     @endforeach
                                 </div>
@@ -116,10 +127,10 @@
                                         ${{ number_format($product->price, 2) }}
                                     </span>
                                     <span class="text-2xl font-bold text-red-600">
-                                        ${{ number_format($product->final_price, 2) }}
+                                        ${{ number_format($product->discount_price, 2) }}
                                     </span>
-                                    <span class="text-sm bg-red-100 text-red-800 px-2 py-1 rounded font-bold inline-block w-fit">
-                                        -{{ $product->discount_percentage }}%
+                                    <span class="text-xs text-red-600">
+                                        Save {{ number_format((($product->price - $product->discount_price) / $product->price) * 100) }}%
                                     </span>
                                 </div>
                             @else
@@ -148,7 +159,7 @@
                             <p class="text-sm text-gray-600 mb-2">Categories</p>
                             <div class="flex flex-wrap gap-2">
                                 @foreach($product->categories as $category)
-                                    <span class="px-3 py-1 bg-purple-100 text-purple-800 text-sm rounded-full">
+                                    <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
                                         {{ $category->name }}
                                     </span>
                                 @endforeach
@@ -162,9 +173,9 @@
                             <div class="flex flex-wrap gap-2">
                                 @foreach($product->colors as $color)
                                     <div class="flex items-center gap-2 px-3 py-1 bg-gray-100 rounded-full">
-                                        <div class="w-5 h-5 rounded-full border-2 border-gray-300" 
+                                        <div class="w-4 h-4 rounded-full border border-gray-300" 
                                              style="background-color: {{ $color->hex_code }}"></div>
-                                        <span class="text-sm text-gray-700">{{ $color->name }}</span>
+                                        <span class="text-sm">{{ $color->name }}</span>
                                     </div>
                                 @endforeach
                             </div>
@@ -195,4 +206,15 @@
             </div>
         </div>
     </div>
+
+    <!-- Delete Confirmation Modals -->
+    <x-delete-confirmation-modal 
+        modalId="product-show-mobile"
+        title="Delete Product"
+        message="Are you sure you want to delete '{{ $product->title }}'? This action cannot be undone." />
+    
+    <x-delete-confirmation-modal 
+        modalId="product-show-desktop"
+        title="Delete Product"
+        message="Are you sure you want to delete '{{ $product->title }}'? This action cannot be undone." />
 </x-app-layout>

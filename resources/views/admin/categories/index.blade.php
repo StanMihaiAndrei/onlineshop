@@ -70,13 +70,19 @@
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <a href="{{ route('admin.categories.edit', $category) }}" 
                                        class="text-indigo-600 hover:text-indigo-900 mr-3">Edit</a>
-                                    <form action="{{ route('admin.categories.destroy', $category) }}" 
+                                    <form id="delete-form-cat-{{ $category->id }}" 
+                                          action="{{ route('admin.categories.destroy', $category) }}" 
                                           method="POST" 
                                           class="inline"
-                                          onsubmit="return confirm('Are you sure? This will also delete all subcategories!');">
+                                          x-data
+                                          @confirm-delete.window="if ($event.detail === 'category-{{ $category->id }}') $el.submit()">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="text-red-600 hover:text-red-900">Delete</button>
+                                        <button type="button" 
+                                                @click="$dispatch('open-modal', 'category-{{ $category->id }}')"
+                                                class="text-red-600 hover:text-red-900">
+                                            Delete
+                                        </button>
                                     </form>
                                 </td>
                             </tr>
@@ -114,13 +120,19 @@
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                         <a href="{{ route('admin.categories.edit', $subcategory) }}" 
                                            class="text-indigo-600 hover:text-indigo-900 mr-3">Edit</a>
-                                        <form action="{{ route('admin.categories.destroy', $subcategory) }}" 
+                                        <form id="delete-form-subcat-{{ $subcategory->id }}" 
+                                              action="{{ route('admin.categories.destroy', $subcategory) }}" 
                                               method="POST" 
                                               class="inline"
-                                              onsubmit="return confirm('Are you sure?');">
+                                              x-data
+                                              @confirm-delete.window="if ($event.detail === 'subcategory-{{ $subcategory->id }}') $el.submit()">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="text-red-600 hover:text-red-900">Delete</button>
+                                            <button type="button" 
+                                                    @click="$dispatch('open-modal', 'subcategory-{{ $subcategory->id }}')"
+                                                    class="text-red-600 hover:text-red-900">
+                                                Delete
+                                            </button>
                                         </form>
                                     </td>
                                 </tr>
@@ -177,11 +189,16 @@
                                class="flex-1 text-center bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded text-sm">
                                 Edit
                             </a>
-                            <form action="{{ route('admin.categories.destroy', $category) }}" method="POST" class="flex-1">
+                            <form id="delete-form-cat-mobile-{{ $category->id }}" 
+                                  action="{{ route('admin.categories.destroy', $category) }}" 
+                                  method="POST" 
+                                  class="flex-1"
+                                  x-data
+                                  @confirm-delete.window="if ($event.detail === 'category-mobile-{{ $category->id }}') $el.submit()">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" 
-                                        onclick="return confirm('Are you sure? This will also delete all subcategories!')"
+                                <button type="button" 
+                                        @click="$dispatch('open-modal', 'category-mobile-{{ $category->id }}')"
                                         class="w-full bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded text-sm">
                                     Delete
                                 </button>
@@ -228,11 +245,16 @@
                                    class="flex-1 text-center bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-1.5 px-3 rounded text-xs">
                                     Edit
                                 </a>
-                                <form action="{{ route('admin.categories.destroy', $subcategory) }}" method="POST" class="flex-1">
+                                <form id="delete-form-subcat-mobile-{{ $subcategory->id }}" 
+                                      action="{{ route('admin.categories.destroy', $subcategory) }}" 
+                                      method="POST" 
+                                      class="flex-1"
+                                      x-data
+                                      @confirm-delete.window="if ($event.detail === 'subcategory-mobile-{{ $subcategory->id }}') $el.submit()">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" 
-                                            onclick="return confirm('Are you sure?')"
+                                    <button type="button" 
+                                            @click="$dispatch('open-modal', 'subcategory-mobile-{{ $subcategory->id }}')"
                                             class="w-full bg-red-500 hover:bg-red-700 text-white font-bold py-1.5 px-3 rounded text-xs">
                                         Delete
                                     </button>
@@ -252,4 +274,29 @@
             </div>
         </div>
     </div>
+
+    <!-- Delete Confirmation Modals -->
+    @foreach($categories as $category)
+        <x-delete-confirmation-modal 
+            modalId="category-{{ $category->id }}"
+            title="Delete Category"
+            message="Are you sure you want to delete category '{{ $category->name }}'? This will also delete all its subcategories. This action cannot be undone." />
+        
+        <x-delete-confirmation-modal 
+            modalId="category-mobile-{{ $category->id }}"
+            title="Delete Category"
+            message="Are you sure you want to delete category '{{ $category->name }}'? This will also delete all its subcategories. This action cannot be undone." />
+        
+        @foreach($category->allChildren as $subcategory)
+            <x-delete-confirmation-modal 
+                modalId="subcategory-{{ $subcategory->id }}"
+                title="Delete Subcategory"
+                message="Are you sure you want to delete subcategory '{{ $subcategory->name }}'? This action cannot be undone." />
+            
+            <x-delete-confirmation-modal 
+                modalId="subcategory-mobile-{{ $subcategory->id }}"
+                title="Delete Subcategory"
+                message="Are you sure you want to delete subcategory '{{ $subcategory->name }}'? This action cannot be undone." />
+        @endforeach
+    @endforeach
 </x-app-layout>

@@ -50,13 +50,19 @@
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <a href="{{ route('admin.colors.edit', $color) }}" 
                                        class="text-indigo-600 hover:text-indigo-900 mr-3">Edit</a>
-                                    <form action="{{ route('admin.colors.destroy', $color) }}" 
+                                    <form id="delete-form-{{ $color->id }}" 
+                                          action="{{ route('admin.colors.destroy', $color) }}" 
                                           method="POST" 
                                           class="inline"
-                                          onsubmit="return confirm('Are you sure?');">
+                                          x-data
+                                          @confirm-delete.window="if ($event.detail === 'color-{{ $color->id }}') $el.submit()">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="text-red-600 hover:text-red-900">Delete</button>
+                                        <button type="button" 
+                                                @click="$dispatch('open-modal', 'color-{{ $color->id }}')"
+                                                class="text-red-600 hover:text-red-900">
+                                            Delete
+                                        </button>
                                     </form>
                                 </td>
                             </tr>
@@ -92,11 +98,16 @@
                                class="flex-1 text-center bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded text-sm">
                                 Edit
                             </a>
-                            <form action="{{ route('admin.colors.destroy', $color) }}" method="POST" class="flex-1">
+                            <form id="delete-form-mobile-{{ $color->id }}" 
+                                  action="{{ route('admin.colors.destroy', $color) }}" 
+                                  method="POST" 
+                                  class="flex-1"
+                                  x-data
+                                  @confirm-delete.window="if ($event.detail === 'color-mobile-{{ $color->id }}') $el.submit()">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" 
-                                        onclick="return confirm('Are you sure you want to delete this color?')"
+                                <button type="button" 
+                                        @click="$dispatch('open-modal', 'color-mobile-{{ $color->id }}')"
                                         class="w-full bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded text-sm">
                                     Delete
                                 </button>
@@ -115,4 +126,17 @@
             </div>
         </div>
     </div>
+
+    <!-- Delete Confirmation Modals -->
+    @foreach($colors as $color)
+        <x-delete-confirmation-modal 
+            modalId="color-{{ $color->id }}"
+            title="Delete Color"
+            message="Are you sure you want to delete color '{{ $color->name }}'? This action cannot be undone." />
+        
+        <x-delete-confirmation-modal 
+            modalId="color-mobile-{{ $color->id }}"
+            title="Delete Color"
+            message="Are you sure you want to delete color '{{ $color->name }}'? This action cannot be undone." />
+    @endforeach
 </x-app-layout>

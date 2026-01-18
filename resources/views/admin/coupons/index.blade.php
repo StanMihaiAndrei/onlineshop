@@ -78,12 +78,19 @@
                                 <td class="px-6 py-4 text-right space-x-2">
                                     <a href="{{ route('admin.coupons.edit', $coupon) }}" 
                                        class="text-blue-600 hover:text-blue-900">Edit</a>
-                                    <form action="{{ route('admin.coupons.destroy', $coupon) }}" method="POST" class="inline">
+                                    <form id="delete-form-{{ $coupon->id }}" 
+                                          action="{{ route('admin.coupons.destroy', $coupon) }}" 
+                                          method="POST" 
+                                          class="inline"
+                                          x-data
+                                          @confirm-delete.window="if ($event.detail === 'coupon-{{ $coupon->id }}') $el.submit()">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" 
-                                                onclick="return confirm('Are you sure?')"
-                                                class="text-red-600 hover:text-red-900">Delete</button>
+                                        <button type="button" 
+                                                @click="$dispatch('open-modal', 'coupon-{{ $coupon->id }}')"
+                                                class="text-red-600 hover:text-red-900">
+                                            Delete
+                                        </button>
                                     </form>
                                 </td>
                             </tr>
@@ -162,11 +169,16 @@
                                class="flex-1 text-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-sm">
                                 Edit
                             </a>
-                            <form action="{{ route('admin.coupons.destroy', $coupon) }}" method="POST" class="flex-1">
+                            <form id="delete-form-mobile-{{ $coupon->id }}" 
+                                  action="{{ route('admin.coupons.destroy', $coupon) }}" 
+                                  method="POST" 
+                                  class="flex-1"
+                                  x-data
+                                  @confirm-delete.window="if ($event.detail === 'coupon-mobile-{{ $coupon->id }}') $el.submit()">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" 
-                                        onclick="return confirm('Are you sure you want to delete this coupon?')"
+                                <button type="button" 
+                                        @click="$dispatch('open-modal', 'coupon-mobile-{{ $coupon->id }}')"
                                         class="w-full bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded text-sm">
                                     Delete
                                 </button>
@@ -185,4 +197,17 @@
             </div>
         </div>
     </div>
+
+    <!-- Delete Confirmation Modals -->
+    @foreach($coupons as $coupon)
+        <x-delete-confirmation-modal 
+            modalId="coupon-{{ $coupon->id }}"
+            title="Delete Coupon"
+            message="Are you sure you want to delete coupon '{{ $coupon->code }}'? This action cannot be undone." />
+        
+        <x-delete-confirmation-modal 
+            modalId="coupon-mobile-{{ $coupon->id }}"
+            title="Delete Coupon"
+            message="Are you sure you want to delete coupon '{{ $coupon->code }}'? This action cannot be undone." />
+    @endforeach
 </x-app-layout>

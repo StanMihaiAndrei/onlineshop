@@ -74,10 +74,19 @@
                     <div class="mt-6 flex space-x-2">
                         <a href="{{ route('admin.users.index') }}" class="text-gray-600 hover:text-gray-800">Back to Users</a>
                         @if($user->id !== auth()->id())
-                            <form action="{{ route('admin.users.destroy', $user) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this user?');">
+                            <form id="delete-form-user-show" 
+                                  action="{{ route('admin.users.destroy', $user) }}" 
+                                  method="POST" 
+                                  class="inline"
+                                  x-data
+                                  @confirm-delete.window="if ($event.detail === 'user-show') $el.submit()">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="text-red-600 hover:text-red-900 ml-4">Delete User</button>
+                                <button type="button" 
+                                        @click="$dispatch('open-modal', 'user-show')"
+                                        class="text-red-600 hover:text-red-900 ml-4">
+                                    Delete User
+                                </button>
                             </form>
                         @endif
                     </div>
@@ -85,4 +94,11 @@
             </div>
         </div>
     </div>
+
+    @if($user->id !== auth()->id())
+        <x-delete-confirmation-modal 
+            modalId="user-show"
+            title="Delete User"
+            message="Are you sure you want to delete user '{{ $user->name }}'? This action cannot be undone." />
+    @endif
 </x-app-layout>
