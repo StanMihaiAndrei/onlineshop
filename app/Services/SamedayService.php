@@ -442,6 +442,7 @@ class SamedayService
                 'cashOnDelivery' => $orderData['cash_on_delivery'] ?? 0,
                 'insuredValue' => $orderData['insured_value'] ?? 0,
                 'thirdPartyPickup' => 0,
+                'observation' => $orderData['notes'] ?? '',
                 'awbRecipient' => [
                     'county' => $orderData['county_id'],
                     'city' => $orderData['city_id'],
@@ -554,6 +555,7 @@ class SamedayService
                 'cashOnDelivery' => $orderData['cash_on_delivery'] ?? 0,
                 'insuredValue' => $orderData['insured_value'] ?? 0,
                 'thirdPartyPickup' => 0,
+                'observation' => $orderData['notes'] ?? '',
                 'awbRecipient' => [
                     'name' => $orderData['name'],
                     'phoneNumber' => $orderData['phone'],

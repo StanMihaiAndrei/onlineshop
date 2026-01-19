@@ -98,6 +98,7 @@ class AdminOrderController extends Controller
                 'weight' => $order->getTotalWeight(),
                 'cash_on_delivery' => $order->payment_method === 'cash_on_delivery' ? $order->total_amount : 0,
                 'insured_value' => $order->total_amount,
+                'notes' => $order->notes,
             ];
 
             $result = $this->samedayService->createHomeDeliveryAwb($orderData);
@@ -158,6 +159,7 @@ class AdminOrderController extends Controller
                 'weight' => $order->getTotalWeight(),
                 'cash_on_delivery' => $order->payment_method === 'cash_on_delivery' ? $order->total_amount : 0,
                 'insured_value' => $order->total_amount,
+                'notes' => $order->notes,
             ];
 
             $result = $this->samedayService->createLockerDeliveryAwb($orderData);
