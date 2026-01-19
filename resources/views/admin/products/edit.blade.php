@@ -297,13 +297,11 @@
     </form>
 
     <script>
-        function deleteImage(productId, imageIndex) {
-            if (confirm('Are you sure you want to delete this image?')) {
-                const form = document.getElementById('delete-image-form');
-                form.action = `/admin/products/${productId}/images`;
-                document.getElementById('delete-image-index').value = imageIndex;
-                form.submit();
-            }
-        }
+         function deleteImage(productId, imageIndex) {
+        const form = document.getElementById('delete-image-form');
+        form.action = `/admin/products/${productId}/images`;
+        document.getElementById('delete-image-index').value = imageIndex;
+        form.submit();
+    }
     </script>
 </x-app-layout>
