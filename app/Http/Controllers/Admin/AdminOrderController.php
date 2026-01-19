@@ -57,7 +57,7 @@ class AdminOrderController extends Controller
             }
         }
 
-        return back()->with('success', 'Order status updated successfully.');
+        return back()->with('success', 'Starea comenzii a fost actualizată cu succes.');
     }
 
     public function updatePaymentStatus(Request $request, Order $order)
@@ -68,7 +68,7 @@ class AdminOrderController extends Controller
 
         $order->update(['payment_status' => $validated['payment_status']]);
 
-        return back()->with('success', 'Payment status updated successfully.');
+        return back()->with('success', 'Starea plății a fost actualizată cu succes.');
     }
 
     /**

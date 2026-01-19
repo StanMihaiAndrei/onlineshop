@@ -22,7 +22,7 @@ class CheckoutController extends Controller
         $cartItems = session()->get('cart', []);
 
         if (empty($cartItems)) {
-            return redirect()->route('shop')->with('error', 'Your cart is empty');
+            return redirect()->route('shop')->with('error', 'Cosul tău este gol');
         }
 
         $cartTotal = collect($cartItems)->sum(function ($item) {
@@ -88,7 +88,7 @@ class CheckoutController extends Controller
         $cartItems = session()->get('cart', []);
 
         if (empty($cartItems)) {
-            return redirect()->route('shop')->with('error', 'Your cart is empty');
+            return redirect()->route('shop')->with('error', 'Cosul tău este gol');
         }
 
         try {
@@ -155,7 +155,7 @@ class CheckoutController extends Controller
                 $product = Product::find($item['id']);
 
                 if (!$product || $product->stock < $item['quantity']) {
-                    throw new \Exception("Product {$item['title']} is out of stock");
+                    throw new \Exception("Produsul {$item['title']} este epuizat sau nu are stoc suficient.");
                 }
 
                 OrderItem::create([
@@ -189,10 +189,10 @@ class CheckoutController extends Controller
             // For cash on delivery, send emails and show success
             $this->sendOrderEmails($order);
             session()->forget(['cart', 'coupon_code']);
-            return redirect()->route('checkout.success', $order)->with('success', 'Order placed successfully!');
+            return redirect()->route('checkout.success', $order)->with('success', 'Comanda a fost plasată cu succes!');
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'Error placing order: ' . $e->getMessage())->withInput();
+            return back()->with('error', 'Eroare la plasarea comenzii: ' . $e->getMessage())->withInput();
         }
     }
 
@@ -208,7 +208,7 @@ class CheckoutController extends Controller
         $coupon = Coupon::where('code', strtoupper($request->coupon_code))->first();
 
         if (!$coupon) {
-            return back()->with('error', 'Coupon code not found.');
+            return back()->with('error', 'Codul de cupon nu a fost găsit.');
         }
 
         $validation = $coupon->isValid($cartTotal);
@@ -220,13 +220,13 @@ class CheckoutController extends Controller
         // Salvează cuponul în sesiune
         session()->put('coupon_code', $coupon->code);
 
-        return back()->with('success', 'Coupon applied successfully!');
+        return back()->with('success', 'Cupon aplicat cu succes!');
     }
 
     public function removeCoupon()
     {
         session()->forget('coupon_code');
-        return back()->with('success', 'Coupon removed.');
+        return back()->with('success', 'Cupon eliminat cu succes!');
     }
 
     private function sendOrderEmails(Order $order)
@@ -344,7 +344,7 @@ class CheckoutController extends Controller
         session()->forget(['cart', 'coupon_code', 'shipping_cost']);
 
         return redirect()->route('checkout.success', $order)
-            ->with('success', 'Payment successful! Order placed successfully!');
+            ->with('success', 'Plata a fost efectuată cu succes! Comanda a fost plasată cu succes!');
     }
 
     public function stripeCancel(Request $request, Order $order)
@@ -361,7 +361,7 @@ class CheckoutController extends Controller
         $order->delete();
 
         return redirect()->route('checkout')
-            ->with('error', 'Payment cancelled. Please try again.');
+            ->with('error', 'Plata a fost anulată. Vă rugăm să încercați din nou.');
     }
 
     public function webhook(Request $request)

@@ -29,7 +29,7 @@ class ColorController extends Controller
         Color::create($validated);
 
         return redirect()->route('admin.colors.index')
-            ->with('success', 'Color created successfully!');
+            ->with('success', 'Culoarea a fost creată cu succes!');
     }
 
     public function edit(Color $color)
@@ -51,7 +51,7 @@ class ColorController extends Controller
         ]);
 
         return redirect()->route('admin.colors.index')
-            ->with('success', 'Color updated successfully!');
+            ->with('success', 'Culoarea a fost actualizată cu succes!');
     }
 
     public function destroy(Color $color)
@@ -59,6 +59,6 @@ class ColorController extends Controller
         $color->delete();
 
         return redirect()->route('admin.colors.index')
-            ->with('success', 'Color deleted successfully!');
+            ->with('success', 'Culoarea a fost ștearsă cu succes!');
     }
 }

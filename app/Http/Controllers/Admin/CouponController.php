@@ -39,7 +39,7 @@ class CouponController extends Controller
         Coupon::create($validated);
 
         return redirect()->route('admin.coupons.index')
-            ->with('success', 'Coupon created successfully!');
+            ->with('success', 'Cuponul a fost creat cu succes!');
     }
 
     public function edit(Coupon $coupon)
@@ -66,13 +66,13 @@ class CouponController extends Controller
         $coupon->update($validated);
 
         return redirect()->route('admin.coupons.index')
-            ->with('success', 'Coupon updated successfully!');
+            ->with('success', 'Cuponul a fost actualizat cu succes!');
     }
 
     public function destroy(Coupon $coupon)
     {
         $coupon->delete();
         return redirect()->route('admin.coupons.index')
-            ->with('success', 'Coupon deleted successfully!');
+            ->with('success', 'Cuponul a fost ștears cu succes!');
     }
 }

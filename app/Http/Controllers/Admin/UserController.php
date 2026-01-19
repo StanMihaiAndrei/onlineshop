@@ -39,7 +39,7 @@ class UserController extends Controller
             'email_verified_at' => $request->has('email_verified') ? now() : null,
         ]);
 
-        return redirect()->route('admin.users.index')->with('success', 'User created successfully.');
+        return redirect()->route('admin.users.index')->with('success', 'Utilizatorul a fost creat cu succes!');
     }
 
     public function show(User $user)
@@ -79,29 +79,29 @@ class UserController extends Controller
 
         $user->save();
 
-        return redirect()->route('admin.users.index')->with('success', 'User updated successfully.');
+        return redirect()->route('admin.users.index')->with('success', 'Utilizatorul a fost actualizat cu succes!');
     }
 
     public function destroy(User $user)
     {
         // Prevent deleting yourself
         if ($user->id === auth()->id()) {
-            return back()->with('error', 'You cannot delete your own account.');
+            return back()->with('error', 'Nu vă puteți șterge propriul cont.');
         }
 
         $user->delete();
 
-        return redirect()->route('admin.users.index')->with('success', 'User deleted successfully.');
+        return redirect()->route('admin.users.index')->with('success', 'Utilizatorul a fost șters cu succes.');
     }
     
     public function toggleEmailVerification(User $user)
     {
         if ($user->email_verified_at) {
             $user->email_verified_at = null;
-            $message = 'Email verification removed successfully.';
+            $message = 'Verificarea emailului a fost eliminată cu succes.';
         } else {
             $user->email_verified_at = now();
-            $message = 'Email verified successfully.';
+            $message = 'Emailul a fost verificat cu succes.';
         }
         
         $user->save();

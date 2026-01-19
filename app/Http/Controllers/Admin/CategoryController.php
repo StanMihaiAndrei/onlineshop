@@ -44,7 +44,7 @@ class CategoryController extends Controller
         Category::create($validated);
 
         return redirect()->route('admin.categories.index')
-            ->with('success', 'Category created successfully!');
+            ->with('success', 'Categoria a fost creată cu succes!');
     }
 
     public function edit(Category $category)
@@ -69,12 +69,12 @@ class CategoryController extends Controller
 
         // Verifică că nu setăm categoria ca părinte al ei însăși
         if ($validated['parent_id'] == $category->id) {
-            return back()->withErrors(['parent_id' => 'A category cannot be its own parent.']);
+            return back()->withErrors(['parent_id' => 'O categorie nu poate fi părinte pentru ea însăși.']);
         }
 
         // Verifică că nu setăm o subcategorie a categoriei curente ca părinte
         if ($validated['parent_id'] && $category->allChildren->contains('id', $validated['parent_id'])) {
-            return back()->withErrors(['parent_id' => 'Cannot set a subcategory as parent.']);
+            return back()->withErrors(['parent_id' => 'Nu se poate seta o subcategorie ca părinte.']);
         }
 
         $category->update([
@@ -85,7 +85,7 @@ class CategoryController extends Controller
         ]);
 
         return redirect()->route('admin.categories.index')
-            ->with('success', 'Category updated successfully!');
+            ->with('success', 'Categoria a fost actualizată cu succes!');
     }
 
     public function destroy(Category $category)
@@ -93,12 +93,12 @@ class CategoryController extends Controller
         // Verifică dacă categoria are subcategorii
         if ($category->allChildren()->count() > 0) {
             return redirect()->route('admin.categories.index')
-                ->withErrors(['error' => 'Cannot delete category with subcategories. Delete subcategories first.']);
+                ->withErrors(['error' => 'Nu se poate șterge categoria deoarece are subcategorii. Șterge mai întâi subcategoriile.']);
         }
 
         $category->delete();
 
         return redirect()->route('admin.categories.index')
-            ->with('success', 'Category deleted successfully!');
+            ->with('success', 'Categoria a fost ștearsă cu succes!');
     }
 }

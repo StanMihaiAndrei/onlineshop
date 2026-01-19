@@ -41,7 +41,7 @@
                         </a>
                     @else
                         <a href="{{ route('register') }}" class="block w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition">
-                            Creează un cont pentru a urmări comanda
+                            Creează un cont pentru vedea detaliile comenzilor viitoare
                         </a>
                     @endauth
                     <a href="{{ route('shop') }}" class="block w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 px-6 rounded-lg transition">
