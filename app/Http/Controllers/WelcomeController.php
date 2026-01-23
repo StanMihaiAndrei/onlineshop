@@ -12,31 +12,35 @@ class WelcomeController extends Controller
     {
         // Obține categoriile
         $decoratiuniCasaCategory = Category::where('slug', 'decoratiuni-casa')->first();
-        $cerceiCategory = Category::where('slug', 'cercei')->first();
+        $bijuteriiCategory = Category::where('slug', 'bijuterii')->first();
         $pomisoriCategory = Category::where('slug', 'pomisori')->first();
 
-        // Obține produse pentru fiecare categorie
-        $decoratiuniCasa = $decoratiuniCasaCategory 
-            ? Product::whereHas('categories', function($query) use ($decoratiuniCasaCategory) {
+        // Obține primele 4 produse pentru fiecare categorie
+        $decoratiuniCasa = $decoratiuniCasaCategory
+            ? Product::whereHas('categories', function ($query) use ($decoratiuniCasaCategory) {
                 $query->where('categories.id', $decoratiuniCasaCategory->id);
-            })->where('stock', '>', 0)->inRandomOrder()->take(3)->get()
+            })->where('stock', '>', 0)->inRandomOrder()->take(4)->get()
             : collect();
 
-        $cercei = $cerceiCategory
-            ? Product::whereHas('categories', function($query) use ($cerceiCategory) {
-                $query->where('categories.id', $cerceiCategory->id);
-            })->where('stock', '>', 0)->inRandomOrder()->take(3)->get()
+        $bijuterii = $bijuteriiCategory
+            ? Product::whereHas('categories', function ($query) use ($bijuteriiCategory) {
+                $query->where('categories.id', $bijuteriiCategory->id);
+            })->where('stock', '>', 0)->inRandomOrder()->take(4)->get()
             : collect();
 
         $pomisori = $pomisoriCategory
-            ? Product::whereHas('categories', function($query) use ($pomisoriCategory) {
+            ? Product::whereHas('categories', function ($query) use ($pomisoriCategory) {
                 $query->where('categories.id', $pomisoriCategory->id);
-            })->where('stock', '>', 0)->inRandomOrder()->take(3)->get()
+            })->where('stock', '>', 0)->inRandomOrder()->take(4)->get()
             : collect();
 
         return view('welcome', compact(
-            'decoratiuniCasa', 'cercei', 'pomisori',
-            'decoratiuniCasaCategory', 'cerceiCategory', 'pomisoriCategory'
+            'decoratiuniCasa',
+            'bijuterii',
+            'pomisori',
+            'decoratiuniCasaCategory',
+            'bijuteriiCategory',
+            'pomisoriCategory'
         ));
     }
 }

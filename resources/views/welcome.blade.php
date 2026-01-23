@@ -166,166 +166,390 @@
         </div>
     </section>
 
-     <!-- Collections Preview -->
-    <section id="colectii" class="py-20 bg-gray-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl font-playfair font-bold text-gray-900 mb-4">Colecțiile Noastre</h2>
-                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                    Explorează universul creațiilor handmade, de la bijuterii elegante la decorațiuni de casă și cadouri personalizate pentru orice ocazie specială.
-                </p>
+    <!-- Collections Preview -->
+<section id="colectii" class="py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="text-4xl font-playfair font-bold text-gray-900 mb-4">Colecțiile Noastre</h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                Explorează universul creațiilor handmade, de la bijuterii elegante la decorațiuni de casă și cadouri personalizate pentru orice ocazie specială.
+            </p>
+        </div>
+        
+        <div x-data="{ activeTab: 'decoratiuni' }">
+            <!-- Category Tabs -->
+            <div class="flex justify-center mb-8">
+                <div class="inline-flex rounded-xl bg-white shadow-md p-1.5 border border-gray-200">
+                    <button @click="activeTab = 'decoratiuni'" 
+                            :class="activeTab === 'decoratiuni' ? 'bg-primary text-white' : 'text-gray-700 hover:bg-gray-100'"
+                            class="px-6 py-3 rounded-lg font-semibold text-sm transition-all duration-200 ease-in-out">
+                        Decorațiuni Casă
+                    </button>
+                    <button @click="activeTab = 'bijuterii'" 
+                            :class="activeTab === 'bijuterii' ? 'bg-primary text-white' : 'text-gray-700 hover:bg-gray-100'"
+                            class="px-6 py-3 rounded-lg font-semibold text-sm transition-all duration-200 ease-in-out">
+                        Bijuterii
+                    </button>
+                    <button @click="activeTab = 'pomisori'" 
+                            :class="activeTab === 'pomisori' ? 'bg-primary text-white' : 'text-gray-700 hover:bg-gray-100'"
+                            class="px-6 py-3 rounded-lg font-semibold text-sm transition-all duration-200 ease-in-out">
+                        Pomișori
+                    </button>
+                </div>
             </div>
-            
-            <div class="grid md:grid-cols-3 gap-8">
-                <!-- Decorațiuni Casă -->
-                <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover-lift">
-                    <div class="p-6 pb-4">
-                        <h3 class="text-2xl font-playfair font-bold text-gray-900 mb-2">Decorațiuni Casă</h3>
-                        <p class="text-gray-600 mb-4">Transformă-ți spațiul cu decorațiuni handmade ce aduc căldură și personalitate.</p>
-                    </div>
-                    
-                    @if($decoratiuniCasa->count() > 0)
-                        <div class="grid grid-cols-1 gap-3 px-6 pb-6">
-                             @foreach($decoratiuniCasa as $product)
-                                <a href="{{ route('shop.product', ['categorySlug' => $product->categories->first()->slug ?? 'decoratiuni-casa', 'productSlug' => $product->slug]) }}" class="group block">
-                                    <div class="flex gap-3 items-center bg-gray-50 rounded-lg p-3 hover:bg-gray-100 transition">
-                                        @if($product->first_image)
-                                            <img src="{{ asset('storage/' . $product->first_image) }}" 
-                                                 alt="{{ $product->title }}"
-                                                 class="w-20 h-20 object-cover rounded-lg">
-                                        @else
-                                            <div class="w-20 h-20 bg-gradient-to-br from-pink-100 to-purple-100 rounded-lg flex items-center justify-center">
-                                                <svg class="w-8 h-8 text-primary" fill="currentColor" viewBox="0 0 20 20">
-                                                    <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
-                                                </svg>
-                                            </div>
-                                        @endif
-                                        <div class="flex-1 min-w-0">
-                                            <h4 class="font-semibold text-gray-900 truncate group-hover:text-primary transition">{{ $product->title }}</h4>
-                                            <p class="text-primary font-bold">${{ number_format($product->price, 2) }}</p>
-                                        </div>
-                                    </div>
-                                </a>
-                            @endforeach
-                        </div>
-                    @else
-                        <div class="px-6 pb-6">
-                            <div class="bg-gradient-to-br from-pink-100 to-purple-100 rounded-lg p-8 text-center">
-                                <svg class="w-16 h-16 mx-auto text-primary mb-2" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
-                                </svg>
-                                <p class="text-gray-600 text-sm">Produse în curând</p>
-                            </div>
-                        </div>
-                    @endif
-                    
-                     <div class="px-6 pb-6">
-                        <a href="{{ $decoratiuniCasaCategory ? route('shop', ['category' => $decoratiuniCasaCategory->id]) : route('shop') }}" class="block text-center text-primary font-semibold hover:underline">
-                            Vezi toate decorațiunile →
-                        </a>
-                    </div>
-                </div>
 
-                <!-- Cercei -->
-                <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover-lift">
-                    <div class="p-6 pb-4">
-                        <h3 class="text-2xl font-playfair font-bold text-gray-900 mb-2">Cercei</h3>
-                        <p class="text-gray-600 mb-4">Bijuterii elegante și unice, create manual cu materiale premium.</p>
-                    </div>
-                    
-                    @if($cercei->count() > 0)
-                        <div class="grid grid-cols-1 gap-3 px-6 pb-6">
-                            @foreach($cercei as $product)
-                                 <a href="{{ route('shop.product', ['categorySlug' => $product->categories->first()->slug ?? 'cercei', 'productSlug' => $product->slug]) }}" class="group block">
-                                    <div class="flex gap-3 items-center bg-gray-50 rounded-lg p-3 hover:bg-gray-100 transition">
-                                        @if($product->first_image)
-                                            <img src="{{ asset('storage/' . $product->first_image) }}" 
-                                                 alt="{{ $product->title }}"
-                                                 class="w-20 h-20 object-cover rounded-lg">
-                                        @else
-                                            <div class="w-20 h-20 bg-gradient-to-br from-purple-100 to-blue-100 rounded-lg flex items-center justify-center">
-                                                <svg class="w-8 h-8 text-primary" fill="currentColor" viewBox="0 0 20 20">
-                                                    <path fill-rule="evenodd" d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a1 1 0 01-2 0V6H3a1 1 0 010-2h1V3a1 1 0 011-1zm0 10a1 1 0 011 1v1h1a1 1 0 110 2H6v1a1 1 0 11-2 0v-1H3a1 1 0 110-2h1v-1a1 1 0 011-1zM12 2a1 1 0 01.967.744L14.146 7.2 17.5 9.134a1 1 0 010 1.732l-3.354 1.935-1.18 4.455a1 1 0 01-1.933 0L9.854 12.8 6.5 10.866a1 1 0 010-1.732l3.354-1.935 1.18-4.455A1 1 0 0112 2z" clip-rule="evenodd"/>
-                                                </svg>
-                                            </div>
-                                        @endif
-                                        <div class="flex-1 min-w-0">
-                                            <h4 class="font-semibold text-gray-900 truncate group-hover:text-primary transition">{{ $product->title }}</h4>
-                                            <p class="text-primary font-bold">${{ number_format($product->price, 2) }}</p>
+            <!-- Products Grid - Decorațiuni Casă -->
+            <div x-show="activeTab === 'decoratiuni'" 
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0 transform scale-95"
+                 x-transition:enter-end="opacity-100 transform scale-100">
+                @if($decoratiuniCasa->count() > 0)
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                        @foreach($decoratiuniCasa as $product)
+                            <div class="bg-white rounded-xl shadow-md overflow-hidden hover-lift group border border-gray-100 flex flex-col h-full">
+                                @php
+                                    $primaryCategory = $product->categories->first();
+                                    $productUrl = $primaryCategory 
+                                        ? route('shop.product', [$primaryCategory->slug, $product->slug])
+                                        : route('shop.product', ['uncategorized', $product->slug]);
+                                @endphp
+                                
+                                <div class="relative">
+                                    <a href="{{ $productUrl }}" class="block">
+                                        <div class="bg-gradient-to-br from-pink-100 to-purple-100 relative overflow-hidden" style="height: 320px;">
+                                            @if(is_array($product->images) && count($product->images) > 0)
+                                                <img src="{{ asset('storage/' . $product->images[0]) }}" 
+                                                     alt="{{ $product->name }}"
+                                                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                                            @else
+                                                <div class="w-full h-full flex items-center justify-center">
+                                                    <svg class="w-20 h-20 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"/>
+                                                    </svg>
+                                                </div>
+                                            @endif
+                                            
+                                            @if($product->stock <= 0)
+                                                <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                                                    <span class="bg-red-500 text-white px-4 py-2 rounded-lg font-bold text-sm">Stoc epuizat</span>
+                                                </div>
+                                            @endif
                                         </div>
+                                    </a>
+                                    
+                                    <div class="absolute top-3 right-3 z-10" onclick="event.stopPropagation();">
+                                        <x-wishlist-icon :productId="$product->id" 
+                                                         iconClass="w-6 h-6"
+                                                         buttonClass="p-2 bg-white/90 hover:bg-white rounded-full shadow-lg transition-all hover:scale-110" />
                                     </div>
-                                </a>
-                            @endforeach
-                        </div>
-                    @else
-                        <div class="px-6 pb-6">
-                            <div class="bg-gradient-to-br from-purple-100 to-blue-100 rounded-lg p-8 text-center">
-                                <svg class="w-16 h-16 mx-auto text-primary mb-2" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a1 1 0 01-2 0V6H3a1 1 0 010-2h1V3a1 1 0 011-1zm0 10a1 1 0 011 1v1h1a1 1 0 110 2H6v1a1 1 0 11-2 0v-1H3a1 1 0 110-2h1v-1a1 1 0 011-1zM12 2a1 1 0 01.967.744L14.146 7.2 17.5 9.134a1 1 0 010 1.732l-3.354 1.935-1.18 4.455a1 1 0 01-1.933 0L9.854 12.8 6.5 10.866a1 1 0 010-1.732l3.354-1.935 1.18-4.455A1 1 0 0112 2z" clip-rule="evenodd"/>
-                                </svg>
-                                <p class="text-gray-600 text-sm">Produse în curând</p>
-                            </div>
-                        </div>
-                    @endif
-                    
-                    <div class="px-6 pb-6">
-                        <a href="{{ $cerceiCategory ? route('shop', ['category' => $cerceiCategory->id]) : route('shop') }}" class="block text-center text-primary font-semibold hover:underline">
-                            Vezi toți cerceii →
-                        </a>
-                    </div>
-                </div>
+                                </div>
+                                
+                                <div class="p-4 flex flex-col flex-grow">
+                                    <a href="{{ $productUrl }}">
+                                        <h3 class="text-sm font-bold text-gray-900 hover:text-primary transition mb-1.5 h-10 line-clamp-2">
+                                            {{ $product->name }}
+                                        </h3>
+                                    </a>
+                                    
+                                    <div class="h-6 mb-2">
+                                        @if($product->categories->count() > 0)
+                                            <span class="text-xs text-gray-500">{{ $product->categories->first()->name }}</span>
+                                        @endif
+                                    </div>
 
-                <!-- Pomișori -->
-                <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover-lift">
-                    <div class="p-6 pb-4">
-                        <h3 class="text-2xl font-playfair font-bold text-gray-900 mb-2">Pomișori</h3>
-                        <p class="text-gray-600 mb-4">Decorațiuni festive handmade pentru sărbători speciale.</p>
-                    </div>
-                    
-                    @if($pomisori->count() > 0)
-                        <div class="grid grid-cols-1 gap-3 px-6 pb-6">
-                            @foreach($pomisori as $product)
-                                 <a href="{{ route('shop.product', ['categorySlug' => $product->categories->first()->slug ?? 'pomisori', 'productSlug' => $product->slug]) }}" class="group block">
-                                    <div class="flex gap-3 items-center bg-gray-50 rounded-lg p-3 hover:bg-gray-100 transition">
-                                        @if($product->first_image)
-                                            <img src="{{ asset('storage/' . $product->first_image) }}" 
-                                                 alt="{{ $product->title }}"
-                                                 class="w-20 h-20 object-cover rounded-lg">
-                                        @else
-                                            <div class="w-20 h-20 bg-gradient-to-br from-blue-100 to-pink-100 rounded-lg flex items-center justify-center">
-                                                <svg class="w-8 h-8 text-primary" fill="currentColor" viewBox="0 0 20 20">
-                                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                                                </svg>
+                                    <div class="h-6 mb-2">
+                                        @if($product->colors->count() > 0)
+                                            <div class="flex gap-1">
+                                                @foreach($product->colors->take(3) as $color)
+                                                    <span class="w-4 h-4 rounded-full border-2 border-gray-300" 
+                                                          style="background-color: {{ $color->hex_code }}"
+                                                          title="{{ $color->name }}"></span>
+                                                @endforeach
                                             </div>
                                         @endif
-                                        <div class="flex-1 min-w-0">
-                                            <h4 class="font-semibold text-gray-900 truncate group-hover:text-primary transition">{{ $product->title }}</h4>
-                                            <p class="text-primary font-bold">${{ number_format($product->price, 2) }}</p>
-                                        </div>
                                     </div>
-                                </a>
-                            @endforeach
-                        </div>
-                    @else
-                        <div class="px-6 pb-6">
-                            <div class="bg-gradient-to-br from-blue-100 to-pink-100 rounded-lg p-8 text-center">
-                                <svg class="w-16 h-16 mx-auto text-primary mb-2" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                                </svg>
-                                <p class="text-gray-600 text-sm">Produse în curând</p>
+
+                                    <p class="text-gray-600 text-xs mb-3 h-10 line-clamp-2 leading-relaxed">
+                                        {{ $product->description }}
+                                    </p>
+                                    
+                                    <div class="flex justify-between items-center mb-3 h-6">
+                                        <span class="text-lg font-bold text-primary">${{ number_format($product->price, 2) }}</span>
+                                        @if($product->stock > 0 && $product->stock <= 5)
+                                            <span class="text-xs text-orange-600 font-semibold">Stoc limitat!</span>
+                                        @endif
+                                    </div>
+                                    
+                                    <div class="mt-auto pt-3 border-t border-gray-100">
+                                        @if($product->stock > 0)
+                                            <button onclick="addToCart({{ $product->id }}, 1)"
+                                                    class="w-full bg-primary hover:bg-primary-dark text-white px-4 py-2.5 rounded-lg transition transform hover:scale-105 font-semibold text-sm shadow-md flex items-center justify-center gap-2">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                                </svg>
+                                                Adaugă în coș
+                                            </button>
+                                        @else
+                                            <button disabled
+                                                    class="w-full bg-gray-300 text-gray-500 px-4 py-2.5 rounded-lg cursor-not-allowed font-semibold text-sm">
+                                                Stoc epuizat
+                                            </button>
+                                        @endif
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    @endif
+                        @endforeach
+                    </div>
                     
-                   <div class="px-6 pb-6">
-                        <a href="{{ $pomisoriCategory ? route('shop', ['category' => $pomisoriCategory->id]) : route('shop') }}" class="block text-center text-primary font-semibold hover:underline">
-                            Vezi toți pomișorii →
+                    <div class="text-center mt-8">
+                        <a href="{{ $decoratiuniCasaCategory ? route('shop', ['category' => $decoratiuniCasaCategory->id]) : route('shop') }}" 
+                           class="inline-block bg-primary hover:bg-primary-dark text-white px-8 py-3 rounded-full font-semibold text-sm transition-all transform hover:scale-105 shadow-md">
+                            Vezi toate produsele din Decorațiuni Casă →
                         </a>
                     </div>
-                </div>
+                @else
+                    <div class="text-center py-12 bg-white rounded-xl shadow-md">
+                        <p class="text-gray-600 text-sm">Nu există produse în această categorie.</p>
+                    </div>
+                @endif
+            </div>
+
+            <!-- Products Grid - Bijuterii -->
+            <div x-show="activeTab === 'bijuterii'" 
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0 transform scale-95"
+                 x-transition:enter-end="opacity-100 transform scale-100"
+                 style="display: none;">
+                @if($bijuterii->count() > 0)
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                        @foreach($bijuterii as $product)
+                            <div class="bg-white rounded-xl shadow-md overflow-hidden hover-lift group border border-gray-100 flex flex-col h-full">
+                                @php
+                                    $primaryCategory = $product->categories->first();
+                                    $productUrl = $primaryCategory 
+                                        ? route('shop.product', [$primaryCategory->slug, $product->slug])
+                                        : route('shop.product', ['uncategorized', $product->slug]);
+                                @endphp
+                                
+                                <div class="relative">
+                                    <a href="{{ $productUrl }}" class="block">
+                                        <div class="bg-gradient-to-br from-pink-100 to-purple-100 relative overflow-hidden" style="height: 320px;">
+                                            @if(is_array($product->images) && count($product->images) > 0)
+                                                <img src="{{ asset('storage/' . $product->images[0]) }}" 
+                                                     alt="{{ $product->name }}"
+                                                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                                            @else
+                                                <div class="w-full h-full flex items-center justify-center">
+                                                    <svg class="w-20 h-20 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"/>
+                                                    </svg>
+                                                </div>
+                                            @endif
+                                            
+                                            @if($product->stock <= 0)
+                                                <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                                                    <span class="bg-red-500 text-white px-4 py-2 rounded-lg font-bold text-sm">Stoc epuizat</span>
+                                                </div>
+                                            @endif
+                                        </div>
+                                    </a>
+                                    
+                                    <div class="absolute top-3 right-3 z-10" onclick="event.stopPropagation();">
+                                        <x-wishlist-icon :productId="$product->id" 
+                                                         iconClass="w-6 h-6"
+                                                         buttonClass="p-2 bg-white/90 hover:bg-white rounded-full shadow-lg transition-all hover:scale-110" />
+                                    </div>
+                                </div>
+                                
+                                <div class="p-4 flex flex-col flex-grow">
+                                    <a href="{{ $productUrl }}">
+                                        <h3 class="text-sm font-bold text-gray-900 hover:text-primary transition mb-1.5 h-10 line-clamp-2">
+                                            {{ $product->name }}
+                                        </h3>
+                                    </a>
+                                    
+                                    <div class="h-6 mb-2">
+                                        @if($product->categories->count() > 0)
+                                            <span class="text-xs text-gray-500">{{ $product->categories->first()->name }}</span>
+                                        @endif
+                                    </div>
+
+                                    <div class="h-6 mb-2">
+                                        @if($product->colors->count() > 0)
+                                            <div class="flex gap-1">
+                                                @foreach($product->colors->take(3) as $color)
+                                                    <span class="w-4 h-4 rounded-full border-2 border-gray-300" 
+                                                          style="background-color: {{ $color->hex_code }}"
+                                                          title="{{ $color->name }}"></span>
+                                                @endforeach
+                                            </div>
+                                        @endif
+                                    </div>
+
+                                    <p class="text-gray-600 text-xs mb-3 h-10 line-clamp-2 leading-relaxed">
+                                        {{ $product->description }}
+                                    </p>
+                                    
+                                    <div class="flex justify-between items-center mb-3 h-6">
+                                        <span class="text-lg font-bold text-primary">${{ number_format($product->price, 2) }}</span>
+                                        @if($product->stock > 0 && $product->stock <= 5)
+                                            <span class="text-xs text-orange-600 font-semibold">Stoc limitat!</span>
+                                        @endif
+                                    </div>
+                                    
+                                    <div class="mt-auto pt-3 border-t border-gray-100">
+                                        @if($product->stock > 0)
+                                            <button onclick="addToCart({{ $product->id }}, 1)"
+                                                    class="w-full bg-primary hover:bg-primary-dark text-white px-4 py-2.5 rounded-lg transition transform hover:scale-105 font-semibold text-sm shadow-md flex items-center justify-center gap-2">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                                </svg>
+                                                Adaugă în coș
+                                            </button>
+                                        @else
+                                            <button disabled
+                                                    class="w-full bg-gray-300 text-gray-500 px-4 py-2.5 rounded-lg cursor-not-allowed font-semibold text-sm">
+                                                Stoc epuizat
+                                            </button>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                    
+                    <div class="text-center mt-8">
+                        <a href="{{ $bijuteriiCategory ? route('shop', ['category' => $bijuteriiCategory->id]) : route('shop') }}" 
+                           class="inline-block bg-primary hover:bg-primary-dark text-white px-8 py-3 rounded-full font-semibold text-sm transition-all transform hover:scale-105 shadow-md">
+                            Vezi toate produsele din Bijuterii →
+                        </a>
+                    </div>
+                @else
+                    <div class="text-center py-12 bg-white rounded-xl shadow-md">
+                        <p class="text-gray-600 text-sm">Nu există produse în această categorie.</p>
+                    </div>
+                @endif
+            </div>
+
+            <!-- Products Grid - Pomișori -->
+            <div x-show="activeTab === 'pomisori'" 
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0 transform scale-95"
+                 x-transition:enter-end="opacity-100 transform scale-100"
+                 style="display: none;">
+                @if($pomisori->count() > 0)
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                        @foreach($pomisori as $product)
+                            <div class="bg-white rounded-xl shadow-md overflow-hidden hover-lift group border border-gray-100 flex flex-col h-full">
+                                @php
+                                    $primaryCategory = $product->categories->first();
+                                    $productUrl = $primaryCategory 
+                                        ? route('shop.product', [$primaryCategory->slug, $product->slug])
+                                        : route('shop.product', ['uncategorized', $product->slug]);
+                                @endphp
+                                
+                                <div class="relative">
+                                    <a href="{{ $productUrl }}" class="block">
+                                        <div class="bg-gradient-to-br from-pink-100 to-purple-100 relative overflow-hidden" style="height: 320px;">
+                                            @if(is_array($product->images) && count($product->images) > 0)
+                                                <img src="{{ asset('storage/' . $product->images[0]) }}" 
+                                                     alt="{{ $product->name }}"
+                                                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                                            @else
+                                                <div class="w-full h-full flex items-center justify-center">
+                                                    <svg class="w-20 h-20 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"/>
+                                                    </svg>
+                                                </div>
+                                            @endif
+                                            
+                                            @if($product->stock <= 0)
+                                                <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                                                    <span class="bg-red-500 text-white px-4 py-2 rounded-lg font-bold text-sm">Stoc epuizat</span>
+                                                </div>
+                                            @endif
+                                        </div>
+                                    </a>
+                                    
+                                    <div class="absolute top-3 right-3 z-10" onclick="event.stopPropagation();">
+                                        <x-wishlist-icon :productId="$product->id" 
+                                                         iconClass="w-6 h-6"
+                                                         buttonClass="p-2 bg-white/90 hover:bg-white rounded-full shadow-lg transition-all hover:scale-110" />
+                                    </div>
+                                </div>
+                                
+                                <div class="p-4 flex flex-col flex-grow">
+                                    <a href="{{ $productUrl }}">
+                                        <h3 class="text-sm font-bold text-gray-900 hover:text-primary transition mb-1.5 h-10 line-clamp-2">
+                                            {{ $product->name }}
+                                        </h3>
+                                    </a>
+                                    
+                                    <div class="h-6 mb-2">
+                                        @if($product->categories->count() > 0)
+                                            <span class="text-xs text-gray-500">{{ $product->categories->first()->name }}</span>
+                                        @endif
+                                    </div>
+
+                                    <div class="h-6 mb-2">
+                                        @if($product->colors->count() > 0)
+                                            <div class="flex gap-1">
+                                                @foreach($product->colors->take(3) as $color)
+                                                    <span class="w-4 h-4 rounded-full border-2 border-gray-300" 
+                                                          style="background-color: {{ $color->hex_code }}"
+                                                          title="{{ $color->name }}"></span>
+                                                @endforeach
+                                            </div>
+                                        @endif
+                                    </div>
+
+                                    <p class="text-gray-600 text-xs mb-3 h-10 line-clamp-2 leading-relaxed">
+                                        {{ $product->description }}
+                                    </p>
+                                    
+                                    <div class="flex justify-between items-center mb-3 h-6">
+                                        <span class="text-lg font-bold text-primary">${{ number_format($product->price, 2) }}</span>
+                                        @if($product->stock > 0 && $product->stock <= 5)
+                                            <span class="text-xs text-orange-600 font-semibold">Stoc limitat!</span>
+                                        @endif
+                                    </div>
+                                    
+                                    <div class="mt-auto pt-3 border-t border-gray-100">
+                                        @if($product->stock > 0)
+                                            <button onclick="addToCart({{ $product->id }}, 1)"
+                                                    class="w-full bg-primary hover:bg-primary-dark text-white px-4 py-2.5 rounded-lg transition transform hover:scale-105 font-semibold text-sm shadow-md flex items-center justify-center gap-2">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                                </svg>
+                                                Adaugă în coș
+                                            </button>
+                                        @else
+                                            <button disabled
+                                                    class="w-full bg-gray-300 text-gray-500 px-4 py-2.5 rounded-lg cursor-not-allowed font-semibold text-sm">
+                                                Stoc epuizat
+                                            </button>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                    
+                    <div class="text-center mt-8">
+                        <a href="{{ $pomisoriCategory ? route('shop', ['category' => $pomisoriCategory->id]) : route('shop') }}" 
+                           class="inline-block bg-primary hover:bg-primary-dark text-white px-8 py-3 rounded-full font-semibold text-sm transition-all transform hover:scale-105 shadow-md">
+                            Vezi toate produsele din Pomișori →
+                        </a>
+                    </div>
+                @else
+                    <div class="text-center py-12 bg-white rounded-xl shadow-md">
+                        <p class="text-gray-600 text-sm">Nu există produse în această categorie.</p>
+                    </div>
+                @endif
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
     <!-- Features Section -->
     <section class="py-20 bg-white">
@@ -378,7 +602,7 @@
     </section>
 
     <!-- Collections Preview -->
-    <section id="colectii" class="py-20 bg-gray-50">
+    {{-- <section id="colectii" class="py-20 bg-gray-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
                 <h2 class="text-4xl font-playfair font-bold text-gray-900 mb-4">Colecțiile Noastre</h2>
@@ -435,7 +659,7 @@
                 </a>
             </div>
         </div>
-    </section>
+    </section> --}}
 
     <!-- About Section -->
     <section id="despre" class="py-20 bg-white">
