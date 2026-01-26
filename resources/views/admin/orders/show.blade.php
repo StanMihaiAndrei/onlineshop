@@ -33,7 +33,7 @@
                                 <div class="bg-green-50 border border-green-200 rounded p-2 my-2">
                                     <p class="text-green-800"><strong>🎉 Cupon Aplicat:</strong> {{ $order->coupon->code }}</p>
                                     <p class="text-green-700 text-sm">
-                                        Discount: ${{ number_format($order->discount_amount, 2) }}
+                                        Discount: RON {{ number_format($order->discount_amount, 2) }}
                                         @if($order->coupon->type === 'percentage')
                                             ({{ $order->coupon->value }}% off)
                                         @endif
@@ -41,7 +41,7 @@
                                 </div>
                             @endif
                             
-                            <p><strong>Total:</strong> ${{ number_format($order->total_amount, 2) }}</p>
+                            <p><strong>Total:</strong> RON {{ number_format($order->total_amount, 2) }}</p>
                             <p><strong>Metodă Plată:</strong> {{ $order->payment_method === 'card' ? 'Card' : 'Ramburs' }}</p>
                             <p><strong>Status:</strong> 
                                 <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
@@ -101,7 +101,7 @@
                                         </div>
                                         <div>
                                             <p class="text-sm text-gray-600">Cost Livrare</p>
-                                            <p class="text-lg font-semibold">${{ number_format($order->sameday_awb_cost, 2) }}</p>
+                                            <p class="text-lg font-semibold">RON {{ number_format($order->sameday_awb_cost, 2) }}</p>
                                         </div>
                                         <div>
                                             <p class="text-sm text-gray-600">Status AWB</p>
@@ -246,10 +246,10 @@
                                 <div class="flex justify-between items-center bg-white p-3 rounded">
                                     <div>
                                         <p class="font-medium">{{ $item->product_title }}</p>
-                                        <p class="text-sm text-gray-600">Cantitate: {{ $item->quantity }} × ${{ number_format($item->price, 2) }}</p>
+                                        <p class="text-sm text-gray-600">Cantitate: {{ $item->quantity }} × RON {{ number_format($item->price, 2) }}</p>
                                     </div>
                                     <div class="text-right">
-                                        <p class="font-medium">${{ number_format($item->subtotal, 2) }}</p>
+                                        <p class="font-medium">RON {{ number_format($item->subtotal, 2) }}</p>
                                     </div>
                                 </div>
                             @endforeach
@@ -261,13 +261,13 @@
                                 
                                 <div class="flex justify-between items-center mb-2">
                                     <span class="text-gray-700">Subtotal produse:</span>
-                                    <span class="font-medium">${{ number_format($subtotal, 2) }}</span>
+                                    <span class="font-medium">RON {{ number_format($subtotal, 2) }}</span>
                                 </div>
                                 
                                 @if($order->discount_amount > 0)
                                     <div class="flex justify-between items-center mb-2 text-green-600">
                                         <span>Discount ({{ $order->coupon->code }}):</span>
-                                        <span class="font-medium">-${{ number_format($order->discount_amount, 2) }}</span>
+                                        <span class="font-medium">-RON {{ number_format($order->discount_amount, 2) }}</span>
                                     </div>
                                 @endif
                                 
@@ -281,13 +281,13 @@
                                                 (🏠 Domiciliu)
                                             @endif
                                         </span>
-                                        <span class="font-medium">${{ number_format($order->shipping_cost, 2) }}</span>
+                                        <span class="font-medium">RON {{ number_format($order->shipping_cost, 2) }}</span>
                                     </div>
                                 @endif
                                 
                                 <div class="flex justify-between items-center font-bold text-lg pt-2 border-t">
                                     <span>Total de plată:</span>
-                                    <span class="text-blue-600">${{ number_format($order->total_amount, 2) }}</span>
+                                    <span class="text-blue-600">RON {{ number_format($order->total_amount, 2) }}</span>
                                 </div>
                             </div>
                         </div>

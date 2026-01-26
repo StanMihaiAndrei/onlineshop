@@ -82,7 +82,7 @@
                                 </div>
                                 @if($priceRange)
                                     <p class="text-xs text-gray-500 mt-1.5">
-                                        Interval: ${{ number_format($priceRange->min, 2) }} - ${{ number_format($priceRange->max, 2) }}
+                                        Interval: RON {{ number_format($priceRange->min, 2) }} - RON {{ number_format($priceRange->max, 2) }}
                                     </p>
                                 @endif
                             </div>

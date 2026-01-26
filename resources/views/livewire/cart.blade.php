@@ -77,14 +77,14 @@
                                 <div class="mt-1">
                                     @if($item['has_discount'] ?? false)
                                         <div class="flex items-center gap-2">
-                                            <span class="text-xs line-through text-gray-400">${{ number_format($item['price'], 2) }}</span>
-                                            <span class="text-sm font-bold text-red-600">${{ number_format($item['final_price'], 2) }}</span>
+                                            <span class="text-xs line-through text-gray-400">RON{{ number_format($item['price'], 2) }}</span>
+                                            <span class="text-sm font-bold text-red-600">RON{{ number_format($item['final_price'], 2) }}</span>
                                             <span class="text-xs bg-red-100 text-red-800 px-1.5 py-0.5 rounded font-bold">
                                                 -{{ $item['discount_percentage'] }}%
                                             </span>
                                         </div>
                                     @else
-                                        <p class="text-sm text-gray-600">${{ number_format($item['final_price'], 2) }}</p>
+                                        <p class="text-sm text-gray-600">RON{{ number_format($item['final_price'], 2) }}</p>
                                     @endif
                                 </div>
                                 
@@ -121,15 +121,15 @@
                                         <div class="flex items-center gap-2">
                                             <span class="text-xs text-gray-500">Subtotal:</span>
                                             <span class="text-xs line-through text-gray-400">
-                                                ${{ number_format($item['price'] * $item['quantity'], 2) }}
+                                                RON{{ number_format($item['price'] * $item['quantity'], 2) }}
                                             </span>
                                             <span class="text-sm font-bold text-gray-800">
-                                                ${{ number_format($item['final_price'] * $item['quantity'], 2) }}
+                                                RON{{ number_format($item['final_price'] * $item['quantity'], 2) }}
                                             </span>
                                         </div>
                                     @else
                                         <p class="text-sm font-semibold text-gray-800">
-                                            Subtotal: ${{ number_format($item['final_price'] * $item['quantity'], 2) }}
+                                            Subtotal: RON{{ number_format($item['final_price'] * $item['quantity'], 2) }}
                                         </p>
                                     @endif
                                 </div>
@@ -226,7 +226,7 @@
             <div class="border-t p-6 bg-gray-50 flex-shrink-0">
                 <div class="flex justify-between items-center mb-4">
                     <span class="text-lg font-semibold text-gray-800">Total:</span>
-                    <span class="text-2xl font-bold text-primary">${{ number_format($cartTotal, 2) }}</span>
+                    <span class="text-2xl font-bold text-primary">RON{{ number_format($cartTotal, 2) }}</span>
                 </div>
                 
                 <a href="{{ route('checkout') }}" 

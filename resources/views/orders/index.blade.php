@@ -37,7 +37,7 @@
                                                     Livrare EasyBox
                                                 @endif
                                                 @if($order->shipping_cost > 0)
-                                                    - ${{ number_format($order->shipping_cost, 2) }}
+                                                    - RON {{ number_format($order->shipping_cost, 2) }}
                                                 @else
                                                     - Gratuit
                                                 @endif
@@ -79,7 +79,7 @@
                                 </div>
 
                                 <div class="flex justify-between items-center pt-4 border-t border-gray-200">
-                                    <span class="text-lg font-semibold text-gray-900">Total: ${{ number_format($order->total_amount, 2) }}</span>
+                                    <span class="text-lg font-semibold text-gray-900">Total: RON{{ number_format($order->total_amount, 2) }}</span>
                                     <a href="{{ route('orders.show', $order) }}" class="text-blue-600 hover:text-blue-800 font-medium">
                                         View Details →
                                     </a>

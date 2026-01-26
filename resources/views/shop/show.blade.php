@@ -114,11 +114,11 @@
                         <div class="flex items-center gap-4 mb-6">
                             @if($product->hasDiscount())
                                 <div class="flex flex-col">
-                                    <span class="text-xl line-through text-gray-400">
-                                        ${{ number_format($product->price, 2) }}
+                                    <span class="text-md line-through text-gray-400">
+                                        RON {{ number_format($product->price, 2) }}
                                     </span>
-                                    <span class="text-3xl font-bold text-red-600">
-                                        ${{ number_format($product->final_price, 2) }}
+                                    <span class="text-xl font-bold text-red-600">
+                                        RON {{ number_format($product->final_price, 2) }}
                                     </span>
                                 </div>
                                 <span class="px-4 py-2 bg-red-100 text-red-800 rounded-full font-bold text-sm shadow-sm">
@@ -126,7 +126,7 @@
                                 </span>
                             @else
                                 <span class="text-3xl font-bold text-primary">
-                                    ${{ number_format($product->price, 2) }}
+                                    RON {{ number_format($product->price, 2) }}
                                 </span>
                             @endif
                             <span class="px-3 py-1.5 text-xs font-bold rounded-full shadow-sm

@@ -96,17 +96,17 @@
             <div class="flex items-center gap-2">
                 @if(method_exists($product, 'hasDiscount') && $product->hasDiscount())
                     <span class="text-xs line-through text-gray-400">
-                        ${{ number_format($product->price, 2) }}
+                        RON {{ number_format($product->price, 2) }}
                     </span>
-                    <span class="text-lg font-bold text-red-600">
-                        ${{ number_format($product->final_price, 2) }}
+                    <span class="text-xs font-bold text-red-600">
+                        RON {{ number_format($product->final_price, 2) }}
                     </span>
                     <span class="text-xs bg-red-100 text-red-800 px-2 py-0.5 rounded-full font-bold">
                         -{{ $product->discount_percentage }}%
                     </span>
                 @else
-                    <span class="text-lg font-bold text-primary">
-                        ${{ number_format($product->price, 2) }}
+                    <span class="text-sm font-bold text-primary">
+                        RON {{ number_format($product->price, 2) }}
                     </span>
                 @endif
             </div>

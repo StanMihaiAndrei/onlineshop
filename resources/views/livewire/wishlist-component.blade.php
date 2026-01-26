@@ -79,10 +79,10 @@
                                 @if($item['has_discount'])
                                     <div class="flex items-center gap-2">
                                         <span class="text-xs line-through text-gray-400">
-                                            ${{ number_format($item['price'], 2) }}
+                                            RON{{ number_format($item['price'], 2) }}
                                         </span>
                                         <span class="text-sm font-bold text-pink-600">
-                                            ${{ number_format($item['final_price'], 2) }}
+                                            RON{{ number_format($item['final_price'], 2) }}
                                         </span>
                                         <span class="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-bold">
                                             -{{ $item['discount_percentage'] }}%
@@ -90,7 +90,7 @@
                                     </div>
                                 @else
                                     <span class="text-sm font-bold text-gray-900">
-                                        ${{ number_format($item['price'], 2) }}
+                                        RON{{ number_format($item['price'], 2) }}
                                     </span>
                                 @endif
                             </div>

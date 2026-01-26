@@ -255,14 +255,14 @@
                                         <p class="text-sm text-gray-600">Qty: {{ $item['quantity'] }}</p>
                                         @if($item['has_discount'] ?? false)
                                             <div class="flex items-center gap-2 text-xs">
-                                                <span class="line-through text-gray-400">${{ number_format($item['price'], 2) }}</span>
-                                                <span class="text-red-600 font-bold">${{ number_format($item['final_price'], 2) }}</span>
+                                                <span class="line-through text-gray-400">RON{{ number_format($item['price'], 2) }}</span>
+                                                <span class="text-red-600 font-bold">RON{{ number_format($item['final_price'], 2) }}</span>
                                                 <span class="bg-red-100 text-red-800 px-1.5 py-0.5 rounded font-bold">
                                                     -{{ $item['discount_percentage'] }}%
                                                 </span>
                                             </div>
                                         @else
-                                            <p class="text-sm font-semibold text-gray-900">${{ number_format($item['final_price'] * $item['quantity'], 2) }}</p>
+                                            <p class="text-sm font-semibold text-gray-900">RON{{ number_format($item['final_price'] * $item['quantity'], 2) }}</p>
                                         @endif
                                     </div>
                                 </div>
@@ -272,13 +272,13 @@
                         <div class="border-t pt-4 space-y-2">
                             <div class="flex justify-between text-gray-600">
                                 <span>Subtotal:</span>
-                                <span>${{ number_format($cartTotal, 2) }}</span>
+                                <span>RON{{ number_format($cartTotal, 2) }}</span>
                             </div>
 
                             @if($coupon && $discountAmount > 0)
                                 <div class="flex justify-between text-green-600">
                                     <span>Discount ({{ $coupon->code }}):</span>
-                                    <span>-${{ number_format($discountAmount, 2) }}</span>
+                                    <span>-RON{{ number_format($discountAmount, 2) }}</span>
                                 </div>
                             @endif
 
@@ -291,7 +291,7 @@
 
                             <div class="flex justify-between text-lg font-bold text-gray-900 pt-2 border-t">
                                 <span>Total:</span>
-                                <span id="total-display">${{ number_format($cartTotal - $discountAmount, 2) }}</span>
+                                <span id="total-display">RON{{ number_format($cartTotal - $discountAmount, 2) }}</span>
                             </div>
                         </div>
 
@@ -1073,7 +1073,7 @@ function calculateShipping() {
             const shippingDisplay = document.getElementById('shipping-cost-display');
             
             if (currentShippingCost > 0) {
-                shippingDisplay.innerHTML = '<span class="text-blue-600 font-semibold">$' + currentShippingCost.toFixed(2) + '</span>';
+                shippingDisplay.innerHTML = '<span class="text-blue-600 font-semibold">RON' + currentShippingCost.toFixed(2) + '</span>';
             } else {
                 shippingDisplay.innerHTML = '<span class="text-green-600 font-semibold">GRATUIT</span>';
             }
@@ -1098,7 +1098,7 @@ function updateTotal() {
     // Update the total display
     const totalDisplay = document.getElementById('total-display');
     if (totalDisplay) {
-        totalDisplay.textContent = '$' + finalTotal.toFixed(2);
+        totalDisplay.textContent = 'RON' + finalTotal.toFixed(2);
     }
     
     console.log('Total updated:', {
