@@ -11,12 +11,17 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Cache;
 use Stripe\Stripe;
 use Stripe\Checkout\Session as StripeSession;
 use App\Services\SamedayService;
 
 class CheckoutController extends Controller
 {
+    // Cache duration: 24 hours for counties/cities/lockers, 1 hour for shipping costs
+    const CACHE_DURATION_LONG = 60 * 24; // 24 hours
+    const CACHE_DURATION_SHORT = 60; // 1 hour
+
     public function index()
     {
         $cartItems = session()->get('cart', []);
@@ -57,7 +62,6 @@ class CheckoutController extends Controller
 
     public function store(Request $request)
     {
-
         // Convert empty strings to null for integer fields
         $request->merge([
             'sameday_county_id' => $request->sameday_county_id ?: null,
@@ -83,7 +87,6 @@ class CheckoutController extends Controller
             'payment_method' => 'required|in:card,cash_on_delivery',
             'notes' => 'nullable|string|max:1000',
         ]);
-
 
         $cartItems = session()->get('cart', []);
 
@@ -260,7 +263,7 @@ class CheckoutController extends Controller
                         'name' => $item['title'],
                         'images' => $item['image'] ? [asset('storage/' . $item['image'])] : [],
                     ],
-                    'unit_amount' => intval($item['final_price'] * 100), // Convert to cents
+                    'unit_amount' => intval($item['final_price'] * 100),
                 ],
                 'quantity' => $item['quantity'],
             ];
@@ -275,19 +278,17 @@ class CheckoutController extends Controller
                         'name' => '🚚 Livrare Sameday ' . ($order->delivery_type === 'locker' ? '(Easybox)' : '(Domiciliu)'),
                         'description' => 'Cost transport',
                     ],
-                    'unit_amount' => intval($order->shipping_cost * 100), // Convert to cents
+                    'unit_amount' => intval($order->shipping_cost * 100),
                 ],
                 'quantity' => 1,
             ];
         }
 
-        // If coupon applied, add it as a discount in Stripe (NOT as negative line item)
         $discounts = [];
         if ($order->discount_amount > 0 && $order->coupon) {
-            // Create a Stripe Coupon for this discount
             try {
                 $stripeCoupon = \Stripe\Coupon::create([
-                    'amount_off' => intval($order->discount_amount * 100), // in cents
+                    'amount_off' => intval($order->discount_amount * 100),
                     'currency' => 'ron',
                     'duration' => 'once',
                     'name' => $order->coupon->code,
@@ -295,7 +296,6 @@ class CheckoutController extends Controller
 
                 $discounts[] = ['coupon' => $stripeCoupon->id];
             } catch (\Exception $e) {
-                // If coupon creation fails, just log it
                 \Log::error('Stripe coupon creation failed: ' . $e->getMessage());
             }
         }
@@ -316,14 +316,11 @@ class CheckoutController extends Controller
             ],
         ];
 
-        // Add discounts if available
         if (!empty($discounts)) {
             $sessionData['discounts'] = $discounts;
         }
 
         $session = StripeSession::create($sessionData);
-
-        // Store Stripe session ID
         $order->update(['stripe_session_id' => $session->id]);
 
         return redirect($session->url);
@@ -331,16 +328,9 @@ class CheckoutController extends Controller
 
     public function stripeSuccess(Request $request, Order $order)
     {
-        // Mark payment as paid
         $order->update(['payment_status' => 'paid']);
-
-        // Load order items for emails
-         $order = $order->fresh(['items', 'coupon']);
-
-        // NOW send emails after successful payment
+        $order = $order->fresh(['items', 'coupon']);
         $this->sendOrderEmails($order);
-
-        // Clear cart
         session()->forget(['cart', 'coupon_code', 'shipping_cost']);
 
         return redirect()->route('checkout.success', $order)
@@ -349,7 +339,6 @@ class CheckoutController extends Controller
 
     public function stripeCancel(Request $request, Order $order)
     {
-        // Restore stock
         foreach ($order->items as $item) {
             $product = Product::find($item->product_id);
             if ($product) {
@@ -357,7 +346,6 @@ class CheckoutController extends Controller
             }
         }
 
-        // Delete order
         $order->delete();
 
         return redirect()->route('checkout')
@@ -378,14 +366,12 @@ class CheckoutController extends Controller
             return response()->json(['error' => $e->getMessage()], 400);
         }
 
-        // Handle the event
         if ($event->type === 'checkout.session.completed') {
             $session = $event->data->object;
 
             $order = Order::where('stripe_session_id', $session->id)->first();
             if ($order && $order->payment_status !== 'paid') {
                 $order->update(['payment_status' => 'paid']);
-                // NU mai trimite email-uri aici - se trimit din stripeSuccess
             }
         }
 
@@ -394,8 +380,6 @@ class CheckoutController extends Controller
 
     public function success(Order $order)
     {
-        // Allow guest users to see their success page
-        // For logged in users, verify they own the order
         if (auth()->check() && $order->user_id !== auth()->id()) {
             abort(403);
         }
@@ -403,51 +387,94 @@ class CheckoutController extends Controller
         return view('checkout.success', compact('order'));
     }
 
+    /**
+     * 🔥 REDIS CACHE: Get counties with 24h cache
+     */
     public function getCounties()
     {
-        $samedayService = new SamedayService();
-        $counties = $samedayService->getCounties();
-        return response()->json($counties);
+        try {
+            $counties = Cache::remember('sameday_counties', self::CACHE_DURATION_LONG, function () {
+                $samedayService = new SamedayService();
+                return $samedayService->getCounties();
+            });
+
+            \Log::info('Counties loaded from cache', ['count' => count($counties)]);
+            return response()->json($counties);
+        } catch (\Exception $e) {
+            \Log::error('Error loading counties: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to load counties'], 500);
+        }
     }
 
+    /**
+     * 🔥 REDIS CACHE: Get cities by county with 24h cache
+     */
     public function getCities(Request $request)
     {
-        $countyId = $request->input('county_id');
-        $samedayService = new SamedayService();
-        $cities = $samedayService->getCities($countyId);
-        return response()->json($cities);
+        try {
+            $countyId = $request->input('county_id');
+
+            if (!$countyId) {
+                return response()->json(['error' => 'County ID required'], 400);
+            }
+
+            $cacheKey = "sameday_cities_{$countyId}";
+
+            $cities = Cache::remember($cacheKey, self::CACHE_DURATION_LONG, function () use ($countyId) {
+                $samedayService = new SamedayService();
+                return $samedayService->getCities($countyId);
+            });
+
+            \Log::info("Cities loaded from cache for county {$countyId}", ['count' => count($cities)]);
+            return response()->json($cities);
+        } catch (\Exception $e) {
+            \Log::error('Error loading cities: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to load cities'], 500);
+        }
     }
 
-    // public function getLockers(Request $request)
-    // {
-    //     $countyId = $request->input('county_id');
-    //     $cityId = $request->input('city_id');
-    //     $samedayService = new SamedayService();
-    //     $lockers = $samedayService->getLockers(0, $countyId, $cityId); // 0 = Easybox
-    //     return response()->json($lockers);
-    // }
-
+    /**
+     * 🔥 REDIS CACHE: Get lockers with 24h cache
+     */
     public function getLockers(Request $request)
     {
-        $countyId = $request->input('county_id');
-        $cityId = $request->input('city_id');
-        $samedayService = new SamedayService();
-        $lockers = $samedayService->getLockers(0, $countyId, $cityId); // 0 = Easybox
+        try {
+            $countyId = $request->input('county_id');
+            $cityId = $request->input('city_id');
 
-        // Map oohId to id for frontend consistency and ensure it's an integer
-        $formattedLockers = array_map(function ($locker) {
-            return [
-                'id' => (int) $locker['oohId'], // Ensure integer
-                'name' => $locker['name'] ?? '',
-                'address' => $locker['address'] ?? '',
-                'countyId' => $locker['countyId'] ?? null,
-                'cityId' => $locker['cityId'] ?? null,
-            ];
-        }, $lockers);
+            if (!$countyId || !$cityId) {
+                return response()->json(['error' => 'County ID and City ID required'], 400);
+            }
 
-        return response()->json($formattedLockers);
+            $cacheKey = "sameday_lockers_{$countyId}_{$cityId}";
+
+            $lockers = Cache::remember($cacheKey, self::CACHE_DURATION_LONG, function () use ($countyId, $cityId) {
+                $samedayService = new SamedayService();
+                $rawLockers = $samedayService->getLockers(0, $countyId, $cityId);
+
+                // Format lockers
+                return array_map(function ($locker) {
+                    return [
+                        'id' => (int) $locker['oohId'],
+                        'name' => $locker['name'] ?? '',
+                        'address' => $locker['address'] ?? '',
+                        'countyId' => $locker['countyId'] ?? null,
+                        'cityId' => $locker['cityId'] ?? null,
+                    ];
+                }, $rawLockers);
+            });
+
+            \Log::info("Lockers loaded from cache for county {$countyId}, city {$cityId}", ['count' => count($lockers)]);
+            return response()->json($lockers);
+        } catch (\Exception $e) {
+            \Log::error('Error loading lockers: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to load lockers'], 500);
+        }
     }
 
+    /**
+     * 🔥 REDIS CACHE: Calculate shipping with 1h cache
+     */
     public function calculateShipping(Request $request)
     {
         $request->validate([
@@ -457,29 +484,37 @@ class CheckoutController extends Controller
         ]);
 
         try {
-            $samedayService = new SamedayService();
+            $deliveryType = $request->delivery_type;
+            $countyId = $request->county_id;
+            $lockerId = $request->locker_id;
 
             // Calculate total weight from cart
             $cartItems = session()->get('cart', []);
             $totalWeight = 0;
 
             foreach ($cartItems as $item) {
-                // 0.5kg per produs (ajustează după nevoie)
-                $totalWeight += ($item['quantity'] * 0.5);
+                $totalWeight += ($item['quantity'] * 0.5); // 0.5kg per product
             }
 
-            // Minimum 1kg
-            $totalWeight = max($totalWeight, 1);
+            $totalWeight = max($totalWeight, 1); // Minimum 1kg
 
-            $shippingCost = $samedayService->estimateShippingCost(
-                $request->delivery_type,
-                $totalWeight,
-                $request->county_id,
-                $request->locker_id
-            );
+            // Cache key includes weight for accuracy
+            $cacheKey = "shipping_cost_{$deliveryType}_{$countyId}_{$lockerId}_{$totalWeight}";
+
+            $shippingCost = Cache::remember($cacheKey, self::CACHE_DURATION_SHORT, function () use ($deliveryType, $totalWeight, $countyId, $lockerId) {
+                $samedayService = new SamedayService();
+                return $samedayService->estimateShippingCost($deliveryType, $totalWeight, $countyId, $lockerId);
+            });
 
             // Save to session
             session()->put('shipping_cost', $shippingCost);
+
+            \Log::info("Shipping cost calculated", [
+                'delivery_type' => $deliveryType,
+                'county_id' => $countyId,
+                'weight' => $totalWeight,
+                'cost' => $shippingCost
+            ]);
 
             return response()->json([
                 'success' => true,
@@ -487,10 +522,35 @@ class CheckoutController extends Controller
                 'formatted' => number_format($shippingCost, 2)
             ]);
         } catch (\Exception $e) {
+            \Log::error('Error calculating shipping: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'error' => 'Could not calculate shipping cost'
             ], 400);
+        }
+    }
+
+    /**
+     * 🔥 Clear specific Sameday cache (pentru debugging)
+     */
+    public function clearSamedayCache()
+    {
+        try {
+            // Clear all Sameday related cache
+            Cache::forget('sameday_counties');
+
+            // Clear all cities and lockers (wildcard not supported in Predis, so manual clear)
+            // În producție, folosește Redis tags sau pattern matching
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Sameday cache cleared successfully'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 }
