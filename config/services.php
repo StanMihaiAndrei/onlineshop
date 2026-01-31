@@ -44,5 +44,11 @@ return [
         'username' => env('SAMEDAY_USERNAME'),
         'password' => env('SAMEDAY_PASSWORD'),
     ],
-
+    'smartbill' => [
+        'base_url' => env('SMARTBILL_BASE_URL', 'https://ws.smartbill.ro/SBORO/api'),
+        'username' => env('SMARTBILL_USERNAME'),
+        'token' => env('SMARTBILL_TOKEN'),
+        'cif' => env('SMARTBILL_CIF'),
+        'series_name' => env('SMARTBILL_SERIES_NAME', 'TEST'),
+    ],
 ];

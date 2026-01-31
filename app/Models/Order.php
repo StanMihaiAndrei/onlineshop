@@ -43,6 +43,9 @@ class Order extends Model
         'stripe_session_id',
         'notes',
         'cancellation_reason',
+        'shipping_county',
+        'smartbill_series',
+        'smartbill_number',
     ];
 
     protected $casts = [

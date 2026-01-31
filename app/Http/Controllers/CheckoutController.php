@@ -142,6 +142,7 @@ class CheckoutController extends Controller
                 'shipping_city' => $validated['shipping_city'],
                 'shipping_postal_code' => $validated['shipping_postal_code'],
                 'shipping_country' => $validated['shipping_country'],
+                'shipping_county' => session()->get('shipping_county', 'Bucuresti'),
                 'is_company' => $validated['is_company'] ?? false,
                 'delivery_type' => $validated['delivery_type'],
                 'sameday_county_id' => $validated['sameday_county_id'],
@@ -235,16 +236,73 @@ class CheckoutController extends Controller
     private function sendOrderEmails(Order $order)
     {
         try {
-            // Queue customer email first (no delay)
-            Mail::to($order->shipping_email)
-                ->queue(new OrderConfirmationMail($order));
+            // Pregătește datele pentru SmartBill
+            $orderData = [
+                'order' => [
+                    'order_number' => $order->order_number,
+                    'shipping_name' => $order->shipping_name,
+                    'shipping_email' => $order->shipping_email,
+                    'shipping_phone' => $order->shipping_phone,
+                    'shipping_address' => $order->shipping_address,
+                    'shipping_city' => $order->shipping_city,
+                    'shipping_county' => $order->shipping_county ?? 'Bucuresti',
+                    'shipping_country' => $order->shipping_country ?? 'Romania',
+                    'shipping_cost' => $order->shipping_cost,
+                ],
+                'items' => []
+            ];
 
-            // Queue admin email after (15 seconds delay)
-            Mail::to(config('mail.admin_email'))
+            // Adaugă produsele (folosind 'title' în loc de 'name')
+            foreach ($order->items as $item) {
+                $orderData['items'][] = [
+                    'name' => $item->product->title,  // ✅ SCHIMBAT de la 'name' la 'title'
+                    'code' => $item->product->code ?? 'PROD' . $item->product->id,
+                    'quantity' => $item->quantity,
+                    'price' => $item->price,
+                ];
+            }
+
+            // Creează factura în SmartBill
+            $smartbillService = new \App\Services\SmartBillService();
+            $invoice = $smartbillService->createInvoice($orderData);
+
+            $invoiceSeries = null;
+            $invoiceNumber = null;
+            $invoicePdfPath = null;
+
+            if ($invoice) {
+                $invoiceSeries = $invoice['series'];
+                $invoiceNumber = $invoice['number'];
+
+                // Salvează informațiile facturii în comandă
+                $order->update([
+                    'smartbill_series' => $invoiceSeries,
+                    'smartbill_number' => $invoiceNumber,
+                ]);
+
+                // ✅ Descarcă PDF-ul facturii și salvează-l local
+                $pdfContent = $smartbillService->getInvoicePdf($invoiceSeries, $invoiceNumber);
+                if ($pdfContent) {
+                    $invoicePdfPath = "invoices/{$order->order_number}_factura_{$invoiceSeries}{$invoiceNumber}.pdf";
+                    \Storage::disk('public')->put($invoicePdfPath, $pdfContent);
+
+                    \Log::info('SmartBill Invoice PDF saved', [
+                        'series' => $invoiceSeries,
+                        'number' => $invoiceNumber,
+                        'path' => $invoicePdfPath
+                    ]);
+                }
+            }
+
+            // Trimite email-ul de confirmare către client cu PDF-ul atașat
+            Mail::to($order->shipping_email)
+                ->queue(new OrderConfirmationMail($order, $invoiceSeries, $invoiceNumber, $invoicePdfPath));
+
+            // Trimite email către admin
+            Mail::to(config('mail.from.address'))
                 ->queue(new OrderCreatedMail($order));
         } catch (\Exception $e) {
-            // Log email errors but don't fail the order
-            \Log::error('Failed to queue order emails: ' . $e->getMessage());
+            \Log::error('Failed to send order emails or create invoice: ' . $e->getMessage());
         }
     }
 

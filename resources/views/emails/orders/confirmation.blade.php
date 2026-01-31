@@ -101,6 +101,19 @@
             <p style="margin: 8px 0;"><strong>Număr comandă:</strong> {{ $order->order_number }}</p>
             <p style="margin: 8px 0;"><strong>Data:</strong> {{ $order->created_at->format('d/m/Y H:i') }}</p>
             <p style="margin: 8px 0;"><strong>Metodă plată:</strong> {{ $order->payment_method === 'card' ? '💳 Card bancar' : '💵 Ramburs la livrare' }}</p>
+
+            @if($invoiceSeries && $invoiceNumber)
+                <p style="margin: 8px 0;">
+                    <strong>📄 Factură:</strong> 
+                    <span style="color: #10b981; font-weight: bold;">{{ $invoiceSeries }}{{ $invoiceNumber }}</span>
+                </p>
+                <div style="background: #d1fae5; border-left: 4px solid #10b981; padding: 12px; border-radius: 4px; margin: 10px 0;">
+                    <p style="margin: 0; color: #047857; font-size: 14px;">
+                        <strong>📎 Factura este atașată la acest email în format PDF.</strong>
+                    </p>
+                </div>
+            @endif
+
             <p style="margin: 8px 0;"><strong>Status plată:</strong> 
                 <span style="color: {{ $order->payment_status === 'paid' ? '#10b981' : '#f59e0b' }};">
                     {{ $order->payment_status === 'paid' ? '✓ Plătit' : '⏳ În așteptare' }}
