@@ -93,7 +93,7 @@ class SmartBillService
         $products = [];
         foreach ($items as $item) {
             $products[] = [
-                'name' => $item['name'] ?? 'Produs',  // ✅ OBLIGATORIU - nu mai poate fi null
+                'name' => $item['name'] ?? 'Produs',
                 'code' => $item['code'] ?? '',
                 'isDiscount' => false,
                 'measuringUnitName' => 'buc',
@@ -102,7 +102,6 @@ class SmartBillService
                 'price' => $item['price'],
                 'saveToDb' => false,
                 'isService' => false
-                // ✅ FĂRĂ parametrii TVA pentru firmă neplatitoare!
             ];
         }
 
@@ -118,23 +117,35 @@ class SmartBillService
                 'price' => $order['shipping_cost'],
                 'saveToDb' => false,
                 'isService' => true
-                // ✅ FĂRĂ parametrii TVA pentru firmă neplatitoare!
             ];
         }
 
+        // ✅ Pregătește datele clientului - FOLOSEȘTE BILLING
+        $clientData = [
+            'name' => $order['billing_name'],
+            'vatCode' => '',  // Default gol pentru persoană fizică
+            'address' => $order['billing_address'] ?? '-',
+            'city' => $order['billing_city'] ?? '-',
+            'county' => $order['billing_county'] ?? '-',
+            'country' => $order['billing_country'] ?? 'Romania',
+            'email' => $order['billing_email'],
+            'phone' => $order['billing_phone'] ?? '',
+            'saveToDb' => false
+        ];
+
+        // ✅ Dacă este firmă, adaugă datele firmei
+        if ($order['is_company'] && !empty($order['billing_cif'])) {
+            $clientData['name'] = $order['billing_company_name'] ?? $order['billing_name'];
+            $clientData['vatCode'] = $order['billing_cif'];
+
+            if (!empty($order['billing_reg_com'])) {
+                $clientData['regCom'] = $order['billing_reg_com'];
+            }
+        }
+
         return [
-            'companyVatCode' => $this->cif,  // ✅ Acum va avea valoarea corectă
-            'client' => [
-                'name' => $order['shipping_name'],
-                'vatCode' => '',
-                'address' => $order['shipping_address'] ?? '-',
-                'city' => $order['shipping_city'] ?? '-',
-                'county' => $order['shipping_county'] ?? '-',
-                'country' => $order['shipping_country'] ?? 'Romania',
-                'email' => $order['shipping_email'],
-                'phone' => $order['shipping_phone'] ?? '',
-                'saveToDb' => false
-            ],
+            'companyVatCode' => $this->cif,
+            'client' => $clientData,
             'issueDate' => now()->format('Y-m-d'),
             'seriesName' => config('services.smartbill.series_name', 'TEST'),
             'isDraft' => false,

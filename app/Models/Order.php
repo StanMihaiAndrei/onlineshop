@@ -20,6 +20,7 @@ class Order extends Model
         'discount_amount',
         'shipping_cost',
         'status',
+        // Shipping (Livrare) - pentru Sameday
         'shipping_name',
         'shipping_email',
         'shipping_phone',
@@ -27,8 +28,10 @@ class Order extends Model
         'shipping_city',
         'shipping_postal_code',
         'shipping_country',
+        //'shipping_county',
         'is_company',
         'delivery_type',
+        // Sameday
         'sameday_county_id',
         'sameday_city_id',
         'sameday_locker_id',
@@ -38,14 +41,27 @@ class Order extends Model
         'sameday_awb_pdf',
         'sameday_awb_status',
         'sameday_tracking_history',
+        // SmartBill
+        'smartbill_series',
+        'smartbill_number',
+        // Billing (Facturare) - pentru SmartBill
+        'billing_name',
+        'billing_email',
+        'billing_phone',
+        'billing_address',
+        'billing_city',
+        'billing_county',
+        'billing_postal_code',
+        'billing_country',
+        'billing_company_name',
+        'billing_cif',
+        'billing_reg_com',
+        // Payment
         'payment_method',
         'payment_status',
         'stripe_session_id',
         'notes',
         'cancellation_reason',
-        'shipping_county',
-        'smartbill_series',
-        'smartbill_number',
     ];
 
     protected $casts = [

@@ -71,13 +71,30 @@ class CheckoutController extends Controller
         ]);
 
         $validated = $request->validate([
+            // Shipping (Livrare) - pentru Sameday
             'shipping_name' => 'required|string|max:255',
             'shipping_email' => 'required|email|max:255',
             'shipping_phone' => 'required|string|max:20',
             'shipping_address' => 'required_if:delivery_type,home|nullable|string|max:500',
             'shipping_city' => 'nullable|string|max:100',
-            'shipping_postal_code' => 'required_if:delivery_type,home|nullable|string|max:20',
+            'shipping_postal_code' => 'required_if:delivery_type,home|nullable|string|max:20', // Doar pentru home delivery
             'shipping_country' => 'required|string|max:100',
+
+            // Billing (Facturare) - pentru SmartBill
+            'billing_name' => 'required|string|max:255',
+            'billing_email' => 'required|email|max:255',
+            'billing_phone' => 'required|string|max:20',
+            'billing_address' => 'required|string|max:500',
+            'billing_city' => 'required|string|max:100',
+            'billing_county' => 'required|string|max:100',
+            'billing_postal_code' => 'required|string|max:20',
+            'billing_country' => 'required|string|max:100',
+
+            // Câmpuri pentru firme (opționale, doar dacă is_company = true)
+            'billing_company_name' => 'required_if:is_company,true|nullable|string|max:255',
+            'billing_cif' => 'required_if:is_company,true|nullable|string|max:50',
+            'billing_reg_com' => 'nullable|string|max:100',
+
             'is_company' => 'boolean',
             'delivery_type' => 'required|in:home,locker',
             'sameday_county_id' => 'required|integer',
@@ -135,14 +152,30 @@ class CheckoutController extends Controller
                 'total_amount' => $finalTotal,
                 'discount_amount' => $discountAmount,
                 'shipping_cost' => $shippingCost,
+
+                // Shipping (Livrare) - pentru Sameday
                 'shipping_name' => $validated['shipping_name'],
                 'shipping_email' => $validated['shipping_email'],
                 'shipping_phone' => $validated['shipping_phone'],
                 'shipping_address' => $validated['shipping_address'],
                 'shipping_city' => $validated['shipping_city'],
-                'shipping_postal_code' => $validated['shipping_postal_code'],
+                'shipping_postal_code' => $validated['shipping_postal_code'] ?? null,
                 'shipping_country' => $validated['shipping_country'],
-                'shipping_county' => session()->get('shipping_county', 'Bucuresti'),
+                //'shipping_county' => session()->get('shipping_county_name', 'Bucuresti'),
+
+                // Billing (Facturare) - pentru SmartBill
+                'billing_name' => $validated['billing_name'],
+                'billing_email' => $validated['billing_email'],
+                'billing_phone' => $validated['billing_phone'],
+                'billing_address' => $validated['billing_address'],
+                'billing_city' => $validated['billing_city'],
+                'billing_county' => $validated['billing_county'],
+                'billing_postal_code' => $validated['billing_postal_code'],
+                'billing_country' => $validated['billing_country'],
+                'billing_company_name' => $validated['billing_company_name'] ?? null,
+                'billing_cif' => $validated['billing_cif'] ?? null,
+                'billing_reg_com' => $validated['billing_reg_com'] ?? null,
+
                 'is_company' => $validated['is_company'] ?? false,
                 'delivery_type' => $validated['delivery_type'],
                 'sameday_county_id' => $validated['sameday_county_id'],
@@ -192,7 +225,7 @@ class CheckoutController extends Controller
 
             // For cash on delivery, send emails and show success
             $this->sendOrderEmails($order);
-            session()->forget(['cart', 'coupon_code']);
+            session()->forget(['cart', 'coupon_code', 'shipping_cost']);
             return redirect()->route('checkout.success', $order)->with('success', 'Comanda a fost plasată cu succes!');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -236,17 +269,21 @@ class CheckoutController extends Controller
     private function sendOrderEmails(Order $order)
     {
         try {
-            // Pregătește datele pentru SmartBill
+            // Pregătește datele pentru SmartBill - folosește BILLING (facturare)
             $orderData = [
                 'order' => [
                     'order_number' => $order->order_number,
-                    'shipping_name' => $order->shipping_name,
-                    'shipping_email' => $order->shipping_email,
-                    'shipping_phone' => $order->shipping_phone,
-                    'shipping_address' => $order->shipping_address,
-                    'shipping_city' => $order->shipping_city,
-                    'shipping_county' => $order->shipping_county ?? 'Bucuresti',
-                    'shipping_country' => $order->shipping_country ?? 'Romania',
+                    'billing_name' => $order->billing_name, // ✅ BILLING
+                    'billing_email' => $order->billing_email,
+                    'billing_phone' => $order->billing_phone,
+                    'billing_address' => $order->billing_address,
+                    'billing_city' => $order->billing_city,
+                    'billing_county' => $order->billing_county,
+                    'billing_country' => $order->billing_country ?? 'Romania',
+                    'billing_company_name' => $order->billing_company_name,
+                    'billing_cif' => $order->billing_cif,
+                    'billing_reg_com' => $order->billing_reg_com,
+                    'is_company' => $order->is_company,
                     'shipping_cost' => $order->shipping_cost,
                 ],
                 'items' => []
@@ -255,7 +292,7 @@ class CheckoutController extends Controller
             // Adaugă produsele (folosind 'title' în loc de 'name')
             foreach ($order->items as $item) {
                 $orderData['items'][] = [
-                    'name' => $item->product->title,  // ✅ SCHIMBAT de la 'name' la 'title'
+                    'name' => $item->product->title,
                     'code' => $item->product->code ?? 'PROD' . $item->product->id,
                     'quantity' => $item->quantity,
                     'price' => $item->price,
@@ -280,7 +317,7 @@ class CheckoutController extends Controller
                     'smartbill_number' => $invoiceNumber,
                 ]);
 
-                // ✅ Descarcă PDF-ul facturii și salvează-l local
+                // Descarcă PDF-ul facturii și salvează-l local
                 $pdfContent = $smartbillService->getInvoicePdf($invoiceSeries, $invoiceNumber);
                 if ($pdfContent) {
                     $invoicePdfPath = "invoices/{$order->order_number}_factura_{$invoiceSeries}{$invoiceNumber}.pdf";
@@ -564,12 +601,27 @@ class CheckoutController extends Controller
                 return $samedayService->estimateShippingCost($deliveryType, $totalWeight, $countyId, $lockerId);
             });
 
+            // ✅ Obține și salvează numele județului
+            // $counties = Cache::remember(
+            //     'sameday_counties',
+            //     self::CACHE_DURATION_LONG,
+            //     function () {
+            //         $samedayService = new SamedayService();
+            //         return $samedayService->getCounties();
+            //     }
+            // );
+
+            // $countyName = collect($counties['data'] ?? [])
+            //     ->firstWhere('id', $countyId)['name'] ?? 'Bucuresti';
+
             // Save to session
             session()->put('shipping_cost', $shippingCost);
+            // session()->put('shipping_county_name', $countyName); // ✅ ADĂUGAT
 
             \Log::info("Shipping cost calculated", [
                 'delivery_type' => $deliveryType,
                 'county_id' => $countyId,
+                //'county_name' => $countyName, // ✅ ADĂUGAT
                 'weight' => $totalWeight,
                 'cost' => $shippingCost
             ]);
@@ -583,7 +635,8 @@ class CheckoutController extends Controller
             \Log::error('Error calculating shipping: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'error' => 'Could not calculate shipping cost'
+                'message' => 'Could not calculate shipping cost',
+                'shipping_cost' => 0
             ], 400);
         }
     }

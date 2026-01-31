@@ -42,7 +42,7 @@ class AdminOrderController extends Controller
         ]);
 
         $previousStatus = $order->status;
-        
+
         $order->update([
             'status' => $validated['status'],
             'cancellation_reason' => $validated['status'] === 'cancelled' ? $validated['cancellation_reason'] : null,
@@ -95,6 +95,8 @@ class AdminOrderController extends Controller
                 'email' => $order->shipping_email,
                 'postal_code' => $order->shipping_postal_code,
                 'is_company' => $order->is_company,
+                'company_name' => $order->billing_company_name,
+                'company_cif' => $order->billing_cif,
                 'weight' => $order->getTotalWeight(),
                 'cash_on_delivery' => $order->payment_method === 'cash_on_delivery' ? $order->total_amount : 0,
                 'insured_value' => $order->total_amount,
@@ -126,7 +128,6 @@ class AdminOrderController extends Controller
             }
 
             return back()->with('error', 'Eroare la crearea AWB. Verifică log-urile.');
-
         } catch (\Exception $e) {
             return back()->with('error', 'Eroare: ' . $e->getMessage());
         }
@@ -156,6 +157,8 @@ class AdminOrderController extends Controller
                 'phone' => $order->shipping_phone,
                 'email' => $order->shipping_email,
                 'is_company' => $order->is_company,
+                'company_name' => $order->billing_company_name,
+                'company_cif' => $order->billing_cif,
                 'weight' => $order->getTotalWeight(),
                 'cash_on_delivery' => $order->payment_method === 'cash_on_delivery' ? $order->total_amount : 0,
                 'insured_value' => $order->total_amount,
@@ -187,7 +190,6 @@ class AdminOrderController extends Controller
             }
 
             return back()->with('error', 'Eroare la crearea AWB. Verifică log-urile.');
-
         } catch (\Exception $e) {
             return back()->with('error', 'Eroare: ' . $e->getMessage());
         }
@@ -214,7 +216,6 @@ class AdminOrderController extends Controller
             }
 
             return back()->with('error', 'Eroare la sincronizarea statusului AWB.');
-
         } catch (\Exception $e) {
             return back()->with('error', 'Eroare: ' . $e->getMessage());
         }

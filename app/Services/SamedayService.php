@@ -452,6 +452,8 @@ class SamedayService
                     'email' => $orderData['email'],
                     'postalCode' => $orderData['postal_code'] ?? '',
                     'personType' => $orderData['is_company'] ? 1 : 0,
+                    'companyName' => $orderData['is_company'] && !empty($orderData['company_name']) ? $orderData['company_name'] : null,
+                    'companyCui' => $orderData['is_company'] && !empty($orderData['company_cif']) ? $orderData['company_cif'] : null,
                 ],
                 'parcels' => [
                     [
@@ -561,6 +563,8 @@ class SamedayService
                     'phoneNumber' => $orderData['phone'],
                     'email' => $orderData['email'],
                     'personType' => $orderData['is_company'] ? 1 : 0,
+                    'companyName' => $orderData['is_company'] && !empty($orderData['company_name']) ? $orderData['company_name'] : null,
+                    'companyCui' => $orderData['is_company'] && !empty($orderData['company_cif']) ? $orderData['company_cif'] : null,
                 ],
                 'parcels' => [
                     [
