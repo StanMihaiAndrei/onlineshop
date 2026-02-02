@@ -80,32 +80,27 @@
                                 <label class="block text-xs font-semibold text-gray-700 mb-2">
                                     Categorii
                                 </label>
-                                <input type="hidden" name="category" x-model="selectedCategory">
                                 
                                 <div class="space-y-1">
                                     <!-- All Products Option -->
-                                    <button type="button"
-                                            @click="selectedCategory = null; $nextTick(() => $el.closest('form').submit())"
-                                            class="w-full text-left px-3 py-2 rounded-lg transition text-sm flex items-center justify-between"
-                                            :class="selectedCategory === null ? 'bg-primary text-white font-semibold' : 'hover:bg-gray-50 text-gray-700'">
+                                    <a href="{{ route('shop') }}"
+                                    class="w-full text-left px-3 py-2 rounded-lg transition text-sm flex items-center justify-between {{ !request('category') ? 'bg-primary text-white font-semibold' : 'hover:bg-gray-50 text-gray-700' }}">
                                         <span>Toate produsele</span>
-                                    </button>
+                                    </a>
 
                                     <!-- Parent Categories with Subcategories -->
                                     @foreach($categories as $cat)
-                                        <div class="space-y-1">
+                                        <div class="space-y-1" x-data="{ expanded: {{ request('category') == $cat->id || $cat->children->contains('id', request('category')) ? 'true' : 'false' }} }">
                                             <!-- Parent Category -->
                                             <div class="flex items-center gap-1">
                                                 @if($cat->children->count() > 0)
                                                     <!-- Toggle Button for Subcategories -->
                                                     <button type="button"
-                                                            @click="expandedCategories.includes({{ $cat->id }}) 
-                                                                ? expandedCategories = expandedCategories.filter(id => id !== {{ $cat->id }})
-                                                                : expandedCategories.push({{ $cat->id }})"
+                                                            @click="expanded = !expanded"
                                                             class="p-1 hover:bg-gray-100 rounded transition">
                                                         <svg class="w-4 h-4 transition-transform" 
-                                                             :class="expandedCategories.includes({{ $cat->id }}) ? 'rotate-90' : ''"
-                                                             fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            :class="expanded ? 'rotate-90' : ''"
+                                                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                                                         </svg>
                                                     </button>
@@ -113,42 +108,32 @@
                                                     <div class="w-6"></div>
                                                 @endif
 
-                                                <!-- Category Button -->
-                                                <button type="button"
-                                                        @click="selectedCategory = {{ $cat->id }}; $nextTick(() => $el.closest('form').submit())"
-                                                        class="flex-1 text-left px-3 py-2 rounded-lg transition text-sm flex items-center justify-between"
-                                                        :class="selectedCategory == {{ $cat->id }} ? 'bg-primary text-white font-semibold' : 'hover:bg-gray-50 text-gray-700'">
+                                                <!-- Category Link - Redirect to category page -->
+                                                <a href="{{ route('shop.category', $cat->slug) }}"
+                                                class="flex-1 text-left px-3 py-2 rounded-lg transition text-sm flex items-center justify-between {{ request('category') == $cat->id ? 'bg-primary text-white font-semibold' : 'hover:bg-gray-50 text-gray-700' }}">
                                                     <span>{{ $cat->name }}</span>
                                                     <span class="text-xs px-2 py-0.5 rounded-full font-semibold"
-                                                          :class="selectedCategory == {{ $cat->id }} ? 'bg-white text-primary' : 'bg-gray-200 text-gray-700'">
+                                                        :class="'{{ request('category') == $cat->id ? 'bg-white text-primary' : 'bg-gray-200 text-gray-700' }}'">
                                                         {{ $cat->products_count }}
                                                     </span>
-                                                </button>
+                                                </a>
                                             </div>
 
                                             <!-- Subcategories -->
                                             @if($cat->children->count() > 0)
-                                                <div x-show="expandedCategories.includes({{ $cat->id }})" 
-                                                     x-transition:enter="transition ease-out duration-200"
-                                                     x-transition:enter-start="opacity-0 -translate-y-1"
-                                                     x-transition:enter-end="opacity-100 translate-y-0"
-                                                     class="ml-6 space-y-1 border-l-2 border-gray-200 pl-2">
+                                                <div x-show="expanded" 
+                                                    x-transition:enter="transition ease-out duration-200"
+                                                    x-transition:enter-start="opacity-0 -translate-y-1"
+                                                    x-transition:enter-end="opacity-100 translate-y-0"
+                                                    class="ml-6 space-y-1 border-l-2 border-gray-200 pl-2">
                                                     @foreach($cat->children as $subcat)
-                                                        <button type="button"
-                                                                @click="selectedCategory = {{ $subcat->id }}; $nextTick(() => $el.closest('form').submit())"
-                                                                class="w-full text-left px-3 py-2 rounded-lg transition text-sm flex items-center justify-between"
-                                                                :class="selectedCategory == {{ $subcat->id }} ? 'bg-pink-100 text-primary font-semibold' : 'hover:bg-gray-50 text-gray-600'">
-                                                            <span class="flex items-center gap-2">
-                                                                <svg class="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                                                                </svg>
-                                                                {{ $subcat->name }}
-                                                            </span>
-                                                            <span class="text-xs px-2 py-0.5 rounded-full font-semibold"
-                                                                  :class="selectedCategory == {{ $subcat->id }} ? 'bg-primary text-white' : 'bg-gray-200 text-gray-600'">
+                                                        <a href="{{ route('shop.category', ['categorySlug' => $cat->slug, 'subcategory' => $subcat->id]) }}"
+                                                        class="w-full text-left px-3 py-2 rounded-lg transition text-sm flex items-center justify-between {{ request('category') == $subcat->id ? 'bg-pink-100 text-primary font-semibold' : 'hover:bg-gray-50 text-gray-700' }}">
+                                                            <span>{{ $subcat->name }}</span>
+                                                            <span class="text-xs px-2 py-0.5 rounded-full font-semibold {{ request('category') == $subcat->id ? 'bg-primary text-white' : 'bg-gray-200 text-gray-700' }}">
                                                                 {{ $subcat->products_count }}
                                                             </span>
-                                                        </button>
+                                                        </a>
                                                     @endforeach
                                                 </div>
                                             @endif

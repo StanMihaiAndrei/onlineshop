@@ -111,34 +111,41 @@
                             </div>
                         @endif
                         
-                        <div class="flex items-center gap-4 mb-6">
-                            @if($product->hasDiscount())
-                                <div class="flex flex-col">
+                        <div class="mb-6">
+                            <!-- Prices Row -->
+                            <div class="flex items-center gap-3 mb-3">
+                                @if($product->hasDiscount())
                                     <span class="text-md line-through text-gray-400">
                                         RON {{ number_format($product->price, 2) }}
                                     </span>
-                                    <span class="text-xl font-bold text-red-600">
+                                    <span class="text-2xl font-bold text-red-600">
                                         RON {{ number_format($product->final_price, 2) }}
                                     </span>
-                                </div>
-                                <span class="px-4 py-2 bg-red-100 text-red-800 rounded-full font-bold text-sm shadow-sm">
-                                    Save {{ $product->discount_percentage }}%
-                                </span>
-                            @else
-                                <span class="text-3xl font-bold text-primary">
-                                    RON {{ number_format($product->price, 2) }}
-                                </span>
-                            @endif
-                            <span class="px-3 py-1.5 text-xs font-bold rounded-full shadow-sm
-                                {{ $product->stock > 10 ? 'bg-green-100 text-green-800' : ($product->stock > 0 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}">
-                                @if($product->stock > 10)
-                                    ✓ În stoc ({{ $product->stock }})
-                                @elseif($product->stock > 0)
-                                    ⚠ Doar {{ $product->stock }} rămase
                                 @else
-                                    ✕ Stoc epuizat
+                                    <span class="text-3xl font-bold text-primary">
+                                        RON {{ number_format($product->price, 2) }}
+                                    </span>
                                 @endif
-                            </span>
+                            </div>
+                            
+                            <!-- Badges Row -->
+                            <div class="flex flex-wrap items-center gap-2">
+                                @if($product->hasDiscount())
+                                    <span class="px-4 py-2 bg-red-100 text-red-800 rounded-full font-bold text-sm shadow-sm">
+                                        Save {{ $product->discount_percentage }}%
+                                    </span>
+                                @endif
+                                <span class="px-3 py-1.5 text-xs font-bold rounded-full shadow-sm
+                                    {{ $product->stock > 10 ? 'bg-green-100 text-green-800' : ($product->stock > 0 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}">
+                                    @if($product->stock > 10)
+                                        ✓ În stoc ({{ $product->stock }})
+                                    @elseif($product->stock > 0)
+                                        ⚠ Doar {{ $product->stock }} rămase
+                                    @else
+                                        ✕ Stoc epuizat
+                                    @endif
+                                </span>
+                            </div>
                         </div>
 
                         <div class="mb-6 pb-6 border-b border-gray-200">
