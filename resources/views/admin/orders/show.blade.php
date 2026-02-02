@@ -23,77 +23,181 @@
                         </div>
                     @endif
 
-                    <!-- Order Info -->
+                    <!-- Order Info & Invoice Section -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-6">
-                        <div class="bg-gray-50 p-3 sm:p-4 rounded-lg">
-                            <h3 class="text-base sm:text-lg font-semibold mb-3">Informații Comandă</h3>
-                            <p class="text-sm sm:text-base mb-1"><strong>Număr Comandă:</strong> {{ $order->order_number }}</p>
-                            <p class="text-sm sm:text-base mb-1"><strong>Data:</strong> {{ $order->created_at->format('d/m/Y H:i') }}</p>
-                            
-                            @if($order->coupon_id && $order->discount_amount > 0)
-                                <div class="bg-green-50 border border-green-200 rounded p-2 my-2">
-                                    <p class="text-green-800 text-sm"><strong>🎉 Cupon:</strong> {{ $order->coupon->code }}</p>
-                                    <p class="text-green-700 text-xs sm:text-sm">
-                                        Discount: RON {{ number_format($order->discount_amount, 2) }}
-                                        @if($order->coupon->type === 'percentage')
-                                            ({{ $order->coupon->value }}% off)
-                                        @endif
-                                    </p>
-                                </div>
-                            @endif
-                            
-                            <p class="text-sm sm:text-base mb-1"><strong>Total:</strong> RON {{ number_format($order->total_amount, 2) }}</p>
-                            <p class="text-sm sm:text-base mb-1"><strong>Metodă Plată:</strong> {{ $order->payment_method === 'card' ? 'Card' : 'Ramburs' }}</p>
-                            <p class="text-sm sm:text-base mb-1"><strong>Status:</strong> 
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                    @if($order->status === 'pending') bg-yellow-100 text-yellow-800
-                                    @elseif($order->status === 'processing') bg-blue-100 text-blue-800
-                                    @elseif($order->status === 'completed') bg-green-100 text-green-800
-                                    @elseif($order->status === 'cancelled') bg-red-100 text-red-800
-                                    @endif">
-                                    {{ ucfirst($order->status) }}
-                                </span>
-                            </p>
-                            <p class="text-sm sm:text-base"><strong>Status Plată:</strong> 
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                    @if($order->payment_status === 'pending') bg-yellow-100 text-yellow-800
-                                    @elseif($order->payment_status === 'paid') bg-green-100 text-green-800
-                                    @elseif($order->payment_status === 'failed') bg-red-100 text-red-800
-                                    @endif">
-                                    {{ ucfirst($order->payment_status) }}
-                                </span>
-                            </p>
+                        <!-- Order Information -->
+                        <div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-lg border-l-4 border-blue-500 shadow-sm">
+                            <h3 class="text-base sm:text-lg font-semibold mb-3 flex items-center gap-2 text-blue-900">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                                Informații Comandă
+                            </h3>
+                            <div class="space-y-2">
+                                <p class="text-sm sm:text-base"><strong>Număr:</strong> <span class="font-mono">{{ $order->order_number }}</span></p>
+                                <p class="text-sm sm:text-base"><strong>Data:</strong> {{ $order->created_at->format('d/m/Y H:i') }}</p>
+                                
+                                @if($order->coupon_id && $order->discount_amount > 0)
+                                    <div class="bg-green-50 border border-green-200 rounded p-2 my-2">
+                                        <p class="text-green-800 text-sm"><strong>🎉 Cupon:</strong> {{ $order->coupon->code }}</p>
+                                        <p class="text-green-700 text-xs sm:text-sm">
+                                            Discount: RON {{ number_format($order->discount_amount, 2) }}
+                                            @if($order->coupon->type === 'percentage')
+                                                ({{ $order->coupon->value }}% off)
+                                            @endif
+                                        </p>
+                                    </div>
+                                @endif
+                                
+                                <p class="text-sm sm:text-base"><strong>Total:</strong> <span class="text-lg font-bold text-blue-600">RON {{ number_format($order->total_amount, 2) }}</span></p>
+                                <p class="text-sm sm:text-base"><strong>Metodă Plată:</strong> {{ $order->payment_method === 'card' ? '💳 Card' : '💵 Ramburs' }}</p>
+                                <p class="text-sm sm:text-base"><strong>Status:</strong> 
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                                        @if($order->status === 'pending') bg-yellow-100 text-yellow-800
+                                        @elseif($order->status === 'processing') bg-blue-100 text-blue-800
+                                        @elseif($order->status === 'completed') bg-green-100 text-green-800
+                                        @elseif($order->status === 'cancelled') bg-red-100 text-red-800
+                                        @endif">
+                                        {{ ucfirst($order->status) }}
+                                    </span>
+                                </p>
+                                <p class="text-sm sm:text-base"><strong>Status Plată:</strong> 
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                                        @if($order->payment_status === 'pending') bg-yellow-100 text-yellow-800
+                                        @elseif($order->payment_status === 'paid') bg-green-100 text-green-800
+                                        @elseif($order->payment_status === 'failed') bg-red-100 text-red-800
+                                        @endif">
+                                        {{ ucfirst($order->payment_status) }}
+                                    </span>
+                                </p>
+                            </div>
                         </div>
 
-                        <div class="bg-gray-50 p-3 sm:p-4 rounded-lg">
-                            <h3 class="text-base sm:text-lg font-semibold mb-3">Informații Client</h3>
-                            <p class="text-sm sm:text-base mb-1"><strong>Nume:</strong> {{ $order->shipping_name }}</p>
-                            <p class="text-sm sm:text-base mb-1"><strong>Tip:</strong> {{ $order->is_company ? 'Persoană Juridică' : 'Persoană Fizică' }}</p>
-                            <p class="text-sm sm:text-base mb-1"><strong>Email:</strong> <span class="break-all">{{ $order->shipping_email }}</span></p>
-                            <p class="text-sm sm:text-base mb-1"><strong>Telefon:</strong> {{ $order->shipping_phone }}</p>
-                            <p class="text-sm sm:text-base mb-1"><strong>Tip Livrare:</strong> 
-                                @if($order->delivery_type === 'home')
-                                    🏠 Domiciliu
+                        <!-- Invoice Information -->
+                        <div class="bg-gradient-to-br from-purple-50 to-pink-50 p-4 rounded-lg border-l-4 border-purple-500 shadow-sm">
+                            <h3 class="text-base sm:text-lg font-semibold mb-3 flex items-center gap-2 text-purple-900">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                                Date Facturare
+                            </h3>
+                            <div class="space-y-2">
+                                @if($order->smartbill_series && $order->smartbill_number)
+                                    <div class="bg-green-50 border-2 border-green-300 rounded-lg p-3 mb-3">
+                                        <p class="text-sm font-semibold text-green-900 mb-1">✅ Factură Emisă</p>
+                                        <p class="text-lg font-bold font-mono text-green-800">{{ $order->smartbill_series }}-{{ $order->smartbill_number }}</p>
+                                        <a href="{{ route('admin.orders.downloadInvoice', $order) }}" 
+                                           target="_blank"
+                                           class="inline-flex items-center gap-1 text-xs text-green-700 hover:text-green-900 font-medium underline mt-2">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                            </svg>
+                                            Descarcă Factură PDF
+                                        </a>
+                                    </div>
                                 @else
-                                    📦 Easybox
+                                    <div class="bg-yellow-50 border border-yellow-200 rounded p-2 mb-3">
+                                        <p class="text-xs text-yellow-800">⏳ Factură în curs de emitere</p>
+                                    </div>
                                 @endif
-                            </p>
-                            @if($order->delivery_type === 'home')
-                                <p class="text-sm sm:text-base"><strong>Adresă:</strong> {{ $order->shipping_address }}, {{ $order->shipping_city }}, {{ $order->shipping_postal_code }}, {{ $order->shipping_country }}</p>
-                            @else
-                                <p class="text-sm sm:text-base mb-1"><strong>Locker:</strong> {{ $order->sameday_locker_name }}</p>
-                                <p class="text-sm sm:text-base"><strong>Oraș:</strong> {{ $order->shipping_city }}</p>
-                            @endif
+
+                                <p class="text-sm sm:text-base"><strong>Tip:</strong> {{ $order->is_company ? '🏢 Persoană Juridică' : '👤 Persoană Fizică' }}</p>
+                                
+                                @if($order->is_company)
+                                    <p class="text-sm sm:text-base"><strong>Firmă:</strong> {{ $order->billing_company_name ?? 'N/A' }}</p>
+                                    <p class="text-sm sm:text-base"><strong>CIF:</strong> {{ $order->billing_cif ?? 'N/A' }}</p>
+                                    @if($order->billing_reg_com)
+                                        <p class="text-sm sm:text-base"><strong>Reg. Com.:</strong> {{ $order->billing_reg_com }}</p>
+                                    @endif
+                                @endif
+
+                                <p class="text-sm sm:text-base"><strong>Nume:</strong> {{ $order->billing_name ?? $order->shipping_name }}</p>
+                                <p class="text-sm sm:text-base"><strong>Email:</strong> <span class="break-all">{{ $order->billing_email ?? $order->shipping_email }}</span></p>
+                                <p class="text-sm sm:text-base"><strong>Telefon:</strong> {{ $order->billing_phone ?? $order->shipping_phone }}</p>
+                                
+                                @if($order->billing_address)
+                                    <div class="text-sm sm:text-base">
+                                        <strong>Adresă Facturare:</strong>
+                                        <p class="text-gray-700 mt-1">
+                                            {{ $order->billing_address }}<br>
+                                            {{ $order->billing_city }}@if($order->billing_postal_code), {{ $order->billing_postal_code }}@endif<br>
+                                            {{ $order->billing_county }}, {{ $order->billing_country }}
+                                        </p>
+                                    </div>
+                                @else
+                                    <p class="text-xs text-gray-500 italic">Adresă facturare identică cu livrarea</p>
+                                @endif
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Sameday AWB Section - Optimizat pentru mobile -->
+                    <!-- Shipping & Billing Section Side by Side -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-6">
+                        <!-- Shipping Information -->
+                        <div class="bg-gradient-to-br from-green-50 to-teal-50 p-4 rounded-lg border-l-4 border-green-500 shadow-sm">
+                            <h3 class="text-base sm:text-lg font-semibold mb-3 flex items-center gap-2 text-green-900">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+                                </svg>
+                                Date Livrare
+                            </h3>
+                            <div class="space-y-2">
+                                <p class="text-sm sm:text-base"><strong>Tip Livrare:</strong> 
+                                    @if($order->delivery_type === 'home')
+                                        🏠 Domiciliu
+                                    @else
+                                        📦 Easybox
+                                    @endif
+                                </p>
+                                @if($order->delivery_type === 'home')
+                                    <div class="bg-white rounded p-2 border border-green-200">
+                                        <p class="text-sm"><strong>{{ $order->shipping_name }}</strong></p>
+                                        <p class="text-sm text-gray-700">{{ $order->shipping_address }}</p>
+                                        <p class="text-sm text-gray-700">{{ $order->shipping_city }}, {{ $order->shipping_postal_code }}</p>
+                                        <p class="text-sm text-gray-700">{{ $order->shipping_country }}</p>
+                                    </div>
+                                @else
+                                    <div class="bg-white rounded p-2 border border-green-200">
+                                        <p class="text-sm"><strong>Locker:</strong> {{ $order->sameday_locker_name }}</p>
+                                        <p class="text-sm text-gray-700"><strong>Oraș:</strong> {{ $order->shipping_city }}</p>
+                                    </div>
+                                @endif
+                                <p class="text-sm sm:text-base"><strong>Email:</strong> <span class="break-all">{{ $order->shipping_email }}</span></p>
+                                <p class="text-sm sm:text-base"><strong>Telefon:</strong> {{ $order->shipping_phone }}</p>
+                            </div>
+                        </div>
+
+                        <!-- Client Notes -->
+                        @if($order->notes || $order->cancellation_reason)
+                            <div class="bg-gradient-to-br from-amber-50 to-orange-50 p-4 rounded-lg border-l-4 border-amber-500 shadow-sm">
+                                <h3 class="text-base sm:text-lg font-semibold mb-3 flex items-center gap-2 text-amber-900">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+                                    </svg>
+                                    Notițe
+                                </h3>
+                                @if($order->notes)
+                                    <div class="bg-white rounded p-3 border border-amber-200 mb-3">
+                                        <p class="text-xs font-semibold text-gray-500 mb-1">Notițe Client:</p>
+                                        <p class="text-sm">{{ $order->notes }}</p>
+                                    </div>
+                                @endif
+                                @if($order->cancellation_reason)
+                                    <div class="bg-red-50 border border-red-200 rounded p-3">
+                                        <p class="text-xs font-semibold text-red-700 mb-1">⚠️ Motiv Anulare:</p>
+                                        <p class="text-sm text-red-800">{{ $order->cancellation_reason }}</p>
+                                    </div>
+                                @endif
+                            </div>
+                        @endif
+                    </div>
+
+                    <!-- Sameday AWB Section -->
                     @if($order->sameday_county_id && $order->sameday_city_id)
                         <div class="bg-blue-50 border-2 border-blue-200 rounded-lg p-4 sm:p-6 mb-6">
                             <h3 class="text-base sm:text-lg font-semibold mb-4 text-blue-900">📦 Livrare Sameday</h3>
                             
                             @if($order->hasAwb())
-                                <!-- AWB exists -->
                                 <div class="bg-white rounded-lg p-3 sm:p-4 mb-4">
                                     <div class="grid grid-cols-2 gap-3 sm:gap-4">
                                         <div>
@@ -124,7 +228,6 @@
                                     </div>
                                 </div>
 
-                                <!-- Butoane AWB optimizate pentru mobile -->
                                 <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
                                     @if($order->sameday_awb_pdf)
                                         <a href="{{ route('admin.orders.downloadAwbPdf', $order) }}" 
@@ -158,7 +261,6 @@
                                     </div>
                                 @endif
                             @else
-                                <!-- No AWB yet -->
                                 <div class="mb-4">
                                     <p class="text-sm sm:text-base text-gray-700 mb-4">AWB nu a fost creat încă. Crează AWB pentru a activa livrarea.</p>
                                     
@@ -171,7 +273,6 @@
                                     @endif
                                 </div>
 
-                                <!-- Butoane Create AWB optimizate pentru mobile -->
                                 <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
                                     @if($order->delivery_type === 'home')
                                         <form action="{{ route('admin.orders.createHomeAwb', $order) }}" method="POST" class="flex-1">
@@ -299,26 +400,12 @@
                             </div>
                         </div>
                     </div>
-
-                    @if($order->notes)
-                        <div class="bg-gray-50 p-3 sm:p-4 rounded-lg mt-6">
-                            <h3 class="text-base sm:text-lg font-semibold mb-3">Notițe Comandă</h3>
-                            <p class="text-sm sm:text-base">{{ $order->notes }}</p>
-                        </div>
-                    @endif
-
-                    @if($order->cancellation_reason)
-                        <div class="bg-red-50 border border-red-200 p-3 sm:p-4 rounded-lg mt-6">
-                            <h3 class="text-base sm:text-lg font-semibold mb-3 text-red-800">Motiv Anulare</h3>
-                            <p class="text-red-700 text-sm sm:text-base">{{ $order->cancellation_reason }}</p>
-                        </div>
-                    @endif
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal pentru motivul anulării - Optimizat pentru mobile -->
+    <!-- Modal pentru motivul anulării -->
     <div id="cancelModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden flex items-center justify-center z-50 p-4">
         <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
             <div class="p-4 sm:p-6">

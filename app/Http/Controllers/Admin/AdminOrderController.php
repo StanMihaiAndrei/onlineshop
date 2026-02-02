@@ -6,9 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Mail\OrderStatusUpdatedMail;
 use App\Models\Order;
 use App\Services\SamedayService;
+use App\Services\SmartBillService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class AdminOrderController extends Controller
 {
@@ -231,5 +233,29 @@ class AdminOrderController extends Controller
         }
 
         return Storage::disk('public')->download($order->sameday_awb_pdf);
+    }
+
+    public function downloadInvoice(Order $order)
+    {
+        if (!$order->smartbill_series || !$order->smartbill_number) {
+            return back()->with('error', 'Factura nu a fost emisă încă.');
+        }
+
+        try {
+            $smartbillService = app(SmartBillService::class);
+            $pdfContent = $smartbillService->getInvoicePdf($order->smartbill_series, $order->smartbill_number);
+
+            if (!$pdfContent) {
+                return back()->with('error', 'Nu s-a putut descărca factura.');
+            }
+
+            return response($pdfContent, 200, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'inline; filename="factura-' . $order->smartbill_series . '-' . $order->smartbill_number . '.pdf"',
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Eroare la descărcarea facturii: ' . $e->getMessage());
+            return back()->with('error', 'A apărut o eroare la descărcarea facturii.');
+        }
     }
 }

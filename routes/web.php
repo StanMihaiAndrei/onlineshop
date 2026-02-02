@@ -40,11 +40,11 @@ Route::prefix('checkout')->name('checkout')->group(function () {
     Route::get('/', [CheckoutController::class, 'index']);
     Route::post('/', [CheckoutController::class, 'store'])->name('.store');
     Route::get('/success/{order}', [CheckoutController::class, 'success'])->name('.success');
-    
+
     // Coupon Management
     Route::post('/apply-coupon', [CheckoutController::class, 'applyCoupon'])->name('.applyCoupon');
     Route::delete('/remove-coupon', [CheckoutController::class, 'removeCoupon'])->name('.removeCoupon');
-    
+
     // Shipping Data (AJAX)
     Route::get('/counties', [CheckoutController::class, 'getCounties'])->name('.counties');
     Route::get('/cities', [CheckoutController::class, 'getCities'])->name('.cities');
@@ -75,21 +75,22 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Dashboard & Profile
     Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
     Route::view('profile', 'profile')->name('profile');
-    
+
     // Cart
     Route::view('/cart', 'cart')->name('cart');
-    
+
     // Wishlist
     Route::get('/wishlist', [App\Http\Controllers\WishlistController::class, 'index'])->name('wishlist.index');
-    
+
     // Reviews
     Route::post('/products/{product}/reviews', [App\Http\Controllers\ReviewController::class, 'store'])->name('reviews.store');
     Route::delete('/reviews/{review}', [App\Http\Controllers\ReviewController::class, 'destroy'])->name('reviews.destroy');
-    
+
     // Orders History
     Route::prefix('orders')->name('orders.')->group(function () {
         Route::get('/', [OrderController::class, 'index'])->name('index');
         Route::get('/{order}', [OrderController::class, 'show'])->name('show');
+        Route::get('/{order}/invoice/download', [OrderController::class, 'downloadInvoice'])->name('downloadInvoice');
     });
 });
 
@@ -100,31 +101,32 @@ Route::middleware(['auth', 'verified'])->group(function () {
 */
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
-    
+
     // Products Management
     Route::resource('products', ProductController::class);
     Route::delete('products/{product}/images', [ProductController::class, 'deleteImage'])
         ->name('products.delete-image');
-    
+
     // Orders Management
     Route::prefix('orders')->name('orders.')->group(function () {
         Route::get('/', [AdminOrderController::class, 'index'])->name('index');
         Route::get('/{order}', [AdminOrderController::class, 'show'])->name('show');
         Route::patch('/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('updateStatus');
         Route::patch('/{order}/payment', [AdminOrderController::class, 'updatePaymentStatus'])->name('updatePayment');
-        
+
         // AWB Management (Sameday)
         Route::post('/{order}/awb/home', [AdminOrderController::class, 'createHomeAwb'])->name('createHomeAwb');
         Route::post('/{order}/awb/locker', [AdminOrderController::class, 'createLockerAwb'])->name('createLockerAwb');
         Route::post('/{order}/awb/sync', [AdminOrderController::class, 'syncAwbStatus'])->name('syncAwbStatus');
         Route::get('/{order}/awb/download', [AdminOrderController::class, 'downloadAwbPdf'])->name('downloadAwbPdf');
+        Route::get('/{order}/invoice/download', [AdminOrderController::class, 'downloadInvoice'])->name('downloadInvoice');
     });
-    
+
     // Users Management
     Route::resource('users', UserController::class);
     Route::post('users/{user}/toggle-email-verification', [UserController::class, 'toggleEmailVerification'])
         ->name('users.toggle-email-verification');
-    
+
     // Nomenclatoare (Settings)
     Route::resource('categories', CategoryController::class);
     Route::resource('colors', ColorController::class);
@@ -138,17 +140,17 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 */
 
 // Test route - remove in production
-Route::get('/test-sameday', function() {
+Route::get('/test-sameday', function () {
     $service = new \App\Services\SamedayService();
-    
+
     $service->clearCache();
     $token = $service->authenticate();
-    
+
     $pickupPoints = $service->getPickupPoints();
     $services = $service->getServices();
     $counties = $service->getCounties();
     $lockers = $service->getLockers(0, 1, null);
-    
+
     return response()->json([
         'token' => $token ? 'OK' : 'FAILED',
         'pickup_points' => $pickupPoints,
@@ -170,4 +172,4 @@ Route::get('/hello', function () {
 |--------------------------------------------------------------------------
 */
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
