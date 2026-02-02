@@ -1,38 +1,39 @@
 <x-app-layout>
-    <div class="py-6">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="py-4 sm:py-6">
+        <div class="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
-                    <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-2xl font-bold text-gray-800">Detalii Comandă</h2>
-                        <a href="{{ route('admin.orders.index') }}" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
-                            Înapoi la Comenzi
+                <div class="p-4 sm:p-6">
+                    <!-- Header optimizat pentru mobile -->
+                    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-6">
+                        <h2 class="text-lg sm:text-2xl font-bold text-gray-800">Detalii Comandă</h2>
+                        <a href="{{ route('admin.orders.index') }}" class="bg-gray-500 hover:bg-gray-700 text-white text-sm font-semibold py-2 px-3 rounded text-center whitespace-nowrap">
+                            ← Înapoi
                         </a>
                     </div>
 
                     @if(session('success'))
-                        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                        <div class="bg-green-100 border border-green-400 text-green-700 px-3 py-2 text-sm rounded mb-4">
                             {{ session('success') }}
                         </div>
                     @endif
 
                     @if(session('error'))
-                        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                        <div class="bg-red-100 border border-red-400 text-red-700 px-3 py-2 text-sm rounded mb-4">
                             {{ session('error') }}
                         </div>
                     @endif
 
                     <!-- Order Info -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                        <div class="bg-gray-50 p-4 rounded-lg">
-                            <h3 class="text-lg font-semibold mb-3">Informații Comandă</h3>
-                            <p><strong>Număr Comandă:</strong> {{ $order->order_number }}</p>
-                            <p><strong>Data:</strong> {{ $order->created_at->format('d/m/Y H:i') }}</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-6">
+                        <div class="bg-gray-50 p-3 sm:p-4 rounded-lg">
+                            <h3 class="text-base sm:text-lg font-semibold mb-3">Informații Comandă</h3>
+                            <p class="text-sm sm:text-base mb-1"><strong>Număr Comandă:</strong> {{ $order->order_number }}</p>
+                            <p class="text-sm sm:text-base mb-1"><strong>Data:</strong> {{ $order->created_at->format('d/m/Y H:i') }}</p>
                             
                             @if($order->coupon_id && $order->discount_amount > 0)
                                 <div class="bg-green-50 border border-green-200 rounded p-2 my-2">
-                                    <p class="text-green-800"><strong>🎉 Cupon Aplicat:</strong> {{ $order->coupon->code }}</p>
-                                    <p class="text-green-700 text-sm">
+                                    <p class="text-green-800 text-sm"><strong>🎉 Cupon:</strong> {{ $order->coupon->code }}</p>
+                                    <p class="text-green-700 text-xs sm:text-sm">
                                         Discount: RON {{ number_format($order->discount_amount, 2) }}
                                         @if($order->coupon->type === 'percentage')
                                             ({{ $order->coupon->value }}% off)
@@ -41,9 +42,9 @@
                                 </div>
                             @endif
                             
-                            <p><strong>Total:</strong> RON {{ number_format($order->total_amount, 2) }}</p>
-                            <p><strong>Metodă Plată:</strong> {{ $order->payment_method === 'card' ? 'Card' : 'Ramburs' }}</p>
-                            <p><strong>Status:</strong> 
+                            <p class="text-sm sm:text-base mb-1"><strong>Total:</strong> RON {{ number_format($order->total_amount, 2) }}</p>
+                            <p class="text-sm sm:text-base mb-1"><strong>Metodă Plată:</strong> {{ $order->payment_method === 'card' ? 'Card' : 'Ramburs' }}</p>
+                            <p class="text-sm sm:text-base mb-1"><strong>Status:</strong> 
                                 <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
                                     @if($order->status === 'pending') bg-yellow-100 text-yellow-800
                                     @elseif($order->status === 'processing') bg-blue-100 text-blue-800
@@ -53,7 +54,7 @@
                                     {{ ucfirst($order->status) }}
                                 </span>
                             </p>
-                            <p><strong>Status Plată:</strong> 
+                            <p class="text-sm sm:text-base"><strong>Status Plată:</strong> 
                                 <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
                                     @if($order->payment_status === 'pending') bg-yellow-100 text-yellow-800
                                     @elseif($order->payment_status === 'paid') bg-green-100 text-green-800
@@ -64,13 +65,13 @@
                             </p>
                         </div>
 
-                        <div class="bg-gray-50 p-4 rounded-lg">
-                            <h3 class="text-lg font-semibold mb-3">Informații Client</h3>
-                            <p><strong>Nume:</strong> {{ $order->shipping_name }}</p>
-                            <p><strong>Tip:</strong> {{ $order->is_company ? 'Persoană Juridică' : 'Persoană Fizică' }}</p>
-                            <p><strong>Email:</strong> {{ $order->shipping_email }}</p>
-                            <p><strong>Telefon:</strong> {{ $order->shipping_phone }}</p>
-                            <p><strong>Tip Livrare:</strong> 
+                        <div class="bg-gray-50 p-3 sm:p-4 rounded-lg">
+                            <h3 class="text-base sm:text-lg font-semibold mb-3">Informații Client</h3>
+                            <p class="text-sm sm:text-base mb-1"><strong>Nume:</strong> {{ $order->shipping_name }}</p>
+                            <p class="text-sm sm:text-base mb-1"><strong>Tip:</strong> {{ $order->is_company ? 'Persoană Juridică' : 'Persoană Fizică' }}</p>
+                            <p class="text-sm sm:text-base mb-1"><strong>Email:</strong> <span class="break-all">{{ $order->shipping_email }}</span></p>
+                            <p class="text-sm sm:text-base mb-1"><strong>Telefon:</strong> {{ $order->shipping_phone }}</p>
+                            <p class="text-sm sm:text-base mb-1"><strong>Tip Livrare:</strong> 
                                 @if($order->delivery_type === 'home')
                                     🏠 Domiciliu
                                 @else
@@ -78,34 +79,34 @@
                                 @endif
                             </p>
                             @if($order->delivery_type === 'home')
-                                <p><strong>Adresă:</strong> {{ $order->shipping_address }}, {{ $order->shipping_city }}, {{ $order->shipping_postal_code }}, {{ $order->shipping_country }}</p>
+                                <p class="text-sm sm:text-base"><strong>Adresă:</strong> {{ $order->shipping_address }}, {{ $order->shipping_city }}, {{ $order->shipping_postal_code }}, {{ $order->shipping_country }}</p>
                             @else
-                                <p><strong>Locker:</strong> {{ $order->sameday_locker_name }}</p>
-                                <p><strong>Oraș:</strong> {{ $order->shipping_city }}</p>
+                                <p class="text-sm sm:text-base mb-1"><strong>Locker:</strong> {{ $order->sameday_locker_name }}</p>
+                                <p class="text-sm sm:text-base"><strong>Oraș:</strong> {{ $order->shipping_city }}</p>
                             @endif
                         </div>
                     </div>
 
-                    <!-- Sameday AWB Section -->
+                    <!-- Sameday AWB Section - Optimizat pentru mobile -->
                     @if($order->sameday_county_id && $order->sameday_city_id)
-                        <div class="bg-blue-50 border-2 border-blue-200 rounded-lg p-6 mb-6">
-                            <h3 class="text-lg font-semibold mb-4 text-blue-900">📦 Livrare Sameday</h3>
+                        <div class="bg-blue-50 border-2 border-blue-200 rounded-lg p-4 sm:p-6 mb-6">
+                            <h3 class="text-base sm:text-lg font-semibold mb-4 text-blue-900">📦 Livrare Sameday</h3>
                             
                             @if($order->hasAwb())
                                 <!-- AWB exists -->
-                                <div class="bg-white rounded-lg p-4 mb-4">
-                                    <div class="grid grid-cols-2 gap-4">
+                                <div class="bg-white rounded-lg p-3 sm:p-4 mb-4">
+                                    <div class="grid grid-cols-2 gap-3 sm:gap-4">
                                         <div>
-                                            <p class="text-sm text-gray-600">Număr AWB</p>
-                                            <p class="text-lg font-bold text-blue-600">{{ $order->sameday_awb_number }}</p>
+                                            <p class="text-xs sm:text-sm text-gray-600">Număr AWB</p>
+                                            <p class="text-sm sm:text-lg font-bold text-blue-600 break-all">{{ $order->sameday_awb_number }}</p>
                                         </div>
                                         <div>
-                                            <p class="text-sm text-gray-600">Cost Livrare</p>
-                                            <p class="text-lg font-semibold">RON {{ number_format($order->sameday_awb_cost, 2) }}</p>
+                                            <p class="text-xs sm:text-sm text-gray-600">Cost Livrare</p>
+                                            <p class="text-sm sm:text-lg font-semibold">RON {{ number_format($order->sameday_awb_cost, 2) }}</p>
                                         </div>
                                         <div>
-                                            <p class="text-sm text-gray-600">Status AWB</p>
-                                            <p class="text-sm font-semibold">
+                                            <p class="text-xs sm:text-sm text-gray-600">Status AWB</p>
+                                            <p class="text-xs sm:text-sm font-semibold">
                                                 <span class="px-2 py-1 rounded-full text-xs
                                                     @if($order->sameday_awb_status === 'created') bg-blue-100 text-blue-800
                                                     @elseif($order->sameday_awb_status === 'in_transit') bg-yellow-100 text-yellow-800
@@ -117,79 +118,85 @@
                                             </p>
                                         </div>
                                         <div>
-                                            <p class="text-sm text-gray-600">Greutate</p>
-                                            <p class="text-sm">{{ $order->getTotalWeight() }} kg</p>
+                                            <p class="text-xs sm:text-sm text-gray-600">Greutate</p>
+                                            <p class="text-xs sm:text-sm">{{ $order->getTotalWeight() }} kg</p>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div class="flex gap-3">
+                                <!-- Butoane AWB optimizate pentru mobile -->
+                                <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
                                     @if($order->sameday_awb_pdf)
                                         <a href="{{ route('admin.orders.downloadAwbPdf', $order) }}" 
-                                           class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded inline-flex items-center">
-                                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                           class="bg-green-500 hover:bg-green-600 text-white text-xs sm:text-sm font-semibold py-2 px-3 rounded inline-flex items-center justify-center">
+                                            <svg class="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                             </svg>
-                                            Descarcă AWB PDF
+                                            <span class="hidden sm:inline">Descarcă AWB PDF</span>
+                                            <span class="sm:hidden">AWB PDF</span>
                                         </a>
                                     @endif
 
-                                    <form action="{{ route('admin.orders.syncAwbStatus', $order) }}" method="POST" class="inline">
+                                    <form action="{{ route('admin.orders.syncAwbStatus', $order) }}" method="POST" class="flex-1 sm:flex-initial">
                                         @csrf
-                                        <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded inline-flex items-center">
-                                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <button type="submit" class="w-full sm:w-auto bg-blue-500 hover:bg-blue-600 text-white text-xs sm:text-sm font-semibold py-2 px-3 rounded inline-flex items-center justify-center">
+                                            <svg class="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                                             </svg>
-                                            Sincronizează Status
+                                            <span class="hidden sm:inline">Sincronizează Status</span>
+                                            <span class="sm:hidden">Sincronizează</span>
                                         </button>
                                     </form>
                                 </div>
 
                                 @if($order->sameday_tracking_history)
-                                    <div class="mt-4 bg-white rounded-lg p-4">
-                                        <h4 class="font-semibold mb-2">Istoric Tracking</h4>
-                                        <div class="text-sm text-gray-600">
-                                            <pre class="whitespace-pre-wrap">{{ json_encode($order->sameday_tracking_history, JSON_PRETTY_PRINT) }}</pre>
+                                    <div class="mt-4 bg-white rounded-lg p-3 sm:p-4">
+                                        <h4 class="font-semibold mb-2 text-sm sm:text-base">Istoric Tracking</h4>
+                                        <div class="text-xs sm:text-sm text-gray-600 overflow-x-auto">
+                                            <pre class="whitespace-pre-wrap break-all">{{ json_encode($order->sameday_tracking_history, JSON_PRETTY_PRINT) }}</pre>
                                         </div>
                                     </div>
                                 @endif
                             @else
                                 <!-- No AWB yet -->
                                 <div class="mb-4">
-                                    <p class="text-gray-700 mb-4">AWB nu a fost creat încă. Crează AWB pentru a activa livrarea.</p>
+                                    <p class="text-sm sm:text-base text-gray-700 mb-4">AWB nu a fost creat încă. Crează AWB pentru a activa livrarea.</p>
                                     
                                     @if(!$order->canCreateAwb())
                                         <div class="bg-yellow-50 border border-yellow-200 rounded p-3 mb-4">
-                                            <p class="text-sm text-yellow-800">
+                                            <p class="text-xs sm:text-sm text-yellow-800">
                                                 ⚠️ Pentru a crea AWB, comanda trebuie să fie plătită și să aibă status "pending" sau "processing".
                                             </p>
                                         </div>
                                     @endif
                                 </div>
 
-                                <div class="flex gap-3">
+                                <!-- Butoane Create AWB optimizate pentru mobile -->
+                                <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
                                     @if($order->delivery_type === 'home')
-                                        <form action="{{ route('admin.orders.createHomeAwb', $order) }}" method="POST" class="inline">
+                                        <form action="{{ route('admin.orders.createHomeAwb', $order) }}" method="POST" class="flex-1">
                                             @csrf
                                             <button type="submit" 
-                                                    class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded inline-flex items-center {{ !$order->canCreateAwb() ? 'opacity-50 cursor-not-allowed' : '' }}"
+                                                    class="w-full bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-semibold py-2 px-3 sm:px-4 rounded inline-flex items-center justify-center {{ !$order->canCreateAwb() ? 'opacity-50 cursor-not-allowed' : '' }}"
                                                     {{ !$order->canCreateAwb() ? 'disabled' : '' }}>
-                                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <svg class="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                                                 </svg>
-                                                🚚 Creează AWB - Livrare la Domiciliu
+                                                <span class="hidden sm:inline">🚚 Creează AWB - Livrare la Domiciliu</span>
+                                                <span class="sm:hidden">🚚 AWB Domiciliu</span>
                                             </button>
                                         </form>
                                     @else
-                                        <form action="{{ route('admin.orders.createLockerAwb', $order) }}" method="POST" class="inline">
+                                        <form action="{{ route('admin.orders.createLockerAwb', $order) }}" method="POST" class="flex-1">
                                             @csrf
                                             <button type="submit" 
-                                                    class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-6 rounded inline-flex items-center {{ !$order->canCreateAwb() ? 'opacity-50 cursor-not-allowed' : '' }}"
+                                                    class="w-full bg-purple-600 hover:bg-purple-700 text-white text-xs sm:text-sm font-semibold py-2 px-3 sm:px-4 rounded inline-flex items-center justify-center {{ !$order->canCreateAwb() ? 'opacity-50 cursor-not-allowed' : '' }}"
                                                     {{ !$order->canCreateAwb() ? 'disabled' : '' }}>
-                                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <svg class="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                                                 </svg>
-                                                📦 Creează AWB - Livrare la Easybox
+                                                <span class="hidden sm:inline">📦 Creează AWB - Livrare la Easybox</span>
+                                                <span class="sm:hidden">📦 AWB Easybox</span>
                                             </button>
                                         </form>
                                     @endif
@@ -199,39 +206,39 @@
                     @endif
 
                     <!-- Status Update Forms -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                        <div class="bg-gray-50 p-4 rounded-lg">
-                            <h3 class="text-lg font-semibold mb-3">Status Comandă</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-6">
+                        <div class="bg-gray-50 p-3 sm:p-4 rounded-lg">
+                            <h3 class="text-base sm:text-lg font-semibold mb-3">Status Comandă</h3>
                             <form action="{{ route('admin.orders.updateStatus', $order) }}" method="POST" id="statusForm">
                                 @csrf
                                 @method('PATCH')
-                                <div class="mb-4">
-                                    <select name="status" id="statusSelect" class="w-full border border-gray-300 rounded-md px-3 py-2">
+                                <div class="mb-3">
+                                    <select name="status" id="statusSelect" class="w-full text-sm sm:text-base border border-gray-300 rounded-md px-3 py-2">
                                         <option value="pending" {{ $order->status === 'pending' ? 'selected' : '' }}>Pending</option>
                                         <option value="processing" {{ $order->status === 'processing' ? 'selected' : '' }}>Processing</option>
                                         <option value="completed" {{ $order->status === 'completed' ? 'selected' : '' }}>Completed</option>
                                         <option value="cancelled" {{ $order->status === 'cancelled' ? 'selected' : '' }}>Cancelled</option>
                                     </select>
                                 </div>
-                                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                                <button type="submit" class="w-full sm:w-auto bg-blue-500 hover:bg-blue-700 text-white text-sm font-semibold py-2 px-4 rounded">
                                     Actualizează Status
                                 </button>
                             </form>
                         </div>
 
-                        <div class="bg-gray-50 p-4 rounded-lg">
-                            <h3 class="text-lg font-semibold mb-3">Status Plată</h3>
+                        <div class="bg-gray-50 p-3 sm:p-4 rounded-lg">
+                            <h3 class="text-base sm:text-lg font-semibold mb-3">Status Plată</h3>
                             <form action="{{ route('admin.orders.updatePayment', $order) }}" method="POST">
                                 @csrf
                                 @method('PATCH')
-                                <div class="mb-4">
-                                    <select name="payment_status" class="w-full border border-gray-300 rounded-md px-3 py-2">
+                                <div class="mb-3">
+                                    <select name="payment_status" class="w-full text-sm sm:text-base border border-gray-300 rounded-md px-3 py-2">
                                         <option value="pending" {{ $order->payment_status === 'pending' ? 'selected' : '' }}>Pending</option>
                                         <option value="paid" {{ $order->payment_status === 'paid' ? 'selected' : '' }}>Paid</option>
                                         <option value="failed" {{ $order->payment_status === 'failed' ? 'selected' : '' }}>Failed</option>
                                     </select>
                                 </div>
-                                <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                                <button type="submit" class="w-full sm:w-auto bg-green-500 hover:bg-green-700 text-white text-sm font-semibold py-2 px-4 rounded">
                                     Actualizează Plată
                                 </button>
                             </form>
@@ -239,17 +246,17 @@
                     </div>
 
                     <!-- Order Items -->
-                    <div class="bg-gray-50 p-4 rounded-lg">
-                        <h3 class="text-lg font-semibold mb-3">Produse Comandate</h3>
+                    <div class="bg-gray-50 p-3 sm:p-4 rounded-lg">
+                        <h3 class="text-base sm:text-lg font-semibold mb-3">Produse Comandate</h3>
                         <div class="space-y-3">
                             @foreach($order->items as $item)
-                                <div class="flex justify-between items-center bg-white p-3 rounded">
-                                    <div>
-                                        <p class="font-medium">{{ $item->product_title }}</p>
-                                        <p class="text-sm text-gray-600">Cantitate: {{ $item->quantity }} × RON {{ number_format($item->price, 2) }}</p>
+                                <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 bg-white p-3 rounded">
+                                    <div class="flex-1">
+                                        <p class="font-medium text-sm sm:text-base">{{ $item->product_title }}</p>
+                                        <p class="text-xs sm:text-sm text-gray-600">Cantitate: {{ $item->quantity }} × RON {{ number_format($item->price, 2) }}</p>
                                     </div>
-                                    <div class="text-right">
-                                        <p class="font-medium">RON {{ number_format($item->subtotal, 2) }}</p>
+                                    <div class="text-left sm:text-right">
+                                        <p class="font-medium text-sm sm:text-base">RON {{ number_format($item->subtotal, 2) }}</p>
                                     </div>
                                 </div>
                             @endforeach
@@ -259,20 +266,20 @@
                                     $subtotal = $order->items->sum('subtotal');
                                 @endphp
                                 
-                                <div class="flex justify-between items-center mb-2">
+                                <div class="flex justify-between items-center mb-2 text-sm sm:text-base">
                                     <span class="text-gray-700">Subtotal produse:</span>
                                     <span class="font-medium">RON {{ number_format($subtotal, 2) }}</span>
                                 </div>
                                 
                                 @if($order->discount_amount > 0)
-                                    <div class="flex justify-between items-center mb-2 text-green-600">
+                                    <div class="flex justify-between items-center mb-2 text-green-600 text-sm sm:text-base">
                                         <span>Discount ({{ $order->coupon->code }}):</span>
                                         <span class="font-medium">-RON {{ number_format($order->discount_amount, 2) }}</span>
                                     </div>
                                 @endif
                                 
                                 @if($order->shipping_cost > 0)
-                                    <div class="flex justify-between items-center mb-2 text-blue-600">
+                                    <div class="flex justify-between items-center mb-2 text-blue-600 text-sm sm:text-base">
                                         <span>
                                             🚚 Cost livrare Sameday 
                                             @if($order->delivery_type === 'locker')
@@ -285,7 +292,7 @@
                                     </div>
                                 @endif
                                 
-                                <div class="flex justify-between items-center font-bold text-lg pt-2 border-t">
+                                <div class="flex justify-between items-center font-bold text-base sm:text-lg pt-2 border-t">
                                     <span>Total de plată:</span>
                                     <span class="text-blue-600">RON {{ number_format($order->total_amount, 2) }}</span>
                                 </div>
@@ -294,16 +301,16 @@
                     </div>
 
                     @if($order->notes)
-                        <div class="bg-gray-50 p-4 rounded-lg mt-6">
-                            <h3 class="text-lg font-semibold mb-3">Notițe Comandă</h3>
-                            <p>{{ $order->notes }}</p>
+                        <div class="bg-gray-50 p-3 sm:p-4 rounded-lg mt-6">
+                            <h3 class="text-base sm:text-lg font-semibold mb-3">Notițe Comandă</h3>
+                            <p class="text-sm sm:text-base">{{ $order->notes }}</p>
                         </div>
                     @endif
 
                     @if($order->cancellation_reason)
-                        <div class="bg-red-50 border border-red-200 p-4 rounded-lg mt-6">
-                            <h3 class="text-lg font-semibold mb-3 text-red-800">Motiv Anulare</h3>
-                            <p class="text-red-700">{{ $order->cancellation_reason }}</p>
+                        <div class="bg-red-50 border border-red-200 p-3 sm:p-4 rounded-lg mt-6">
+                            <h3 class="text-base sm:text-lg font-semibold mb-3 text-red-800">Motiv Anulare</h3>
+                            <p class="text-red-700 text-sm sm:text-base">{{ $order->cancellation_reason }}</p>
                         </div>
                     @endif
                 </div>
@@ -311,12 +318,12 @@
         </div>
     </div>
 
-    <!-- Modal pentru motivul anulării -->
-    <div id="cancelModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden flex items-center justify-center z-50">
-        <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
-            <div class="p-6">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Anulare comandă</h3>
-                <p class="text-gray-600 mb-4">Te rugăm să specifici motivul pentru care anulezi această comandă:</p>
+    <!-- Modal pentru motivul anulării - Optimizat pentru mobile -->
+    <div id="cancelModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
+            <div class="p-4 sm:p-6">
+                <h3 class="text-base sm:text-lg font-semibold text-gray-900 mb-4">Anulare comandă</h3>
+                <p class="text-sm sm:text-base text-gray-600 mb-4">Te rugăm să specifici motivul pentru care anulezi această comandă:</p>
                 
                 <form id="cancelForm" action="{{ route('admin.orders.updateStatus', $order) }}" method="POST">
                     @csrf
@@ -327,17 +334,17 @@
                         <textarea 
                             name="cancellation_reason" 
                             rows="4" 
-                            class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                            class="w-full text-sm sm:text-base border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" 
                             placeholder="Introdu motivul anulării..." 
                             required
                         ></textarea>
                     </div>
                     
-                    <div class="flex justify-end space-x-3">
-                        <button type="button" onclick="closeCancelModal()" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                    <div class="flex flex-col sm:flex-row justify-end gap-2 sm:gap-3">
+                        <button type="button" onclick="closeCancelModal()" class="w-full sm:w-auto bg-gray-500 hover:bg-gray-700 text-white text-sm font-semibold py-2 px-4 rounded order-2 sm:order-1">
                             Renunță
                         </button>
-                        <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                        <button type="submit" class="w-full sm:w-auto bg-red-500 hover:bg-red-700 text-white text-sm font-semibold py-2 px-4 rounded order-1 sm:order-2">
                             Anulează comanda
                         </button>
                     </div>

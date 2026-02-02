@@ -3,9 +3,10 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
-                    <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-2xl font-bold text-gray-800">Management Conturi</h2>
-                        <a href="{{ route('admin.users.create') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    <!-- Header optimizat pentru mobile -->
+                    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-6">
+                        <h2 class="text-xl font-bold text-gray-800">Management Conturi</h2>
+                        <a href="{{ route('admin.users.create') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-center">
                             Adaugă Utilizator
                         </a>
                     </div>
