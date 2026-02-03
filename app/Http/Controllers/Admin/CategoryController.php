@@ -11,14 +11,14 @@ class CategoryController extends Controller
     public function index()
     {
         // Obține toate categoriile principale cu subcategoriile lor
-        $categories = Category::with(['allChildren' => function($query) {
-                $query->withCount('products');
-            }])
+        $categories = Category::with(['allChildren' => function ($query) {
+            $query->withCount('products');
+        }])
             ->withCount('products')
             ->whereNull('parent_id')
             ->latest()
             ->paginate(15);
-        
+
         return view('admin.categories.index', compact('categories'));
     }
 
@@ -29,7 +29,7 @@ class CategoryController extends Controller
             ->where('is_active', true)
             ->orderBy('name')
             ->get();
-        
+
         return view('admin.categories.create', compact('parentCategories'));
     }
 
@@ -55,7 +55,7 @@ class CategoryController extends Controller
             ->where('is_active', true)
             ->orderBy('name')
             ->get();
-        
+
         return view('admin.categories.edit', compact('category', 'parentCategories'));
     }
 
@@ -67,20 +67,25 @@ class CategoryController extends Controller
             'parent_id' => 'nullable|exists:categories,id',
         ]);
 
-        // Verifică că nu setăm categoria ca părinte al ei însăși
-        if ($validated['parent_id'] == $category->id) {
-            return back()->withErrors(['parent_id' => 'O categorie nu poate fi părinte pentru ea însăși.']);
-        }
+        // Dacă categoria este părinte, păstrează parent_id ca null
+        if ($category->isParent()) {
+            $validated['parent_id'] = null;
+        } else {
+            // Verifică că nu setăm categoria ca părinte al ei însăși
+            if (isset($validated['parent_id']) && $validated['parent_id'] == $category->id) {
+                return back()->withErrors(['parent_id' => 'O categorie nu poate fi părinte pentru ea însăși.']);
+            }
 
-        // Verifică că nu setăm o subcategorie a categoriei curente ca părinte
-        if ($validated['parent_id'] && $category->allChildren->contains('id', $validated['parent_id'])) {
-            return back()->withErrors(['parent_id' => 'Nu se poate seta o subcategorie ca părinte.']);
+            // Verifică că nu setăm o subcategorie a categoriei curente ca părinte
+            if (isset($validated['parent_id']) && $category->allChildren->contains('id', $validated['parent_id'])) {
+                return back()->withErrors(['parent_id' => 'Nu se poate seta o subcategorie ca părinte.']);
+            }
         }
 
         $category->update([
             'name' => $validated['name'],
             'description' => $validated['description'],
-            'parent_id' => $validated['parent_id'],
+            'parent_id' => $validated['parent_id'] ?? null,
             'is_active' => $request->has('is_active'),
         ]);
 

@@ -1,6 +1,6 @@
 <x-app-layout>
     <div class="py-6">
-        <div class="max-w-3xl mx-auto">
+        <div class="max-w-3xl mx-auto px-4">
             <div class="mb-6">
                 <a href="{{ route('admin.coupons.index') }}" class="text-blue-600 hover:text-blue-800">
                     Înapoi la Cupoane
@@ -23,7 +23,7 @@
                         @enderror
                     </div>
 
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label for="type" class="block text-sm font-medium text-gray-700 mb-1">Tip Discount *</label>
                             <select name="type" id="type" required
@@ -46,12 +46,13 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label for="valid_from" class="block text-sm font-medium text-gray-700 mb-1">Valabil De La</label>
                             <input type="datetime-local" name="valid_from" id="valid_from" 
                                    value="{{ old('valid_from', $coupon->valid_from?->format('Y-m-d\TH:i')) }}"
-                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 @error('valid_from') border-red-500 @enderror">
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 @error('valid_from') border-red-500 @enderror"
+                                   style="color-scheme: light;">
                             @error('valid_from')
                                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                             @enderror
@@ -61,14 +62,15 @@
                             <label for="valid_until" class="block text-sm font-medium text-gray-700 mb-1">Valabil Până La</label>
                             <input type="datetime-local" name="valid_until" id="valid_until" 
                                    value="{{ old('valid_until', $coupon->valid_until?->format('Y-m-d\TH:i')) }}"
-                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 @error('valid_until') border-red-500 @enderror">
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 @error('valid_until') border-red-500 @enderror"
+                                   style="color-scheme: light;">
                             @error('valid_until')
                                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                             @enderror
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label for="usage_limit" class="block text-sm font-medium text-gray-700 mb-1">Limită Utilizare</label>
                             <input type="number" name="usage_limit" id="usage_limit" value="{{ old('usage_limit', $coupon->usage_limit) }}" min="1"
@@ -98,13 +100,13 @@
                         </label>
                     </div>
 
-                    <div class="flex gap-4 pt-4">
+                    <div class="flex flex-col sm:flex-row gap-4 pt-4">
                         <button type="submit" 
                                 class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition">
                             Actualizează Cupon
                         </button>
                         <a href="{{ route('admin.coupons.index') }}" 
-                           class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-2 rounded-lg font-medium transition">
+                           class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-2 rounded-lg font-medium transition text-center">
                             Anulează
                         </a>
                     </div>
@@ -112,4 +114,5 @@
             </div>
         </div>
     </div>
+
 </x-app-layout>

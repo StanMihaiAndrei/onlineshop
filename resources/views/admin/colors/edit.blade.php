@@ -28,11 +28,11 @@
 
                 <div class="mb-4">
                     <label for="hex_code" class="block text-sm font-medium text-gray-700 mb-2">Cod Hex *</label>
-                    <div class="flex gap-2">
+                    <div class="flex flex-col sm:flex-row gap-2">
                         <input type="color" 
                                id="color_picker" 
                                value="{{ old('hex_code', $color->hex_code) }}"
-                               class="h-10 w-20 border border-gray-300 rounded cursor-pointer">
+                               class="h-10 w-full sm:w-20 border border-gray-300 rounded cursor-pointer">
                         <input type="text" 
                                name="hex_code" 
                                id="hex_code" 
@@ -57,14 +57,14 @@
                     </label>
                 </div>
 
-                <div class="flex justify-end space-x-4">
+                <div class="flex flex-col sm:flex-row justify-center gap-3 sm:space-x-4">
                     <a href="{{ route('admin.colors.index') }}" 
-                       class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                       class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 text-center">
                         Anulează
                     </a>
                     <button type="submit" 
                             class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                        Actualizează Culoare
+                        Actualizează
                     </button>
                 </div>
             </form>
