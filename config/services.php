@@ -51,4 +51,7 @@ return [
         'cif' => env('SMARTBILL_CIF'),
         'series_name' => env('SMARTBILL_SERIES_NAME', 'TEST'),
     ],
+    'brevo' => [
+        'key' => env('BREVO_API_KEY'),
+    ]
 ];

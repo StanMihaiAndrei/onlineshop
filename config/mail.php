@@ -64,6 +64,10 @@ return [
         'resend' => [
             'transport' => 'resend',
         ],
+        'brevo' => [
+            'transport' => 'brevo',
+            'key' => env('BREVO_API_KEY'),
+        ],
 
         'sendmail' => [
             'transport' => 'sendmail',
@@ -124,6 +128,6 @@ return [
     |
     */
 
-    'admin_email' => env('ADMIN_EMAIL', 'contact@craftgits.ro'),
+    'admin_email' => env('ADMIN_EMAIL', 'contactcraftgifts@gmail.com'),
 
 ];
