@@ -9,20 +9,19 @@
 
         <link rel="icon" type="image/svg+xml" href="{{ asset('images/favicon.svg') }}">
 
-
         <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+        <link rel="preconnect" href="https://fonts.cdnfonts.com">
+        <link href="https://fonts.cdnfonts.com/css/comic-relief" rel="stylesheet">
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="font-sans antialiased">
+    <body class="font-sans antialiased bg-background text-text">
         <!-- Navigation pentru clienți și guest -->
         <livewire:layout.navigation />
 
         <!-- Page Content -->
-        <main class="min-h-screen bg-gray-100">
+        <main class="min-h-screen bg-background">
             {{ $slot }}
         </main>
 

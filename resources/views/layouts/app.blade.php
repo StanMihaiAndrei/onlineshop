@@ -9,18 +9,17 @@
 
         <link rel="icon" type="image/svg+xml" href="{{ asset('images/favicon.svg') }}">
 
-
         <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+        <link rel="preconnect" href="https://fonts.cdnfonts.com">
+        <link href="https://fonts.cdnfonts.com/css/comic-relief" rel="stylesheet">
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         
         @stack('styles')
     </head>
-    <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gray-100">
+    <body class="font-sans antialiased bg-background text-text">
+        <div class="min-h-screen bg-background">
             @if(auth()->check() && auth()->user()->role === 'admin')
                 <!-- Layout pentru ADMIN cu Sidebar -->
                 <div class="flex">

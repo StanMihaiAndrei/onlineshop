@@ -12,14 +12,17 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Inter', ...defaultTheme.fontFamily.sans],
-                serif: ['Playfair Display', ...defaultTheme.fontFamily.serif],
+                sans: ['Comic Relief', 'Comic Sans MS', 'cursive', ...defaultTheme.fontFamily.sans],
             },
             colors: {
+                // Noua paletă de culori
+                background: '#f6f1eb',
+                text: '#3a3a3a',
+                secondary: '#8fae9e',
                 primary: {
-                    DEFAULT: 'rgb(219, 28, 181)',
-                    dark: 'rgb(180, 20, 145)',
-                    light: 'rgb(252, 231, 243)',
+                    DEFAULT: '#db1cb5',
+                    dark: '#b01691',
+                    light: '#f0d5ea',
                 },
             },
         },

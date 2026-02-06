@@ -1,4 +1,13 @@
-/* Custom Craft Gifts Styles */
+/* Custom Styles - Noua paletă de culori */
+
+:root {
+    --color-background: #f6f1eb;
+    --color-text: #3a3a3a;
+    --color-secondary: #8fae9e;
+    --color-primary: #db1cb5;
+    --color-primary-dark: #b01691;
+    --color-primary-light: #f0d5ea;
+}
 
 /* Hover Effects */
 .hover-lift {
@@ -12,12 +21,12 @@
 
 /* Gradients */
 .hero-gradient {
-    background: linear-gradient(135deg, rgba(219, 28, 181, 0.1) 0%, rgba(255, 255, 255, 1) 100%);
+    background: linear-gradient(135deg, rgba(219, 28, 181, 0.1) 0%, rgba(246, 241, 235, 1) 100%);
 }
 
 .feature-card {
     backdrop-filter: blur(10px);
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(246, 241, 235, 0.9);
 }
 
 /* Animations */

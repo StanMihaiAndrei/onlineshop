@@ -1,5 +1,16 @@
+/* Import Comic Relief font */
+@import url('https://fonts.cdnfonts.com/css/comic-relief');
+
 @import './custom.css';
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+/* Fallback cu Comic Sans MS dacă Comic Relief nu se încarcă */
+@layer base {
+    body {
+        font-family: 'Comic Relief', 'Comic Sans MS', cursive, sans-serif;
+    }
+}
