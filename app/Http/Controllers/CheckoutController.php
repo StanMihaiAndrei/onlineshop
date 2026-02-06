@@ -333,7 +333,7 @@ class CheckoutController extends Controller
 
             // Trimite email-ul de confirmare către client cu PDF-ul atașat
             Mail::to($order->shipping_email)
-                ->queue(new OrderConfirmationMail($order, $invoiceSeries, $invoiceNumber, $invoicePdfPath));
+                ->send(new OrderConfirmationMail($order, $invoiceSeries, $invoiceNumber, $invoicePdfPath));
 
             // Trimite email către admin
             Mail::to(config('mail.from.address'))
