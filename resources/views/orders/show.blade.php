@@ -148,7 +148,7 @@
                                         <div class="pt-3 border-t">
                                             <p class="text-gray-600 mb-2">Număr AWB</p>
                                             <p class="font-mono font-bold text-lg mb-3" style="color: var(--color-secondary);">{{ $order->sameday_awb_number }}</p>
-                                            <a href="https://sameday.ro/tracking" target="_blank" 
+                                            <a href="https://sameday.ro/awb-tracking/?awb={{ $order->sameday_awb_number }}" target="_blank" 
                                                class="inline-flex items-center gap-2 text-sm font-medium hover:underline"
                                                style="color: var(--color-secondary);">
                                                 <span>Urmărește coletul</span>

@@ -54,7 +54,7 @@ class OrderController extends Controller
 
             return response($pdfContent, 200, [
                 'Content-Type' => 'application/pdf',
-                'Content-Disposition' => 'inline; filename="factura-' . $order->smartbill_series . '-' . $order->smartbill_number . '.pdf"',
+                'Content-Disposition' => 'attachment; filename="factura-' . $order->smartbill_series . '-' . $order->smartbill_number . '.pdf"',
             ]);
         } catch (\Exception $e) {
             Log::error('Eroare la descărcarea facturii (client): ' . $e->getMessage());

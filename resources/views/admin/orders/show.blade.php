@@ -444,13 +444,21 @@
 
     <script>
         document.getElementById('statusSelect').addEventListener('change', function(e) {
-            if (e.target.value === 'cancelled') {
-                e.preventDefault();
-                document.getElementById('cancelModal').classList.remove('hidden');
-                e.target.value = '{{ $order->status }}';
-                return false;
-            }
-        });
+        if (e.target.value === 'cancelled') {
+            e.preventDefault();
+            document.getElementById('cancelModal').classList.remove('hidden');
+            e.target.value = '{{ $order->status }}';
+            return false;
+        }
+        
+        // Previne schimbarea în "delivering" fără AWB
+        if (e.target.value === 'delivering' && !'{{ $order->sameday_awb_number }}') {
+            e.preventDefault();
+            alert('Nu poți schimba statusul în "În Curs de Livrare" fără AWB creat!');
+            e.target.value = '{{ $order->status }}';
+            return false;
+        }
+    });
 
         function closeCancelModal() {
             document.getElementById('cancelModal').classList.add('hidden');
