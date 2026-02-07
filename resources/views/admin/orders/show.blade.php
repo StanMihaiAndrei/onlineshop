@@ -55,10 +55,11 @@
                                     <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
                                         @if($order->status === 'pending') bg-yellow-100 text-yellow-800
                                         @elseif($order->status === 'processing') bg-blue-100 text-blue-800
+                                        @elseif($order->status === 'delivering') bg-purple-100 text-purple-800
                                         @elseif($order->status === 'completed') bg-green-100 text-green-800
                                         @elseif($order->status === 'cancelled') bg-red-100 text-red-800
                                         @endif">
-                                        {{ ucfirst($order->status) }}
+                                        {{ $order->status_label }}
                                     </span>
                                 </p>
                                 <p class="text-sm sm:text-base"><strong>Status Plată:</strong> 
@@ -67,7 +68,7 @@
                                         @elseif($order->payment_status === 'paid') bg-green-100 text-green-800
                                         @elseif($order->payment_status === 'failed') bg-red-100 text-red-800
                                         @endif">
-                                        {{ ucfirst($order->payment_status) }}
+                                        {{ $order->payment_status_label }}
                                     </span>
                                 </p>
                             </div>
@@ -314,11 +315,12 @@
                                 @csrf
                                 @method('PATCH')
                                 <div class="mb-3">
-                                    <select name="status" id="statusSelect" class="w-full text-sm sm:text-base border border-gray-300 rounded-md px-3 py-2">
-                                        <option value="pending" {{ $order->status === 'pending' ? 'selected' : '' }}>Pending</option>
-                                        <option value="processing" {{ $order->status === 'processing' ? 'selected' : '' }}>Processing</option>
-                                        <option value="completed" {{ $order->status === 'completed' ? 'selected' : '' }}>Completed</option>
-                                        <option value="cancelled" {{ $order->status === 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+                                    <select id="statusSelect" name="status" class="w-full border-gray-300 rounded text-sm p-2">
+                                        <option value="pending" {{ $order->status === 'pending' ? 'selected' : '' }}>⏳ În Așteptare</option>
+                                        <option value="processing" {{ $order->status === 'processing' ? 'selected' : '' }}>📦 În Procesare</option>
+                                        <option value="delivering" {{ $order->status === 'delivering' ? 'selected' : '' }}>🚚 În Curs de Livrare</option>
+                                        <option value="completed" {{ $order->status === 'completed' ? 'selected' : '' }}>✅ Finalizată</option>
+                                        <option value="cancelled" {{ $order->status === 'cancelled' ? 'selected' : '' }}>❌ Anulată</option>
                                     </select>
                                 </div>
                                 <button type="submit" class="w-full sm:w-auto bg-blue-500 hover:bg-blue-700 text-white text-sm font-semibold py-2 px-4 rounded">
@@ -333,10 +335,10 @@
                                 @csrf
                                 @method('PATCH')
                                 <div class="mb-3">
-                                    <select name="payment_status" class="w-full text-sm sm:text-base border border-gray-300 rounded-md px-3 py-2">
-                                        <option value="pending" {{ $order->payment_status === 'pending' ? 'selected' : '' }}>Pending</option>
-                                        <option value="paid" {{ $order->payment_status === 'paid' ? 'selected' : '' }}>Paid</option>
-                                        <option value="failed" {{ $order->payment_status === 'failed' ? 'selected' : '' }}>Failed</option>
+                                   <select name="payment_status" class="w-full border-gray-300 rounded text-sm p-2">
+                                        <option value="pending" {{ $order->payment_status === 'pending' ? 'selected' : '' }}>⏳ În Așteptare</option>
+                                        <option value="paid" {{ $order->payment_status === 'paid' ? 'selected' : '' }}>✅ Plătită</option>
+                                        <option value="failed" {{ $order->payment_status === 'failed' ? 'selected' : '' }}>❌ Eșuată</option>
                                     </select>
                                 </div>
                                 <button type="submit" class="w-full sm:w-auto bg-green-500 hover:bg-green-700 text-white text-sm font-semibold py-2 px-4 rounded">

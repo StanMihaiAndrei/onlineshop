@@ -8,7 +8,9 @@
         body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
         .container { max-width: 600px; margin: 0 auto; padding: 20px; }
         .header { padding: 30px 20px; border-radius: 8px; margin-bottom: 20px; text-align: center; color: white; }
+        .pending { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
         .processing { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); }
+        .delivering { background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); }
         .completed { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
         .cancelled { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); }
         .order-details { background: #f8f9fa; border-radius: 8px; padding: 20px; margin: 15px 0; }
@@ -50,8 +52,12 @@
     <div class="container">
         <div class="header {{ $order->status }}">
             <h1 style="margin: 0 0 10px 0; font-size: 28px;">
-                @if($order->status === 'processing')
+                @if($order->status === 'pending')
+                    ⏳ Comandă în așteptare
+                @elseif($order->status === 'processing')
                     📦 Comandă în procesare
+                @elseif($order->status === 'delivering')
+                    🚚 Comandă în curs de livrare
                 @elseif($order->status === 'completed')
                     ✅ Comandă finalizată
                 @elseif($order->status === 'cancelled')
@@ -66,19 +72,55 @@
         <p>Statusul comenzii tale #{{ $order->order_number }} a fost actualizat:</p>
         
         <div style="background: #f3f4f6; padding: 15px; border-radius: 8px; margin: 15px 0;">
-            <p style="margin: 5px 0;"><strong>Status anterior:</strong> <span style="color: #6b7280;">{{ ucfirst($previousStatus) }}</span></p>
+            <p style="margin: 5px 0;"><strong>Status anterior:</strong> 
+                <span style="color: #6b7280;">
+                    @php
+                        $prevLabel = match($previousStatus) {
+                            'pending' => 'În așteptare',
+                            'processing' => 'În procesare',
+                            'delivering' => 'În curs de livrare',
+                            'completed' => 'Finalizată',
+                            'cancelled' => 'Anulată',
+                            default => ucfirst($previousStatus)
+                        };
+                    @endphp
+                    {{ $prevLabel }}
+                </span>
+            </p>
             <p style="margin: 5px 0;"><strong>Status curent:</strong> 
                 <span style="color: #2563eb; font-weight: bold;">
-                    @if($order->status === 'processing')
-                        În procesare - comanda ta este pregătită pentru expediere
+                    @if($order->status === 'pending')
+                        ⏳ În așteptare - comanda ta este înregistrată
+                    @elseif($order->status === 'processing')
+                        📦 În procesare - comanda ta este pregătită pentru expediere
+                    @elseif($order->status === 'delivering')
+                        🚚 În curs de livrare - coletul tău este pe drum!
                     @elseif($order->status === 'completed')
-                        Finalizată - comanda a fost livrată cu succes
+                        ✅ Finalizată - comanda a fost livrată cu succes
                     @elseif($order->status === 'cancelled')
-                        Anulată - comanda a fost anulată
+                        ❌ Anulată - comanda a fost anulată
                     @endif
                 </span>
             </p>
         </div>
+
+        @if($order->status === 'delivering')
+            <div style="background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%); border: 2px solid #8b5cf6; border-radius: 8px; padding: 20px; margin: 20px 0; text-align: center;">
+                <h3 style="margin: 0 0 10px 0; color: #6b21a8; font-size: 22px;">🚚 Coletul tău este în drum!</h3>
+                <p style="margin: 10px 0; color: #5b21b6; font-size: 16px;">
+                    Comanda ta a fost preluată de curier și va ajunge în curând la tine.
+                </p>
+                @if($order->delivery_type === 'home')
+                    <p style="margin: 10px 0; color: #6b21a8; font-size: 14px;">
+                        📍 <strong>Livrare la domiciliu:</strong> {{ $order->shipping_address }}, {{ $order->shipping_city }}
+                    </p>
+                @else
+                    <p style="margin: 10px 0; color: #6b21a8; font-size: 14px;">
+                        📦 <strong>Livrare la EasyBox:</strong> {{ $order->sameday_locker_name }}, {{ $order->shipping_city }}
+                    </p>
+                @endif
+            </div>
+        @endif
 
         @if($order->status === 'cancelled' && $order->cancellation_reason)
             <div class="cancellation-reason">
@@ -112,7 +154,7 @@
 
                 <p style="margin: 8px 0;"><strong>Cost transport:</strong> 
                     @if($order->shipping_cost > 0)
-                        <span style="color: #2563eb; font-weight: bold;">${{ number_format($order->shipping_cost, 2) }}</span>
+                        <span style="color: #2563eb; font-weight: bold;">RON {{ number_format($order->shipping_cost, 2) }}</span>
                     @else
                         <span style="color: #10b981; font-weight: bold;">GRATUIT</span>
                     @endif
@@ -154,7 +196,7 @@
                     <p style="margin: 0 0 8px 0; font-size: 14px; color: #059669;">🎉 <strong>Cupon aplicat</strong></p>
                     <div class="coupon-code-small">{{ $order->coupon->code }}</div>
                     <p style="margin: 8px 0 0 0; font-size: 16px; color: #047857; font-weight: bold;">
-                        Ai economisit: ${{ number_format($order->discount_amount, 2) }}
+                        Ai economisit: RON {{ number_format($order->discount_amount, 2) }}
                     </p>
                     @if($order->coupon->type === 'percentage')
                         <p style="margin: 5px 0 0 0; font-size: 12px; color: #065f46;">
@@ -174,13 +216,13 @@
                 
                 <div style="display: flex; justify-content: space-between; margin: 8px 0;">
                     <span style="color: #6b7280;">Subtotal produse:</span>
-                    <span style="font-weight: 600;">${{ number_format($subtotal, 2) }}</span>
+                    <span style="font-weight: 600;">RON {{ number_format($subtotal, 2) }}</span>
                 </div>
                 
                 @if($order->discount_amount > 0)
                     <div style="display: flex; justify-content: space-between; margin: 8px 0; color: #10b981; font-weight: bold;">
                         <span>🎁 Reducere:</span>
-                        <span>-${{ number_format($order->discount_amount, 2) }}</span>
+                        <span>-RON {{ number_format($order->discount_amount, 2) }}</span>
                     </div>
                 @endif
                 
@@ -188,7 +230,7 @@
                     <span>🚚 Transport:</span>
                     <span>
                         @if($order->shipping_cost > 0)
-                            ${{ number_format($order->shipping_cost, 2) }}
+                            RON {{ number_format($order->shipping_cost, 2) }}
                         @else
                             GRATUIT
                         @endif
@@ -197,29 +239,28 @@
                 
                 <div style="display: flex; justify-content: space-between; margin-top: 15px; padding-top: 15px; border-top: 2px solid #ddd; font-size: 20px; font-weight: bold; color: #2563eb;">
                     <span>Total:</span>
-                    <span>${{ number_format($order->total_amount, 2) }}</span>
+                    <span>RON {{ number_format($order->total_amount, 2) }}</span>
                 </div>
             </div>
-            
-            <p style="margin: 15px 0 8px 0;"><strong>Metodă plată:</strong> {{ $order->payment_method === 'card' ? '💳 Card bancar' : '💵 Ramburs la livrare' }}</p>
+
+            <p style="margin: 8px 0;"><strong>Metodă de plată:</strong> {{ $order->payment_method_label }}</p>
+            <p style="margin: 8px 0;"><strong>Status plată:</strong> 
+                <span style="color: {{ $order->payment_status === 'paid' ? '#10b981' : '#f59e0b' }}; font-weight: bold;">
+                    {{ $order->payment_status_label }}
+                </span>
+            </p>
+        </div>
+
+        <div style="background: #eff6ff; border-left: 4px solid #3b82f6; padding: 15px; margin: 20px 0; border-radius: 4px;">
+            <p style="margin: 0; color: #1e40af;">
+                <strong>💡 Ai nevoie de ajutor?</strong><br>
+                Dacă ai întrebări despre comanda ta, nu ezita să ne contactezi. Suntem aici să te ajutăm!
+            </p>
         </div>
 
         <div class="footer">
-            @if($order->status === 'completed')
-                <p style="text-align: center; font-size: 16px; color: #1f2937;">
-                    <strong>Mulțumim că ai ales CraftGits Shop! 🙏</strong><br>
-                    Sperăm că ești mulțumit de achiziție.
-                </p>
-            @elseif($order->status === 'cancelled')
-                <p style="text-align: center;">
-                    Ne pare rău că a trebuit să anulăm comanda.<br>
-                    Pentru întrebări, ne poți contacta la: <strong style="color: #2563eb;">contact@craftgits.ro</strong>
-                </p>
-            @else
-                <p style="text-align: center;">
-                    Pentru întrebări, ne poți contacta la: <strong style="color: #2563eb;">contact@craftgits.ro</strong>
-                </p>
-            @endif
+            <p style="margin: 5px 0; font-size: 14px;">Mulțumim pentru comanda ta! 🎉</p>
+            <p style="margin: 5px 0; font-size: 12px;">© {{ date('Y') }} {{ config('app.name') }}. Toate drepturile rezervate.</p>
         </div>
     </div>
 </body>

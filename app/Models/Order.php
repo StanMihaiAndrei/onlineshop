@@ -141,4 +141,53 @@ class Order extends Model
         // Pentru simplitate, presupunem 0.5kg per produs
         return $this->items->sum('quantity') * 0.5;
     }
+
+    public function getStatusLabelAttribute(): string
+    {
+        return match ($this->status) {
+            'pending' => 'În așteptare',
+            'processing' => 'În procesare',
+            'delivering' => 'În curs de livrare',
+            'completed' => 'Finalizată',
+            'cancelled' => 'Anulată',
+            default => $this->status
+        };
+    }
+
+    /**
+     * Get payment status label in Romanian
+     */
+    public function getPaymentStatusLabelAttribute(): string
+    {
+        return match ($this->payment_status) {
+            'pending' => 'În așteptare',
+            'paid' => 'Plătită',
+            'failed' => 'Eșuată',
+            default => $this->payment_status
+        };
+    }
+
+    /**
+     * Get payment method label in Romanian
+     */
+    public function getPaymentMethodLabelAttribute(): string
+    {
+        return match ($this->payment_method) {
+            'card' => 'Card bancar',
+            'cash_on_delivery' => 'Ramburs la livrare',
+            default => $this->payment_method
+        };
+    }
+
+    /**
+     * Get delivery type label in Romanian
+     */
+    public function getDeliveryTypeLabelAttribute(): string
+    {
+        return match ($this->delivery_type) {
+            'home' => 'Livrare la domiciliu',
+            'locker' => 'Livrare la EasyBox',
+            default => $this->delivery_type ?? 'Necunoscut'
+        };
+    }
 }

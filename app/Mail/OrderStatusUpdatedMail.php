@@ -24,7 +24,9 @@ class OrderStatusUpdatedMail extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         $statusMessage = match($this->order->status) {
+            'pending' => 'în așteptare',
             'processing' => 'în procesare',
+            'delivering' => 'în curs de livrare',
             'completed' => 'finalizată',
             'cancelled' => 'anulată',
             default => $this->order->status

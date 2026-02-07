@@ -21,11 +21,47 @@
                     <span class="px-4 py-2 text-sm font-semibold rounded-full w-fit
                         {{ $order->status === 'completed' ? 'bg-green-100 text-green-800' : '' }}
                         {{ $order->status === 'processing' ? 'bg-blue-100 text-blue-800' : '' }}
+                        {{ $order->status === 'delivering' ? 'bg-purple-100 text-purple-800' : '' }}
                         {{ $order->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : '' }}
                         {{ $order->status === 'cancelled' ? 'bg-red-100 text-red-800' : '' }}">
-                        {{ ucfirst($order->status) }}
+                        {{ $order->status_label }}
                     </span>
                 </div>
+
+                <!-- Status Progress Bar (nou) -->
+                @if($order->status !== 'cancelled')
+                    <div class="mb-6 bg-gray-50 rounded-lg p-4">
+                        <div class="flex justify-between items-center mb-2">
+                            @php
+                                $steps = ['pending', 'processing', 'delivering', 'completed'];
+                                $currentIndex = array_search($order->status, $steps);
+                            @endphp
+                            
+                            @foreach(['pending' => '⏳ În așteptare', 'processing' => '📦 În procesare', 'delivering' => '🚚 În livrare', 'completed' => '✅ Finalizată'] as $step => $label)
+                                <div class="flex-1 text-center">
+                                    <div class="relative">
+                                        <div class="w-8 h-8 mx-auto rounded-full flex items-center justify-center text-xs font-bold
+                                            {{ $order->status === $step ? 'bg-blue-600 text-white' : (array_search($step, $steps) < $currentIndex ? 'bg-green-500 text-white' : 'bg-gray-300 text-gray-600') }}">
+                                            @if(array_search($step, $steps) < $currentIndex)
+                                                ✓
+                                            @else
+                                                {{ array_search($step, $steps) + 1 }}
+                                            @endif
+                                        </div>
+                                        <p class="text-xs mt-2 {{ $order->status === $step ? 'font-bold text-blue-600' : 'text-gray-600' }}">
+                                            {{ explode(' ', $label)[1] ?? $label }}
+                                        </p>
+                                    </div>
+                                </div>
+                                @if(!$loop->last)
+                                    <div class="flex-1 flex items-center" style="margin-top: -20px;">
+                                        <div class="w-full h-1 {{ array_search($step, $steps) < $currentIndex ? 'bg-green-500' : 'bg-gray-300' }}"></div>
+                                    </div>
+                                @endif
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
 
                 <!-- Coupon Info -->
                 @if($order->coupon_id && $order->discount_amount > 0)
@@ -37,7 +73,7 @@
                                 <p class="text-xs sm:text-sm text-green-700">
                                     Ai economisit: RON {{ number_format($order->discount_amount, 2) }}
                                     @if($order->coupon->type === 'percentage')
-                                        ({{ $order->coupon->value }}% discount)
+                                        ({{ $order->coupon->value }}% reducere)
                                     @endif
                                 </p>
                             </div>
@@ -93,11 +129,7 @@
                                 <div class="flex justify-between items-start text-sm">
                                     <span class="text-gray-600 font-medium">Tip Livrare:</span>
                                     <span class="font-semibold text-gray-900 text-right">
-                                        @if($order->delivery_type === 'home')
-                                            🏠 La Domiciliu
-                                        @else
-                                            📦 EasyBox
-                                        @endif
+                                        {{ $order->delivery_type_label }}
                                     </span>
                                 </div>
 
@@ -232,7 +264,7 @@
                                          class="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded">
                                 @else
                                     <div class="w-16 h-16 sm:w-20 sm:h-20 bg-gray-200 rounded flex items-center justify-center">
-                                        <span class="text-gray-400 text-xs">No image</span>
+                                        <span class="text-gray-400 text-xs">Fără imagine</span>
                                     </div>
                                 @endif
                                 
@@ -263,7 +295,7 @@
                     
                     @if($order->discount_amount > 0)
                         <div class="flex justify-between mb-2 text-green-600 text-sm sm:text-base">
-                            <span>Discount ({{ $order->coupon->code }})</span>
+                            <span>Reducere ({{ $order->coupon->code }})</span>
                             <span class="font-medium">-RON {{ number_format($order->discount_amount, 2) }}</span>
                         </div>
                     @endif
@@ -286,19 +318,15 @@
 
                 <!-- Payment Info -->
                 <div class="border-t border-gray-200 pt-6">
-                    <h3 class="font-bold text-gray-900 mb-3 text-sm sm:text-base">Metoda de Plată</h3>
+                    <h3 class="font-bold text-gray-900 mb-3 text-sm sm:text-base">Metodă de Plată</h3>
                     <div class="bg-gray-50 rounded-lg p-3 sm:p-4">
                         <p class="text-gray-700 text-sm sm:text-base">
-                            @if($order->payment_method === 'card')
-                                💳 Plată cu Cardul
-                            @else
-                                💵 Plată la Livrare (Ramburs)
-                            @endif
+                            {{ $order->payment_method_label }}
                         </p>
                         <p class="text-xs sm:text-sm text-gray-600 mt-2">
                             Status Plată: 
-                            <span class="font-semibold {{ $order->payment_status === 'paid' ? 'text-green-600' : 'text-yellow-600' }}">
-                                {{ ucfirst($order->payment_status) }}
+                            <span class="font-semibold {{ $order->payment_status === 'paid' ? 'text-green-600' : ($order->payment_status === 'failed' ? 'text-red-600' : 'text-yellow-600') }}">
+                                {{ $order->payment_status_label }}
                             </span>
                         </p>
                     </div>

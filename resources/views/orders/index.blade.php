@@ -10,16 +10,17 @@
                             <div class="flex flex-col md:flex-row md:justify-between md:items-start gap-4 mb-4">
                                 <div>
                                     <h3 class="text-lg font-bold text-gray-900">Comanda {{ $order->order_number }}</h3>
-                                    <p class="text-sm text-gray-600">Plasată la {{ $order->created_at->format('F d, Y') }}</p>
+                                    <p class="text-sm text-gray-600">Plasată la {{ $order->created_at->format('d.m.Y H:i') }}</p>
                                 </div>
                                 
                                 <div class="flex gap-2">
                                     <span class="px-3 py-1 text-sm font-semibold rounded-full 
                                         {{ $order->status === 'completed' ? 'bg-green-100 text-green-800' : '' }}
                                         {{ $order->status === 'processing' ? 'bg-blue-100 text-blue-800' : '' }}
+                                        {{ $order->status === 'delivering' ? 'bg-purple-100 text-purple-800' : '' }}
                                         {{ $order->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : '' }}
                                         {{ $order->status === 'cancelled' ? 'bg-red-100 text-red-800' : '' }}">
-                                        {{ ucfirst($order->status) }}
+                                        {{ $order->status_label }}
                                     </span>
                                 </div>
                             </div>
@@ -31,11 +32,7 @@
                                         <span class="text-lg">🚚</span>
                                         <div class="flex-1">
                                             <p class="text-sm font-semibold text-blue-900">
-                                                @if($order->delivery_type === 'home')
-                                                    Livrare la domiciliu
-                                                @else
-                                                    Livrare EasyBox
-                                                @endif
+                                                {{ $order->delivery_type_label }}
                                                 @if($order->shipping_cost > 0)
                                                     - RON {{ number_format($order->shipping_cost, 2) }}
                                                 @else
@@ -62,26 +59,26 @@
                                                      class="w-16 h-16 object-cover rounded">
                                             @else
                                                 <div class="w-16 h-16 bg-gray-200 rounded flex items-center justify-center">
-                                                    <span class="text-gray-400 text-xs">No image</span>
+                                                    <span class="text-gray-400 text-xs">Fără imagine</span>
                                                 </div>
                                             @endif
                                             
                                             <div class="flex-1">
                                                 <h4 class="text-sm font-medium text-gray-900">{{ $item->product_title }}</h4>
-                                                <p class="text-sm text-gray-600">Qty: {{ $item->quantity }} × ${{ number_format($item->price, 2) }}</p>
+                                                <p class="text-sm text-gray-600">Cantitate: {{ $item->quantity }} × RON {{ number_format($item->price, 2) }}</p>
                                             </div>
                                             
                                             <div class="text-right">
-                                                <p class="text-sm font-semibold text-gray-900">${{ number_format($item->subtotal, 2) }}</p>
+                                                <p class="text-sm font-semibold text-gray-900">RON {{ number_format($item->subtotal, 2) }}</p>
                                             </div>
                                         </div>
                                     @endforeach
                                 </div>
 
                                 <div class="flex justify-between items-center pt-4 border-t border-gray-200">
-                                    <span class="text-lg font-semibold text-gray-900">Total: RON{{ number_format($order->total_amount, 2) }}</span>
+                                    <span class="text-lg font-semibold text-gray-900">Total: RON {{ number_format($order->total_amount, 2) }}</span>
                                     <a href="{{ route('orders.show', $order) }}" class="text-blue-600 hover:text-blue-800 font-medium">
-                                        View Details →
+                                        Vezi Detalii →
                                     </a>
                                 </div>
                             </div>
