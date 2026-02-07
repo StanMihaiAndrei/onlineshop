@@ -384,6 +384,44 @@
                             @endforeach
                         </div>
 
+                      <!-- Coupon Section -->
+<div class="border-t border-gray-200 pt-4 mb-4">
+    @if($coupon)
+        <div class="bg-green-50 border border-green-200 rounded-lg p-3 mb-3">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="text-sm font-medium" style="color: var(--color-primary);">✓ Cupon aplicat: {{ $coupon->code }}</p>
+                    <p class="text-xs" style="color: var(--color-text);">
+                        @if($coupon->type === 'percentage')
+                            {{ $coupon->value }}% reducere
+                        @else
+                            RON {{ number_format($coupon->value, 2) }} reducere
+                        @endif
+                    </p>
+                </div>
+                <button type="button" onclick="removeCoupon()" 
+                    class="text-red-500 hover:text-red-700 text-sm font-medium">
+                    Elimină
+                </button>
+            </div>
+        </div>
+    @else
+        <div id="coupon-form" class="flex gap-2">
+            <input type="text" 
+                id="coupon_code_input"
+                placeholder="Cod cupon" 
+                class="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-opacity-50"
+                style="focus:ring-color: var(--color-primary);">
+            <button type="button" onclick="applyCoupon()"
+                class="px-4 py-2 text-white rounded-lg font-medium text-sm transition hover:opacity-90"
+                style="background-color: var(--color-primary);">
+                Aplică
+            </button>
+        </div>
+        <div id="coupon-message" class="mt-2 text-sm hidden"></div>
+    @endif
+</div>
+
                         <div class="border-t border-gray-200 pt-4 space-y-2">
                             <div class="flex justify-between">
                                 <span>Subtotal:</span>
@@ -979,6 +1017,77 @@
             total: finalTotal
         });
     }
+
+    // Coupon functions
+function applyCoupon() {
+    const couponCode = document.getElementById('coupon_code_input').value.trim();
+    const messageDiv = document.getElementById('coupon-message');
+    
+    if (!couponCode) {
+        showCouponMessage('Vă rugăm introduceți un cod de cupon.', 'error');
+        return;
+    }
+    
+    fetch('{{ route('checkout.applyCoupon') }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        body: JSON.stringify({
+            coupon_code: couponCode
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showCouponMessage(data.message || 'Cupon aplicat cu succes!', 'success');
+            // Reload page to show updated discount
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+        } else {
+            showCouponMessage(data.message || 'Codul de cupon nu este valid.', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error applying coupon:', error);
+        showCouponMessage('Eroare la aplicarea cuponului.', 'error');
+    });
+}
+
+function removeCoupon() {
+    fetch('{{ route('checkout.removeCoupon') }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            window.location.reload();
+        }
+    })
+    .catch(error => {
+        console.error('Error removing coupon:', error);
+    });
+}
+
+function showCouponMessage(message, type) {
+    const messageDiv = document.getElementById('coupon-message');
+    messageDiv.textContent = message;
+    messageDiv.className = 'mt-2 text-sm';
+    
+    if (type === 'success') {
+        messageDiv.classList.add('text-green-600');
+    } else {
+        messageDiv.classList.add('text-red-600');
+    }
+    
+    messageDiv.classList.remove('hidden');
+}
 </script>
 @endpush
 </x-app-layout>

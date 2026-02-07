@@ -240,30 +240,43 @@ class CheckoutController extends Controller
         ]);
 
         $cartItems = session()->get('cart', []);
-        $cartTotal = collect($cartItems)->sum(fn($item) => $item['price'] * $item['quantity']);
+        $cartTotal = collect($cartItems)->sum(fn($item) => $item['final_price'] * $item['quantity']);
 
         $coupon = Coupon::where('code', strtoupper($request->coupon_code))->first();
 
         if (!$coupon) {
-            return back()->with('error', 'Codul de cupon nu a fost găsit.');
+            return response()->json([
+                'success' => false,
+                'message' => 'Codul de cupon nu a fost găsit.'
+            ]);
         }
 
         $validation = $coupon->isValid($cartTotal);
 
         if (!$validation['valid']) {
-            return back()->with('error', $validation['message']);
+            return response()->json([
+                'success' => false,
+                'message' => $validation['message']
+            ]);
         }
 
         // Salvează cuponul în sesiune
         session()->put('coupon_code', $coupon->code);
 
-        return back()->with('success', 'Cupon aplicat cu succes!');
+        return response()->json([
+            'success' => true,
+            'message' => 'Cupon aplicat cu succes!'
+        ]);
     }
 
     public function removeCoupon()
     {
         session()->forget('coupon_code');
-        return back()->with('success', 'Cupon eliminat cu succes!');
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Cupon eliminat cu succes!'
+        ]);
     }
 
     private function sendOrderEmails(Order $order)

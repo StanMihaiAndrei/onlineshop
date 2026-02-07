@@ -43,7 +43,7 @@ Route::prefix('checkout')->name('checkout')->group(function () {
 
     // Coupon Management
     Route::post('/apply-coupon', [CheckoutController::class, 'applyCoupon'])->name('.applyCoupon');
-    Route::delete('/remove-coupon', [CheckoutController::class, 'removeCoupon'])->name('.removeCoupon');
+    Route::post('/remove-coupon', [CheckoutController::class, 'removeCoupon'])->name('.removeCoupon');
 
     // Shipping Data (AJAX)
     Route::get('/counties', [CheckoutController::class, 'getCounties'])->name('.counties');
