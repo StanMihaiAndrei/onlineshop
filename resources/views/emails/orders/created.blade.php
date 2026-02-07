@@ -222,12 +222,12 @@
                     </div>
 
                     <div class="info-box">
-                        <h3 style="margin: 0 0 10px 0; color: #b01691; font-size: 16px;">&#9776; Informații plată:</h3>
-                        <div class="info-row"><strong>Metodă:</strong> {!! $order->payment_method === 'card' ? '&#9776; Card bancar' : '&#9776; Ramburs' !!}</div>
+                        <h3 style="margin: 0 0 10px 0; color: #b01691; font-size: 16px;">💳 Informații plată:</h3>
+                        <div class="info-row"><strong>Metodă:</strong> {{ $order->payment_method === 'card' ? '💳 Card bancar' : '💵 Ramburs' }}</div>
                         <div class="info-row">
                             <strong>Status:</strong> 
                             <span class="badge {{ $order->payment_status === 'paid' ? 'badge-success' : 'badge-warning' }}">
-                                {{ $order->payment_status === 'paid' ? '✓ PLĂTIT' : '&#9711; ÎN AȘTEPTARE' }}
+                                {{ $order->payment_status === 'paid' ? '✅ PLĂTIT' : '⏳ ÎN AȘTEPTARE' }}
                             </span>
                         </div>
                     </div>

@@ -298,6 +298,8 @@ class CheckoutController extends Controller
                     'billing_reg_com' => $order->billing_reg_com,
                     'is_company' => $order->is_company,
                     'shipping_cost' => $order->shipping_cost,
+                    'discount_amount' => $order->discount_amount,
+                    'coupon_code' => $order->coupon ? $order->coupon->code : null,
                 ],
                 'items' => []
             ];

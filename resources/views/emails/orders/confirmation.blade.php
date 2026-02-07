@@ -228,7 +228,7 @@
                     <div class="info-row"><strong>Număr comandă:</strong> {{ $order->order_number }}</div>
                     <div class="info-row"><strong>Data:</strong> {{ $order->created_at->format('d/m/Y H:i') }}</div>
 
-                    <div class="info-row"><strong>Metodă plată:</strong> {!! $order->payment_method === 'card' ? '&#9776; Card bancar' : '&#9776; Ramburs la livrare' !!}</div>
+                    <div class="info-row"><strong>Metodă plată:</strong> {{ $order->payment_method === 'card' ? '💳 Card bancar' : '💵 Ramburs la livrare' }}</div>
                     @if($invoiceSeries && $invoiceNumber)
                         <div class="info-row">
                             <strong>&#9776; Factură:</strong> 
@@ -244,7 +244,7 @@
                     <div class="info-row">
                         <strong>Status plată:</strong> 
                         <span class="badge {{ $order->payment_status === 'paid' ? 'badge-success' : 'badge-warning' }}">
-                            {{ $order->payment_status === 'paid' ? '✓ Plătit' : '&#9711; În așteptare' }}
+                            {{ $order->payment_status === 'paid' ? '✅ Plătit' : '⏳ În așteptare' }}
                         </span>
                     </div>
                 </div>

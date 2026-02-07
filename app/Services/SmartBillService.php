@@ -105,6 +105,24 @@ class SmartBillService
             ];
         }
 
+        // ✅ Add discount if exists (BEFORE shipping)
+        if (!empty($order['discount_amount']) && $order['discount_amount'] > 0) {
+            $discountName = 'Reducere';
+            if (!empty($order['coupon_code'])) {
+                $discountName = 'Cupon: ' . $order['coupon_code'];
+            }
+
+            $products[] = [
+                'name' => $discountName,
+                'isDiscount' => true,
+                'measuringUnitName' => 'buc',
+                'currency' => 'RON',
+                'discountType' => 1, // 1 = valoric, 2 = procentual
+                'discountValue' => -1 * $order['discount_amount'], // TREBUIE SA FIE NEGATIV
+                'saveToDb' => false
+            ];
+        }
+
         // Add shipping as a product if exists (WITHOUT TVA)
         if ($order['shipping_cost'] > 0) {
             $products[] = [
