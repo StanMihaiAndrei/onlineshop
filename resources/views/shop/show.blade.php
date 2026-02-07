@@ -1,5 +1,5 @@
 <x-guest-layout>
-    <div class="py-8 bg-gradient-to-b from-pink-50 to-white">
+    <div class="py-8 bg-background">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Breadcrumb -->
             <nav class="mb-6 text-sm">

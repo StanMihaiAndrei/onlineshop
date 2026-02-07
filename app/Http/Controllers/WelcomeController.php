@@ -45,14 +45,14 @@ class WelcomeController extends Controller
             ],
             [
                 'name' => 'Andrei Ionescu',
-                'location' => 'Cluj-Napoca',
+                'location' => 'București',
                 'rating' => 5,
                 'text' => 'Prima dată când comand produse handmade online și sunt impresionat! Livrare rapidă, comunicare excelentă și produsul exact ca în descriere. Mulțumesc!',
                 'date' => '1 lună în urmă'
             ],
             [
                 'name' => 'Elena Dumitrescu',
-                'location' => 'Timișoara',
+                'location' => 'București',
                 'rating' => 5,
                 'text' => 'Decorațiunile pentru casă sunt absolut minunate! Se vede că sunt făcute cu dragoste și atenție la detalii. Am primit multe complimente de la oaspeți!',
                 'date' => '3 săptămâni în urmă'

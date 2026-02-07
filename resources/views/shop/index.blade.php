@@ -1,5 +1,5 @@
 <x-guest-layout>
-    <div class="py-8 bg-gradient-to-b from-pink-50 to-white">
+    <div class="py-8 bg-background">
         <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col lg:flex-row gap-6">
                 <!-- Sidebar Filters -->

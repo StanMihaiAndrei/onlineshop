@@ -152,8 +152,12 @@
             <div class="grid md:grid-cols-2 gap-12 items-center">
                 <div class="space-y-6 animate-slide-in">
                     <div class="inline-block">
-                        <span class="bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-semibold border-2 border-primary/20">
-                            ✨ Creații 100% Handmade
+                        <span class="bg-primary/5 text-secondary px-4 py-2 rounded-full text-sm font-semibold border-2 border-primary/20 inline-flex items-center gap-2">
+                            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="currentColor" opacity="0.2"/>
+                            </svg>
+                            Creații 100% Handmade
                         </span>
                     </div>
                     
@@ -185,19 +189,19 @@
                     
                     <!-- Trust Indicators -->
                     <div class="flex flex-wrap gap-6 pt-8">
-                        <div class="flex items-center gap-2 bg-white/50 px-4 py-2 rounded-full border-2 border-secondary/20">
+                        <div class="flex items-center gap-2 bg-white/50 px-4 py-2 rounded-full border-2 border-secondary/40">
                             <svg class="w-6 h-6 text-primary" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                             </svg>
                             <span class="text-text font-bold">100% Handmade</span>
                         </div>
-                        <div class="flex items-center gap-2 bg-white/50 px-4 py-2 rounded-full border-2 border-secondary/20">
+                        <div class="flex items-center gap-2 bg-white/50 px-4 py-2 rounded-full border-2 border-secondary/40">
                             <svg class="w-6 h-6 text-primary" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
                             </svg>
                             <span class="text-text font-bold">Calitate Premium</span>
                         </div>
-                        <div class="flex items-center gap-2 bg-white/50 px-4 py-2 rounded-full border-2 border-secondary/20">
+                        <div class="flex items-center gap-2 bg-white/50 px-4 py-2 rounded-full border-2 border-secondary/40">
                             <svg class="w-6 h-6 text-primary" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"/>
                                 <path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1V5a1 1 0 00-1-1H3zM14 7a1 1 0 00-1 1v6.05A2.5 2.5 0 0115.95 16H17a1 1 0 001-1v-5a1 1 0 00-.293-.707l-2-2A1 1 0 0015 7h-1z"/>
@@ -228,11 +232,11 @@
             <!-- Stats Bar -->
             <div class="mt-20 grid grid-cols-2 md:grid-cols-4 gap-6">
                 <div class="bg-white/60 backdrop-blur-sm p-6 rounded-2xl border-2 border-secondary/20 text-center hover:scale-105 transition-transform">
-                    <div class="text-4xl font-bold text-primary mb-2">500+</div>
+                    <div class="text-4xl font-bold text-primary mb-2">350+</div>
                     <div class="text-text/70 font-semibold">Produse Unice</div>
                 </div>
                 <div class="bg-white/60 backdrop-blur-sm p-6 rounded-2xl border-2 border-secondary/20 text-center hover:scale-105 transition-transform">
-                    <div class="text-4xl font-bold text-primary mb-2">2000+</div>
+                    <div class="text-4xl font-bold text-primary mb-2">150+</div>
                     <div class="text-text/70 font-semibold">Clienți Fericiți</div>
                 </div>
                 <div class="bg-white/60 backdrop-blur-sm p-6 rounded-2xl border-2 border-secondary/20 text-center hover:scale-105 transition-transform">
@@ -387,7 +391,7 @@
             
             <div class="grid md:grid-cols-3 gap-8">
                 <div class="feature-card p-8 rounded-3xl hover-lift">
-                    <div class="w-20 h-20 bg-gradient-to-br from-primary to-primary-dark rounded-2xl flex items-center justify-center mb-6 shadow-xl">
+                    <div class="w-20 h-20 bg-secondary rounded-2xl flex items-center justify-center mb-6 shadow-xl">
                         <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
                         </svg>
@@ -399,7 +403,7 @@
                 </div>
                 
                 <div class="feature-card p-8 rounded-3xl hover-lift">
-                    <div class="w-20 h-20 bg-gradient-to-br from-secondary to-primary rounded-2xl flex items-center justify-center mb-6 shadow-xl">
+                    <div class="w-20 h-20 bg-secondary rounded-2xl flex items-center justify-center mb-6 shadow-xl">
                         <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
                         </svg>
@@ -411,7 +415,7 @@
                 </div>
                 
                 <div class="feature-card p-8 rounded-3xl hover-lift">
-                    <div class="w-20 h-20 bg-gradient-to-br from-primary-dark to-secondary rounded-2xl flex items-center justify-center mb-6 shadow-xl">
+                    <div class="w-20 h-20 bg-secondary rounded-2xl flex items-center justify-center mb-6 shadow-xl">
                         <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
                         </svg>
@@ -477,7 +481,7 @@
             </div>
 
             <!-- Trust Badge -->
-            <div class="bg-gradient-to-r from-primary/5 to-secondary/5 rounded-3xl p-8 text-center border-2 border-secondary/20">
+            <div class="bg-secondary/20 rounded-3xl p-8 text-center border-2 border-secondary/20">
                 <div class="flex items-center justify-center gap-2 mb-3">
                     <div class="flex">
                         @for($i = 0; $i < 5; $i++)
@@ -489,7 +493,7 @@
                     <span class="text-3xl font-bold text-text">5.0</span>
                 </div>
                 <p class="text-text/70 text-lg">
-                    <strong class="text-primary">150+ recenzii</strong> de la clienți mulțumiți care recomandă produsele noastre
+                    <strong class="text-primary">30+ recenzii</strong> de la clienți mulțumiți care recomandă produsele noastre
                 </p>
             </div>
         </div>
