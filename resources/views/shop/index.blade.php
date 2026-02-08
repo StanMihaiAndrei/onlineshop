@@ -1,4 +1,7 @@
 <x-guest-layout>
+    <x-slot name="head">
+        <title> Craft Gifts | Magazin Handmade</title>
+    </x-slot>
     <div class="py-8 bg-background">
         <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col lg:flex-row gap-6">
