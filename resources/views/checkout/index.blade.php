@@ -701,223 +701,262 @@
     let currentShippingCost = 0;
 
     // Initialize on page load
-    document.addEventListener('DOMContentLoaded', function() {
-        deliveryHome = document.getElementById('delivery_home');
-        deliveryLocker = document.getElementById('delivery_locker');
-        const addressField = document.getElementById('address_field');
-        const postalCodeField = document.getElementById('postal_code_field');
-        const lockerField = document.getElementById('locker_field');
-        countySelect = document.getElementById('sameday_county');
-        citySelect = document.getElementById('sameday_city');
-        lockerSelect = document.getElementById('sameday_locker');
-        const shippingCityInput = document.getElementById('shipping_city');
-        const shippingAddressInput = document.getElementById('shipping_address');
-        const lockerNameInput = document.getElementById('sameday_locker_name');
+   document.addEventListener('DOMContentLoaded', function() {
+    deliveryHome = document.getElementById('delivery_home');
+    deliveryLocker = document.getElementById('delivery_locker');
+    const addressField = document.getElementById('address_field');
+    const postalCodeField = document.getElementById('postal_code_field');
+    const lockerField = document.getElementById('locker_field');
+    countySelect = document.getElementById('sameday_county');
+    citySelect = document.getElementById('sameday_city');
+    lockerSelect = document.getElementById('sameday_locker');
+    const shippingCityInput = document.getElementById('shipping_city');
+    const shippingAddressInput = document.getElementById('shipping_address');
+    const lockerNameInput = document.getElementById('sameday_locker_name');
 
-        // Initialize searchable selects
-        let countySearchable, citySearchable, lockerSearchable;
+    // Initialize searchable selects
+    let countySearchable, citySearchable, lockerSearchable;
 
-        setTimeout(() => {
-            countySearchable = new SearchableSelect(countySelect);
-            citySearchable = new SearchableSelect(citySelect);
-            lockerSearchable = new SearchableSelect(lockerSelect);
-            
-            citySearchable.disable();
-            lockerSearchable.disable();
-        }, 100);
+    // ✅ SCHIMBAT: Creează select-urile și APOI încarcă datele
+    countySearchable = new SearchableSelect(countySelect);
+    citySearchable = new SearchableSelect(citySelect);
+    lockerSearchable = new SearchableSelect(lockerSelect);
+    
+    citySearchable.disable();
+    lockerSearchable.disable();
 
-        // Toggle delivery type
-        function toggleDeliveryFields() {
-            if (deliveryHome.checked) {
-                addressField.classList.remove('hidden');
-                postalCodeField.classList.remove('hidden');
-                lockerField.classList.add('hidden');
-                document.getElementById('shipping_address').required = true;
-                document.getElementById('shipping_postal_code').required = true;
-                lockerSelect.required = false;
-            } else {
-                addressField.classList.add('hidden');
-                postalCodeField.classList.add('hidden');
-                lockerField.classList.remove('hidden');
-                document.getElementById('shipping_address').required = false;
-                document.getElementById('shipping_postal_code').required = false;
-                lockerSelect.required = true;
+    // ✅ NOW load counties AFTER searchable selects are initialized
+    console.log('Loading counties...');
+    fetch('{{ route('checkout.counties') }}')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
-            calculateShipping();
+            return response.json();
+        })
+        .then(data => {
+            console.log('Counties received:', data);
+            
+            if (!data || data.length === 0) {
+                throw new Error('No counties data received');
+            }
+            
+            const options = data.map(county => ({
+                value: county.id,
+                text: county.name
+            }));
+            
+            countySearchable.updateOptions(options);
+            countySearchable.enable();
+            
+            console.log('Counties loaded successfully:', options.length, 'items');
+        })
+        .catch(error => {
+            console.error('Error loading counties:', error);
+            alert('Eroare la încărcarea județelor. Vă rugăm să reîncărcați pagina.');
+        });
+
+    // Toggle delivery type
+    function toggleDeliveryFields() {
+        if (deliveryHome.checked) {
+            addressField.classList.remove('hidden');
+            postalCodeField.classList.remove('hidden');
+            lockerField.classList.add('hidden');
+            document.getElementById('shipping_address').required = true;
+            document.getElementById('shipping_postal_code').required = true;
+            lockerSelect.required = false;
+        } else {
+            addressField.classList.add('hidden');
+            postalCodeField.classList.add('hidden');
+            lockerField.classList.remove('hidden');
+            document.getElementById('shipping_address').required = false;
+            document.getElementById('shipping_postal_code').required = false;
+            lockerSelect.required = true;
+        }
+        calculateShipping();
+    }
+
+    deliveryHome.addEventListener('change', toggleDeliveryFields);
+    deliveryLocker.addEventListener('change', toggleDeliveryFields);
+
+    // Load cities when county changes
+    countySelect.addEventListener('change', function() {
+        const countyId = this.value;
+        
+        if (!countyId) {
+            citySearchable.reset();
+            citySearchable.disable();
+            lockerSearchable.reset();
+            lockerSearchable.disable();
+            return;
         }
 
-        deliveryHome.addEventListener('change', toggleDeliveryFields);
-        deliveryLocker.addEventListener('change', toggleDeliveryFields);
-
-        // Load counties
-        console.log('Loading counties...');
-        fetch('{{ route('checkout.counties') }}')
-            .then(response => response.json())
+        console.log('Loading cities for county:', countyId);
+        
+        fetch(`{{ route('checkout.cities') }}?county_id=${countyId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
             .then(data => {
-                console.log('Counties received:', data.length, 'items');
-                const options = data.map(county => ({
-                    value: county.id,
-                    text: county.name
+                console.log('Cities received:', data);
+                
+                if (!data || data.length === 0) {
+                    console.warn('No cities found for this county');
+                    citySearchable.updateOptions([]);
+                    citySearchable.disable();
+                    return;
+                }
+                
+                const options = data.map(city => ({
+                    value: city.id,
+                    text: city.name
                 }));
-                countySearchable.updateOptions(options);
-                countySearchable.enable();
+                
+                citySearchable.updateOptions(options);
+                citySearchable.enable();
+                citySearchable.reset();
+                
+                lockerSearchable.reset();
+                lockerSearchable.disable();
+                
+                console.log('Cities loaded successfully:', options.length, 'items');
             })
             .catch(error => {
-                console.error('Error loading counties:', error);
-                alert('Eroare la încărcarea județelor. Vă rugăm să reîncărcați pagina.');
+                console.error('Error loading cities:', error);
+                alert('Eroare la încărcarea orașelor: ' + error.message);
             });
+        
+        calculateShipping();
+    });
 
-        // Load cities when county changes
-        countySelect.addEventListener('change', function() {
-            const countyId = this.value;
-            
-            if (!countyId) {
-                citySearchable.reset();
-                citySearchable.disable();
-                lockerSearchable.reset();
-                lockerSearchable.disable();
-                return;
-            }
-
-            console.log('Loading cities for county:', countyId);
-            
-            fetch(`{{ route('checkout.cities') }}?county_id=${countyId}`)
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Cities received:', data.length, 'items');
-                    const options = data.map(city => ({
-                        value: city.id,
-                        text: city.name
-                    }));
-                    citySearchable.updateOptions(options);
-                    citySearchable.enable();
-                    citySearchable.reset();
-                    
-                    lockerSearchable.reset();
-                    lockerSearchable.disable();
-                })
-                .catch(error => {
-                    console.error('Error loading cities:', error);
-                    alert('Eroare la încărcarea orașelor.');
-                });
-            
-            calculateShipping();
-        });
-
-        // Load lockers and update shipping_city when city changes
-        citySelect.addEventListener('change', function() {
-            const countyId = countySelect.value;
-            const cityId = this.value;
-            const cityName = this.options[this.selectedIndex].text;
-            
-            // Update hidden shipping_city field
-            shippingCityInput.value = cityName;
-            
-            if (!cityId) {
-                lockerSearchable.reset();
-                lockerSearchable.disable();
-                return;
-            }
-
-            if (deliveryLocker.checked) {
-                console.log('Loading lockers for city:', cityId);
-                
-                fetch(`{{ route('checkout.lockers') }}?county_id=${countyId}&city_id=${cityId}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log('Lockers received:', data.length, 'items');
-                        const options = data.map(locker => ({
-                            value: locker.id,
-                            text: locker.name
-                        }));
-                        lockerSearchable.updateOptions(options);
-                        lockerSearchable.enable();
-                        lockerSearchable.reset();
-                    })
-                    .catch(error => {
-                        console.error('Error loading lockers:', error);
-                        alert('Eroare la încărcarea EasyBox-urilor.');
-                    });
-            }
-            
-            calculateShipping();
-        });
-
-        // Update locker name hidden field
-        lockerSelect.addEventListener('change', function() {
-            const lockerName = this.options[this.selectedIndex].text;
-            lockerNameInput.value = lockerName;
-            
-            // Also update shipping_address for locker delivery
-            shippingAddressInput.value = lockerName;
-            
-            calculateShipping();
-        });
-
-        // ========================================
-        // BILLING FIELDS - Toggle company fields
-        // ========================================
-        const isPersonRadio = document.getElementById('is_person');
-        const isCompanyRadio = document.getElementById('is_company_radio');
-        const companyFields = document.getElementById('company_fields');
-        const billingCompanyName = document.getElementById('billing_company_name');
-        const billingCif = document.getElementById('billing_cif');
-
-        function toggleCompanyFields() {
-            if (isCompanyRadio.checked) {
-                companyFields.classList.remove('hidden');
-                billingCompanyName.required = true;
-                billingCif.required = true;
-            } else {
-                companyFields.classList.add('hidden');
-                billingCompanyName.required = false;
-                billingCif.required = false;
-            }
+    // Load lockers and update shipping_city when city changes
+    citySelect.addEventListener('change', function() {
+        const countyId = countySelect.value;
+        const cityId = this.value;
+        const cityName = this.options[this.selectedIndex].text;
+        
+        // Update hidden shipping_city field
+        shippingCityInput.value = cityName;
+        
+        if (!cityId) {
+            lockerSearchable.reset();
+            lockerSearchable.disable();
+            return;
         }
 
-        isPersonRadio.addEventListener('change', toggleCompanyFields);
-        isCompanyRadio.addEventListener('change', toggleCompanyFields);
-
-        // ========================================
-        // SAME AS SHIPPING - Copy shipping to billing
-        // ========================================
-        const sameAsShippingCheckbox = document.getElementById('same_as_shipping');
-        
-        sameAsShippingCheckbox.addEventListener('change', function() {
-            if (this.checked) {
-                // Copy shipping data to billing
-                document.getElementById('billing_name').value = document.getElementById('shipping_name').value;
-                document.getElementById('billing_email').value = document.getElementById('shipping_email').value;
-                document.getElementById('billing_phone').value = document.getElementById('shipping_phone').value;
-                document.getElementById('billing_address').value = document.getElementById('shipping_address').value;
-                document.getElementById('billing_city').value = shippingCityInput.value || document.getElementById('shipping_city').value;
-                document.getElementById('billing_postal_code').value = document.getElementById('shipping_postal_code').value;
-                
-                // Get county name from select
-                const countySelect = document.getElementById('sameday_county');
-                const countyName = countySelect.options[countySelect.selectedIndex]?.text || '';
-                document.getElementById('billing_county').value = countyName;
-            }
-        });
-
-        // Also update billing when shipping fields change (if checkbox is checked)
-        ['shipping_name', 'shipping_email', 'shipping_phone', 'shipping_address', 'shipping_postal_code'].forEach(fieldId => {
-            const field = document.getElementById(fieldId);
-            if (field) {
-                field.addEventListener('input', function() {
-                    if (sameAsShippingCheckbox.checked) {
-                        const billingFieldId = fieldId.replace('shipping_', 'billing_');
-                        const billingField = document.getElementById(billingFieldId);
-                        if (billingField) {
-                            billingField.value = this.value;
-                        }
+        if (deliveryLocker.checked) {
+            console.log('Loading lockers for city:', cityId);
+            
+            fetch(`{{ route('checkout.lockers') }}?county_id=${countyId}&city_id=${cityId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
                     }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Lockers received:', data);
+                    
+                    if (!data || data.length === 0) {
+                        console.warn('No lockers found for this city');
+                        alert('Nu există EasyBox-uri disponibile în acest oraș. Vă rugăm selectați livrare la domiciliu.');
+                        lockerSearchable.updateOptions([]);
+                        lockerSearchable.disable();
+                        return;
+                    }
+                    
+                    const options = data.map(locker => ({
+                        value: locker.id,
+                        text: locker.name
+                    }));
+                    
+                    lockerSearchable.updateOptions(options);
+                    lockerSearchable.enable();
+                    lockerSearchable.reset();
+                    
+                    console.log('Lockers loaded successfully:', options.length, 'items');
+                })
+                .catch(error => {
+                    console.error('Error loading lockers:', error);
+                    alert('Eroare la încărcarea EasyBox-urilor: ' + error.message);
                 });
-            }
-        });
+        }
         
-        console.log('Checkout form initialized successfully');
+        calculateShipping();
     });
+
+    // Update locker name hidden field
+    lockerSelect.addEventListener('change', function() {
+        const lockerName = this.options[this.selectedIndex].text;
+        lockerNameInput.value = lockerName;
+        
+        // Also update shipping_address for locker delivery
+        shippingAddressInput.value = lockerName;
+        
+        calculateShipping();
+    });
+
+    // BILLING FIELDS - Toggle company fields
+    const isPersonRadio = document.getElementById('is_person');
+    const isCompanyRadio = document.getElementById('is_company_radio');
+    const companyFields = document.getElementById('company_fields');
+    const billingCompanyName = document.getElementById('billing_company_name');
+    const billingCif = document.getElementById('billing_cif');
+
+    function toggleCompanyFields() {
+        if (isCompanyRadio.checked) {
+            companyFields.classList.remove('hidden');
+            billingCompanyName.required = true;
+            billingCif.required = true;
+        } else {
+            companyFields.classList.add('hidden');
+            billingCompanyName.required = false;
+            billingCif.required = false;
+        }
+    }
+
+    isPersonRadio.addEventListener('change', toggleCompanyFields);
+    isCompanyRadio.addEventListener('change', toggleCompanyFields);
+
+    // SAME AS SHIPPING - Copy shipping to billing
+    const sameAsShippingCheckbox = document.getElementById('same_as_shipping');
+    
+    sameAsShippingCheckbox.addEventListener('change', function() {
+        if (this.checked) {
+            document.getElementById('billing_name').value = document.getElementById('shipping_name').value;
+            document.getElementById('billing_email').value = document.getElementById('shipping_email').value;
+            document.getElementById('billing_phone').value = document.getElementById('shipping_phone').value;
+            document.getElementById('billing_address').value = document.getElementById('shipping_address').value;
+            document.getElementById('billing_city').value = shippingCityInput.value || document.getElementById('shipping_city').value;
+            document.getElementById('billing_postal_code').value = document.getElementById('shipping_postal_code').value;
+            
+            const countySelect = document.getElementById('sameday_county');
+            const countyName = countySelect.options[countySelect.selectedIndex]?.text || '';
+            document.getElementById('billing_county').value = countyName;
+        }
+    });
+
+    // Also update billing when shipping fields change (if checkbox is checked)
+    ['shipping_name', 'shipping_email', 'shipping_phone', 'shipping_address', 'shipping_postal_code'].forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field) {
+            field.addEventListener('input', function() {
+                if (sameAsShippingCheckbox.checked) {
+                    const billingFieldId = fieldId.replace('shipping_', 'billing_');
+                    const billingField = document.getElementById(billingFieldId);
+                    if (billingField) {
+                        billingField.value = this.value;
+                    }
+                }
+            });
+        }
+    });
+    
+    console.log('Checkout form initialized successfully');
+});
 
     // Function to calculate shipping cost
     function calculateShipping() {
