@@ -13,6 +13,16 @@
         @endif
 
         <link rel="icon" type="image/svg+xml" href="{{ asset('images/favicon.svg') }}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/favicon-32x32.png') }}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('images/favicon-16x16.png') }}">
+        <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/apple-touch-icon.png') }}">
+        <link rel="manifest" href="{{ asset('site.webmanifest') }}">
+        <meta name="theme-color" content="#db1cb5">
+        <meta http-equiv="content-language" content="ro">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+        <meta name="apple-mobile-web-app-title" content="Craft Gifts">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.cdnfonts.com">

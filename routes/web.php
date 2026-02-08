@@ -65,6 +65,10 @@ Route::view('/politica-de-confidentialitate', 'legal.privacy')->name('legal.priv
 Route::view('/politica-de-returnare', 'legal.delivery')->name('legal.delivery');
 Route::view('/politica-de-cookies', 'legal.cookies')->name('legal.cookies');
 
+// Sitemap
+Route::get('/sitemap.xml', [App\Http\Controllers\SitemapController::class, 'index'])
+    ->name('sitemap');
+
 /*
 |--------------------------------------------------------------------------
 | Authenticated User Routes
