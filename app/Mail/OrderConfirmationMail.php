@@ -4,7 +4,6 @@ namespace App\Mail;
 
 use App\Models\Order;
 use Illuminate\Bus\Queueable;
-// ❌ Elimină ShouldQueue
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
@@ -12,7 +11,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Mail\Mailables\Attachment;
 
-class OrderConfirmationMail extends Mailable // ❌ fără implements ShouldQueue
+class OrderConfirmationMail extends Mailable 
 {
     use Queueable, SerializesModels;
 
@@ -51,9 +50,9 @@ class OrderConfirmationMail extends Mailable // ❌ fără implements ShouldQueu
     public function attachments(): array
     {
         // ✅ Atașează PDF-ul facturii dacă există
-        if ($this->invoicePdfPath && Storage::disk('public')->exists($this->invoicePdfPath)) {
+        if ($this->invoicePdfPath && Storage::disk('local')->exists($this->invoicePdfPath)) {
             return [
-                Attachment::fromStorageDisk('public', $this->invoicePdfPath)
+                Attachment::fromStorageDisk('local', $this->invoicePdfPath)
                     ->as("Factura_{$this->invoiceSeries}{$this->invoiceNumber}.pdf")
                     ->withMime('application/pdf'),
             ];

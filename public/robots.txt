@@ -1,2 +1,41 @@
 User-agent: *
-Disallow:
+Allow: /
+
+# Pagini importante
+Allow: /shop
+Allow: /shop/*
+Allow: /despre
+Allow: /contact
+
+# Fișiere statice
+Allow: /css/
+Allow: /js/
+Allow: /images/
+Allow: /storage/
+
+# Blocking admin și zone private
+Disallow: /admin
+Disallow: /admin/*
+Disallow: /dashboard
+Disallow: /dashboard/*
+Disallow: /login
+Disallow: /register
+Disallow: /password/
+Disallow: /cart
+Disallow: /checkout
+Disallow: /orders
+Disallow: /wishlist
+Disallow: /profile
+
+# Blocking duplicate content
+Disallow: /*?sort=
+Disallow: /*?page=
+Disallow: /*?search=
+Allow: /shop?*
+
+# Blocking API endpoints
+Disallow: /api/
+Disallow: /livewire/
+
+# Sitemap Location
+Sitemap: https://craftgifts.ro/sitemap.xml

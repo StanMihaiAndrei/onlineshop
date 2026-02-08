@@ -336,7 +336,7 @@ class CheckoutController extends Controller
                 $pdfContent = $smartbillService->getInvoicePdf($invoiceSeries, $invoiceNumber);
                 if ($pdfContent) {
                     $invoicePdfPath = "invoices/{$order->order_number}_factura_{$invoiceSeries}{$invoiceNumber}.pdf";
-                    \Storage::disk('public')->put($invoicePdfPath, $pdfContent);
+                    \Storage::disk('local')->put($invoicePdfPath, $pdfContent);
 
                     \Log::info('SmartBill Invoice PDF saved', [
                         'series' => $invoiceSeries,

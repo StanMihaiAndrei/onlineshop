@@ -114,7 +114,7 @@ class AdminOrderController extends Controller
                     $pdfContent = $this->samedayService->downloadAwbPdf($result['pdf_link']);
                     if ($pdfContent) {
                         $pdfPath = "awb/{$order->order_number}_{$result['awb_number']}.pdf";
-                        Storage::disk('public')->put($pdfPath, $pdfContent);
+                        Storage::disk('local')->put($pdfPath, $pdfContent);
                     }
                 }
 
@@ -176,7 +176,7 @@ class AdminOrderController extends Controller
                     $pdfContent = $this->samedayService->downloadAwbPdf($result['pdf_link']);
                     if ($pdfContent) {
                         $pdfPath = "awb/{$order->order_number}_{$result['awb_number']}.pdf";
-                        Storage::disk('public')->put($pdfPath, $pdfContent);
+                        Storage::disk('local')->put($pdfPath, $pdfContent);
                     }
                 }
 
@@ -228,11 +228,11 @@ class AdminOrderController extends Controller
      */
     public function downloadAwbPdf(Order $order)
     {
-        if (!$order->sameday_awb_pdf || !Storage::disk('public')->exists($order->sameday_awb_pdf)) {
+        if (!$order->sameday_awb_pdf || !Storage::disk('local')->exists($order->sameday_awb_pdf)) {
             return back()->with('error', 'PDF-ul AWB nu este disponibil.');
         }
 
-        return Storage::disk('public')->download($order->sameday_awb_pdf);
+        return Storage::disk('local')->download($order->sameday_awb_pdf);
     }
 
     public function downloadInvoice(Order $order)
