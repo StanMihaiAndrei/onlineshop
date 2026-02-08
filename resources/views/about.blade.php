@@ -131,9 +131,9 @@
                     </div>
                 </div>
                 <div class="relative">
-                    <img src="{{ asset('images/about-story.jpg') }}" 
-                         alt="Povestea Craft Gifts" 
-                         class="rounded-2xl shadow-2xl w-full h-[400px] sm:h-[500px] object-cover">
+                    <img src="{{ asset('images/general/about.webp') }}" 
+                        alt="Povestea Craft Gifts" 
+                        class="rounded-2xl shadow-2xl w-full h-[400px] sm:h-[500px] object-cover">
                     <div class="absolute -bottom-6 -right-6 w-32 h-32 bg-primary-light/50 rounded-full blur-3xl"></div>
                     <div class="absolute -top-6 -left-6 w-40 h-40 bg-secondary/30 rounded-full blur-3xl"></div>
                 </div>
@@ -291,9 +291,9 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid md:grid-cols-2 gap-12 items-center">
                 <div class="relative order-2 md:order-1">
-                    <img src="{{ asset('images/artisan-work.jpg') }}" 
-                         alt="Artizani la lucru" 
-                         class="rounded-2xl shadow-2xl w-full h-[400px] sm:h-[500px] object-cover">
+                    <img src="{{ asset('images/general/principal.webp') }}" 
+                        alt="Artizani la lucru" 
+                        class="rounded-2xl shadow-2xl w-full h-[400px] sm:h-[500px] object-cover">
                     <div class="absolute -bottom-6 -left-6 w-32 h-32 bg-primary-light/50 rounded-full blur-3xl"></div>
                 </div>
                 <div class="space-y-6 order-1 md:order-2">
