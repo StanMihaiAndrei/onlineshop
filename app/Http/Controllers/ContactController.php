@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 use App\Mail\ContactFormMail;
 
 class ContactController extends Controller
@@ -31,11 +32,26 @@ class ContactController extends Controller
         ]);
 
         try {
-            // Trimite email către admin
-            Mail::to(env('ADMIN_EMAIL'))->send(new ContactFormMail($validated));
+            // Folosește config() nu env() - config merge și pe producție cu cache
+            $adminEmail = config('mail.admin_email');
+            
+            Log::info('Attempting to send contact form email', [
+                'to' => $adminEmail,
+                'from' => $validated['email'],
+                'subject' => $validated['subject'],
+            ]);
+
+            Mail::to($adminEmail)->send(new ContactFormMail($validated));
+
+            Log::info('Contact form email sent successfully');
 
             return back()->with('success', 'Mesajul tău a fost trimis cu succes! Vom reveni în cel mai scurt timp.');
         } catch (\Exception $e) {
+            Log::error('Contact form email failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
             return back()->with('error', 'A apărut o eroare la trimiterea mesajului. Te rugăm să încerci din nou.');
         }
     }
