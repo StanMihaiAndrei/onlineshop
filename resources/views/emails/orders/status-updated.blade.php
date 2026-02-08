@@ -314,8 +314,8 @@
                             </p>
                             <p style="margin: 15px 0 5px 0; font-size: 14px; color: #6b7280;">
                                 Urmărește coletul aici:<br>
-                                <a href="https://sameday.ro/tracking" style="color: #8fae9e; font-weight: bold; text-decoration: underline;">
-                                    sameday.ro/tracking
+                                <a href="https://sameday.ro/awb-tracking/?awb={{ $order->sameday_awb_number }}" target="_blank" style="color: #8fae9e; font-weight: bold; text-decoration: underline;">
+                                    Verifica statusul comenzii
                                 </a>
                             </p>
                             

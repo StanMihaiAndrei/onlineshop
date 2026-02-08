@@ -49,15 +49,15 @@
                                 @if($product->hasDiscount())
                                     <div class="flex flex-col">
                                         <span class="text-xs line-through text-gray-400">
-                                            ${{ number_format($product->price, 2) }}
+                                            RON {{ number_format($product->price, 2) }}
                                         </span>
                                         <span class="text-sm font-semibold text-red-600">
-                                            ${{ number_format($product->discount_price, 2) }}
+                                            RON {{ number_format($product->discount_price, 2) }}
                                         </span>
                                     </div>
                                 @else
                                     <span class="text-sm text-gray-900">
-                                        ${{ number_format($product->price, 2) }}
+                                        RON {{ number_format($product->price, 2) }}
                                     </span>
                                 @endif
                             </td>
@@ -128,11 +128,11 @@
                                 <p class="text-xs text-gray-500">Preț</p>
                                 @if($product->hasDiscount())
                                     <div class="flex flex-col">
-                                        <span class="text-xs line-through text-gray-400">${{ number_format($product->price, 2) }}</span>
-                                        <span class="text-sm font-semibold text-red-600">${{ number_format($product->discount_price, 2) }}</span>
+                                        <span class="text-xs line-through text-gray-400">RON {{ number_format($product->price, 2) }}</span>
+                                        <span class="text-sm font-semibold text-red-600">RON {{ number_format($product->discount_price, 2) }}</span>
                                     </div>
                                 @else
-                                    <p class="text-sm font-semibold text-gray-900">${{ number_format($product->price, 2) }}</p>
+                                    <p class="text-sm font-semibold text-gray-900">RON {{ number_format($product->price, 2) }}</p>
                                 @endif
                             </div>
                             <div>

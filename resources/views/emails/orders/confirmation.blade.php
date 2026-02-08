@@ -287,7 +287,7 @@
                                 {{ $order->sameday_awb_number }}
                             </div>
                             <div style="margin-top: 10px; font-size: 14px; color: #6b7280;">
-                                Poți urmări coletul pe <a href="https://sameday.ro/tracking" style="color: #8fae9e; text-decoration: underline;">sameday.ro/tracking</a>
+                                Poți urmări coletul pe <a href="https://sameday.ro/awb-tracking/?awb={{ $order->sameday_awb_number }}" target="_blank" style="color: #8fae9e; text-decoration: underline;">sameday.ro/awb-tracking</a>
                             </div>
                         </div>
                     @endif
