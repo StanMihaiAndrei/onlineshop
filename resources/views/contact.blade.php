@@ -1,11 +1,34 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     
+    <!-- SEO Meta Tags -->
     <title>Contact - Craft Gifts | Ia Legătura cu Noi</title>
     <meta name="description" content="Contactează-ne pentru întrebări despre produsele handmade, comenzi personalizate sau orice alte informații. Echipa Craft Gifts este aici pentru tine!">
+    <meta name="keywords" content="contact craft gifts, contacteaza-ne, intrebari produse handmade, comenzi personalizate, suport clienti, email craft gifts">
+    <meta name="author" content="Craft Gifts">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ route('contact') }}">
+    <meta property="og:title" content="Contact - Craft Gifts | Ia Legătura cu Noi">
+    <meta property="og:description" content="Contactează-ne pentru întrebări despre produsele handmade, comenzi personalizate sau orice alte informații. Echipa Craft Gifts este aici pentru tine!">
+    <meta property="og:image" content="{{ asset('images/transparent.jpg') }}">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="{{ route('contact') }}">
+    <meta property="twitter:title" content="Contact - Craft Gifts | Ia Legătura cu Noi">
+    <meta property="twitter:description" content="Contactează-ne pentru întrebări despre produsele handmade, comenzi personalizate sau orice alte informații.">
+    <meta property="twitter:image" content="{{ asset('images/transparent.jpg') }}">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="{{ route('contact') }}">
     
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=playfair-display:400,600,700|inter:400,500,600&display=swap" rel="stylesheet" />
@@ -14,7 +37,105 @@
     
     <style>
         .font-playfair { font-family: 'Playfair Display', serif; }
+        .hero-gradient {
+            background: linear-gradient(135deg, rgba(219, 28, 181, 0.08) 0%, rgba(246, 241, 235, 1) 100%);
+        }
     </style>
+    
+    <!-- Schema.org ContactPage Structured Data -->
+    <script type="application/ld+json">
+    {
+        "context": "https://schema.org",
+        "type": "ContactPage",
+        "name": "Contact Craft Gifts",
+        "description": "Contactează-ne pentru întrebări despre produsele handmade, comenzi personalizate sau orice alte informații.",
+        "url": "{{ route('contact') }}",
+        "mainEntity": {
+            "type": "Organization",
+            "name": "Craft Gifts",
+            "url": "{{ route('home') }}",
+            "logo": "{{ asset('images/transparent.png') }}",
+            "contactPoint": [
+                {
+                    "type": "ContactPoint",
+                    "telephone": "+40-722-739-278",
+                    "contactType": "Customer Service",
+                    "email": "{{ env('ADMIN_EMAIL') }}",
+                    "availableLanguage": ["Romanian"],
+                    "areaServed": "RO"
+                }
+            ],
+            "sameAs": [
+                "https://www.facebook.com/profile.php?id=61586880062880",
+                "https://www.instagram.com/craftgiftshandmade/"
+            ]
+        }
+    }
+    </script>
+    
+    <!-- BreadcrumbList Schema -->
+    <script type="application/ld+json">
+    {
+        "context": "https://schema.org",
+        "type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "type": "ListItem",
+                "position": 1,
+                "name": "Acasă",
+                "item": "{{ route('home') }}"
+            },
+            {
+                "type": "ListItem",
+                "position": 2,
+                "name": "Contact",
+                "item": "{{ route('contact') }}"
+            }
+        ]
+    }
+    </script>
+    
+    <!-- FAQ Schema for Contact Page -->
+    <script type="application/ld+json">
+    {
+        "context": "https://schema.org",
+        "type": "FAQPage",
+        "mainEntity": [
+            {
+                "type": "Question",
+                "name": "Cât durează procesarea unei comenzi?",
+                "acceptedAnswer": {
+                    "type": "Answer",
+                    "text": "De obicei, procesăm comenzile în 1-3 zile lucrătoare. Pentru comenzi personalizate, timpul de execuție poate varia între 5-10 zile lucrătoare, în funcție de complexitate."
+                }
+            },
+            {
+                "type": "Question",
+                "name": "Puteți realiza comenzi personalizate?",
+                "acceptedAnswer": {
+                    "type": "Answer",
+                    "text": "Da, cu siguranță! Ne place să creăm piese unice după specificațiile tale. Contactează-ne prin formularul de contact sau la email cu detaliile dorite și îți vom trimite o ofertă personalizată."
+                }
+            },
+            {
+                "type": "Question",
+                "name": "Ce metode de plată acceptați?",
+                "acceptedAnswer": {
+                    "type": "Answer",
+                    "text": "Acceptăm plata online cu cardul (Visa, Mastercard) prin Stripe și ramburs la primirea coletului. Pentru comenzi mari, putem discuta și alte opțiuni de plată."
+                }
+            },
+            {
+                "type": "Question",
+                "name": "Oferiți returnări?",
+                "acceptedAnswer": {
+                    "type": "Answer",
+                    "text": "Da, poți returna produsele în termen de 14 zile de la primire, dacă acestea sunt în starea originală. Produsele personalizate nu pot fi returnate. Contactează-ne pentru detalii despre procesul de returnare."
+                }
+            }
+        ]
+    }
+    </script>
 </head>
 <body class="antialiased font-sans bg-background">
     <!-- Navigation -->
@@ -61,8 +182,8 @@
                     </div>
                     <h3 class="text-xl font-bold text-text mb-2">Telefon</h3>
                     <p class="text-gray-600 mb-3">Sună-ne direct</p>
-                    <a href="tel:+40123456789" class="text-secondary font-semibold hover:text-text">
-                        +40 123 456 789
+                    <a href="tel:+40722739278" class="text-secondary font-semibold hover:text-text">
+                        +40 722-739-278
                     </a>
                 </div>
 

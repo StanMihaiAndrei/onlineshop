@@ -1,4 +1,137 @@
 <x-guest-layout>
+    <!-- SEO Meta Tags -->
+    <x-slot name="head">
+        @php
+            $pageTitle = isset($selectedSubcategory) ? $selectedSubcategory->name . ' | ' . $category->name : $category->name;
+            $pageDescription = isset($selectedSubcategory) && $selectedSubcategory->description 
+                ? Str::limit($selectedSubcategory->description, 155) 
+                : ($category->description ? Str::limit($category->description, 155) : 'Descoperă produse handmade din categoria ' . $category->name . ' la Craft Gifts. Decorațiuni artizanale și cadouri personalizate create cu pasiune.');
+            $keywords = [$category->name];
+            if(isset($selectedSubcategory)) $keywords[] = $selectedSubcategory->name;
+            if(isset($selectedColor)) $keywords[] = $selectedColor->name;
+            $keywords[] = 'decoratiuni handmade';
+            $keywords[] = 'cadouri personalizate';
+            $keywords[] = 'craft Romania';
+        @endphp
+        
+        <title>{{ $pageTitle }} - Craft Gifts | Decorațiuni Handmade</title>
+        <meta name="description" content="{{ $pageDescription }}">
+        <meta name="keywords" content="{{ implode(', ', $keywords) }}">
+        <meta name="robots" content="index, follow">
+        
+        <!-- Open Graph / Facebook -->
+        <meta property="og:type" content="product.group">
+        <meta property="og:url" content="{{ url()->current() }}">
+        <meta property="og:title" content="{{ $pageTitle }} - Craft Gifts">
+        <meta property="og:description" content="{{ $pageDescription }}">
+        @if($products->count() > 0 && $products->first()->images && count($products->first()->images) > 0)
+        <meta property="og:image" content="{{ asset('storage/' . $products->first()->images[0]) }}">
+        @else
+        <meta property="og:image" content="{{ asset('images/transparent.jpg') }}">
+        @endif
+        
+        <!-- Twitter -->
+        <meta property="twitter:card" content="summary_large_image">
+        <meta property="twitter:url" content="{{ url()->current() }}">
+        <meta property="twitter:title" content="{{ $pageTitle }} - Craft Gifts">
+        <meta property="twitter:description" content="{{ $pageDescription }}">
+        @if($products->count() > 0 && $products->first()->images && count($products->first()->images) > 0)
+        <meta property="twitter:image" content="{{ asset('storage/' . $products->first()->images[0]) }}">
+        @else
+        <meta property="twitter:image" content="{{ asset('images/transparent.jpg') }}">
+        @endif
+        
+        <!-- Canonical URL -->
+        <link rel="canonical" href="{{ url()->current() }}">
+        
+        <!-- Schema.org ItemList Structured Data -->
+        <script type="application/ld+json">
+        {
+            "context": "https://schema.org",
+            "type": "ItemList",
+            "name": "{{ $pageTitle }}",
+            "description": "{{ $pageDescription }}",
+            "numberOfItems": "{{ $products->total() }}",
+            "itemListElement": [
+                @foreach($products->take(10) as $index => $product)
+                {
+                    "type": "ListItem",
+                    "position": {{ $index + 1 }},
+                    "item": {
+                        "type": "Product",
+                        "name": "{{ $product->title }}",
+                        "url": "{{ route('shop', ['categorySlug' => $category->slug, 'productSlug' => $product->slug]) }}",
+                        @if($product->images && count($product->images) > 0)
+                        "image": "{{ asset('storage/' . $product->images[0]) }}",
+                        @endif
+                        "offers": {
+                            "type": "Offer",
+                            "price": "{{ $product->hasDiscount() ? $product->discount_price : $product->price }}",
+                            "priceCurrency": "RON",
+                            "availability": "{{ $product->stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock' }}"
+                        }
+                    }
+                }{{ $index < min(9, $products->count() - 1) ? ',' : '' }}
+                @endforeach
+            ]
+        }
+        </script>
+        
+        <!-- BreadcrumbList Schema -->
+        <script type="application/ld+json">
+        {
+            "context": "https://schema.org",
+            "type": "BreadcrumbList",
+            "itemListElement": [
+                {
+                    "type": "ListItem",
+                    "position": 1,
+                    "name": "Acasă",
+                    "item": "{{ route('home') }}"
+                },
+                {
+                    "type": "ListItem",
+                    "position": 2,
+                    "name": "Shop",
+                    "item": "{{ route('shop') }}"
+                }
+                @if($category->parent)
+                ,
+                {
+                    "type": "ListItem",
+                    "position": 3,
+                    "name": "{{ $category->parent->name }}",
+                    "item": "{{ route('shop.category', $category->parent->slug) }}"
+                },
+                {
+                    "type": "ListItem",
+                    "position": 4,
+                    "name": "{{ $category->name }}",
+                    "item": "{{ route('shop.category', $category->slug) }}"
+                }
+                @else
+                ,
+                {
+                    "type": "ListItem",
+                    "position": 3,
+                    "name": "{{ $category->name }}",
+                    "item": "{{ route('shop.category', $category->slug) }}"
+                }
+                @endif
+                @if(isset($selectedSubcategory))
+                ,
+                {
+                    "type": "ListItem",
+                    "position": {{ $category->parent ? 5 : 4 }},
+                    "name": "{{ $selectedSubcategory->name }}",
+                    "item": "{{ url()->current() }}"
+                }
+                @endif
+            ]
+        }
+        </script>
+    </x-slot>
+
     <div class="py-8 bg-background">
         <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Breadcrumb -->

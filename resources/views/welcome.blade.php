@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     
     <!-- SEO Meta Tags -->
-    <title>Craft Gifts - Decorațiuni Handmade Unice | Bijuterii & Cadouri Personalizate</title>
-    <meta name="description" content="Descoperă lumea magică a decorațiunilor handmade de la Craft Gifts. Bijuterii unice, cadouri personalizate și decorațiuni artizanale create cu pasiune. Comandă online și oferă cadouri speciale!">
+    <title>Craft Gifts - Decorațiuni Handmade & Cadouri Personalizate</title>
+    <meta name="description" content="Descoperă decorațiuni handmade, bijuterii artizanale și cadouri personalizate create cu pasiune. Comandă online cadouri unice de la Craft Gifts!">
     <meta name="keywords" content="decoratiuni handmade, bijuterii artizanale, cadouri personalizate, craft Romania, decoratiuni unicat, cadouri unice, handmade Romania">
     <meta name="author" content="Craft Gifts">
     <meta name="robots" content="index, follow">
@@ -14,15 +14,16 @@
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://craftgifts.ro/">
-    <meta property="og:title" content="Craft Gifts - Decorațiuni Handmade Unice">
+    <meta property="og:title" content="Craft Gifts - Decorațiuni Handmade & Cadouri Personalizate">
     <meta property="og:description" content="Bijuterii artizanale, decorațiuni și cadouri personalizate create cu pasiune. Fiecare piesă este unică!">
-    <meta property="og:image" content="{{ asset('images/og-image.jpg') }}">
+    <meta property="og:image" content="{{ asset('images/transparent.jpg') }}">
     
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://craftgifts.ro/">
-    <meta property="twitter:title" content="Craft Gifts - Decorațiuni Handmade Unice">
+    <meta property="twitter:title" content="Craft Gifts - Decorațiuni Handmade & Cadouri Personalizate">
     <meta property="twitter:description" content="Bijuterii artizanale, decorațiuni și cadouri personalizate create cu pasiune.">
+    <meta property="twitter:image" content="{{ asset('images/transparent.jpg') }}">
     
     <!-- Canonical URL -->
     <link rel="canonical" href="https://craftgifts.ro/">

@@ -1,4 +1,78 @@
 <x-guest-layout>
+    <!-- SEO Meta Tags -->
+    <x-slot name="head">
+        <title>{{ $product->title }} - Craft Gifts | Decorațiuni Handmade</title>
+        <meta name="description" content="{{ Str::limit($product->description, 155) }} - Comandă online de la Craft Gifts!">
+        <meta name="keywords" content="{{ $product->title }}, {{ $product->categories->pluck('name')->implode(', ') }}, decoratiuni handmade, cadouri personalizate, craft Romania">
+        <meta name="robots" content="index, follow">
+        
+        <!-- Open Graph / Facebook -->
+        <meta property="og:type" content="product">
+        <meta property="og:url" content="{{ url()->current() }}">
+        <meta property="og:title" content="{{ $product->title }} - Craft Gifts">
+        <meta property="og:description" content="{{ Str::limit($product->description, 200) }}">
+        @if($product->images && count($product->images) > 0)
+        <meta property="og:image" content="{{ asset('storage/' . $product->images[0]) }}">
+        @else
+        <meta property="og:image" content="{{ asset('images/transparent.jpg') }}">
+        @endif
+        <meta property="og:price:amount" content="{{ $product->hasDiscount() ? $product->discount_price : $product->price }}">
+        <meta property="og:price:currency" content="RON">
+        <meta property="product:availability" content="{{ $product->stock > 0 ? 'in stock' : 'out of stock' }}">
+        
+        <!-- Twitter -->
+        <meta property="twitter:card" content="summary_large_image">
+        <meta property="twitter:url" content="{{ url()->current() }}">
+        <meta property="twitter:title" content="{{ $product->title }} - Craft Gifts">
+        <meta property="twitter:description" content="{{ Str::limit($product->description, 200) }}">
+        @if($product->images && count($product->images) > 0)
+        <meta property="twitter:image" content="{{ asset('storage/' . $product->images[0]) }}">
+        @else
+        <meta property="twitter:image" content="{{ asset('images/transparent.jpg') }}">
+        @endif
+        
+        <!-- Canonical URL -->
+        <link rel="canonical" href="{{ url()->current() }}">
+        
+        <!-- Schema.org Product Structured Data -->
+        <script type="application/ld+json">
+        {
+            "context": "https://schema.org/",
+            "type": "Product",
+            "name": "{{ $product->title }}",
+            "description": "{{ $product->description }}",
+            @if($product->images && count($product->images) > 0)
+            "image": [
+                @foreach($product->images as $index => $image)
+                "{{ asset('storage/' . $image) }}"{{ $index < count($product->images) - 1 ? ',' : '' }}
+                @endforeach
+            ],
+            @endif
+            "sku": "{{ $product->id }}",
+            "brand": {
+                "@type": "Brand",
+                "name": "Craft Gifts"
+            },
+            "offers": {
+                "@type": "Offer",
+                "url": "{{ url()->current() }}",
+                "priceCurrency": "RON",
+                "price": "{{ $product->hasDiscount() ? $product->discount_price : $product->price }}",
+                "availability": "{{ $product->stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock' }}",
+                "itemCondition": "https://schema.org/NewCondition"
+            }
+            @if($product->reviews_count > 0)
+            ,
+            "aggregateRating": {
+                "@type": "AggregateRating",
+                "ratingValue": "{{ $product->average_rating }}",
+                "reviewCount": "{{ $product->reviews_count }}"
+            }
+            @endif
+        }
+        </script>
+    </x-slot>
+
     <div class="py-8 bg-background">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Breadcrumb -->

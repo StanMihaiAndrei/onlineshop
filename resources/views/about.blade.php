@@ -4,8 +4,29 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     
+    <!-- SEO Meta Tags -->
     <title>Despre Noi - Craft Gifts | Povestea Creațiilor Handmade</title>
     <meta name="description" content="Descoperă povestea din spatele Craft Gifts - pasiunea pentru creații handmade unice, dedicarea pentru calitate și dragostea pentru artă. Cunoaște echipa și valorile noastre.">
+    <meta name="keywords" content="despre craft gifts, povestea noastra, artizani romani, handmade Romania, atelier handmade, creatori romani, echipa craft gifts">
+    <meta name="author" content="Craft Gifts">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ route('about') }}">
+    <meta property="og:title" content="Despre Noi - Craft Gifts | Povestea Creațiilor Handmade">
+    <meta property="og:description" content="Descoperă povestea din spatele Craft Gifts - pasiunea pentru creații handmade unice, dedicarea pentru calitate și dragostea pentru artă.">
+    <meta property="og:image" content="{{ asset('images/about-story.jpg') }}">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="{{ route('about') }}">
+    <meta property="twitter:title" content="Despre Noi - Craft Gifts | Povestea Creațiilor Handmade">
+    <meta property="twitter:description" content="Descoperă povestea din spatele Craft Gifts - pasiunea pentru creații handmade unice, dedicarea pentru calitate și dragostea pentru artă.">
+    <meta property="twitter:image" content="{{ asset('images/about-story.jpg') }}">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="{{ route('about') }}">
     
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=playfair-display:400,600,700|inter:400,500,600&display=swap" rel="stylesheet" />
@@ -14,7 +35,62 @@
     
     <style>
         .font-playfair { font-family: 'Playfair Display', serif; }
+        .hover-lift {
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .hover-lift:hover {
+            transform: translateY(-8px);
+        }
     </style>
+    
+    <!-- Schema.org AboutPage Structured Data -->
+    <script type="application/ld+json">
+    {
+        "context": "https://schema.org",
+        "type": "AboutPage",
+        "name": "Despre Craft Gifts",
+        "description": "Descoperă povestea din spatele Craft Gifts - pasiunea pentru creații handmade unice, dedicarea pentru calitate și dragostea pentru artă.",
+        "url": "{{ route('about') }}",
+        "mainEntity": {
+            "type": "Organization",
+            "name": "Craft Gifts",
+            "description": "Magazin online cu decorațiuni handmade, bijuterii artizanale și cadouri personalizate",
+            "url": "{{ route('home') }}",
+            "logo": "{{ asset('images/transparent.png') }}",
+            "foundingDate": "2020",
+            "sameAs": [
+                "https://www.facebook.com/profile.php?id=61586880062880",
+                "https://www.instagram.com/craftgiftshandmade/"
+            ],
+            "address": {
+                "type": "PostalAddress",
+                "addressCountry": "RO"
+            }
+        }
+    }
+    </script>
+    
+    <!-- BreadcrumbList Schema -->
+    <script type="application/ld+json">
+    {
+        "context": "https://schema.org",
+        "type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "type": "ListItem",
+                "position": 1,
+                "name": "Acasă",
+                "item": "{{ route('home') }}"
+            },
+            {
+                "type": "ListItem",
+                "position": 2,
+                "name": "Despre Noi",
+                "item": "{{ route('about') }}"
+            }
+        ]
+    }
+    </script>
 </head>
 <body class="bg-background">
     <!-- Navigation -->

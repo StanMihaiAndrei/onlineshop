@@ -5,7 +5,12 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+        <!-- SEO Meta Tags (can be overridden by pages) -->
+        @if (isset($head))
+            {{ $head }}
+        @else
+            <title>{{ config('app.name', 'Laravel') }}</title>
+        @endif
 
         <link rel="icon" type="image/svg+xml" href="{{ asset('images/favicon.svg') }}">
 

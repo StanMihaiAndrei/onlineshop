@@ -161,11 +161,6 @@ Route::get('/test-sameday', function () {
     ]);
 });
 
-// Hello test route - remove in production
-Route::get('/hello', function () {
-    return view('hello');
-})->name('hello');
-
 /*
 |--------------------------------------------------------------------------
 | Authentication Routes
