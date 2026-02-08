@@ -503,12 +503,9 @@ class CheckoutController extends Controller
     public function getCounties()
     {
         try {
-            $counties = Cache::remember('sameday_counties', self::CACHE_DURATION_LONG, function () {
-                $samedayService = new SamedayService();
-                return $samedayService->getCounties();
-            });
+            $samedayService = new SamedayService();
+            $counties = $samedayService->getCounties(); // Deja face cache intern
 
-            \Log::info('Counties loaded from cache', ['count' => count($counties)]);
             return response()->json($counties);
         } catch (\Exception $e) {
             \Log::error('Error loading counties: ' . $e->getMessage());
@@ -516,26 +513,17 @@ class CheckoutController extends Controller
         }
     }
 
-    /**
-     * 🔥 REDIS CACHE: Get cities by county with 24h cache
-     */
     public function getCities(Request $request)
     {
         try {
             $countyId = $request->input('county_id');
-
             if (!$countyId) {
                 return response()->json(['error' => 'County ID required'], 400);
             }
 
-            $cacheKey = "sameday_cities_{$countyId}";
+            $samedayService = new SamedayService();
+            $cities = $samedayService->getCities($countyId);
 
-            $cities = Cache::remember($cacheKey, self::CACHE_DURATION_LONG, function () use ($countyId) {
-                $samedayService = new SamedayService();
-                return $samedayService->getCities($countyId);
-            });
-
-            \Log::info("Cities loaded from cache for county {$countyId}", ['count' => count($cities)]);
             return response()->json($cities);
         } catch (\Exception $e) {
             \Log::error('Error loading cities: ' . $e->getMessage());
@@ -543,9 +531,6 @@ class CheckoutController extends Controller
         }
     }
 
-    /**
-     * 🔥 REDIS CACHE: Get lockers with 24h cache
-     */
     public function getLockers(Request $request)
     {
         try {
@@ -556,25 +541,19 @@ class CheckoutController extends Controller
                 return response()->json(['error' => 'County ID and City ID required'], 400);
             }
 
-            $cacheKey = "sameday_lockers_{$countyId}_{$cityId}";
+            $samedayService = new SamedayService();
+            $rawLockers = $samedayService->getLockers(0, $countyId, $cityId);
 
-            $lockers = Cache::remember($cacheKey, self::CACHE_DURATION_LONG, function () use ($countyId, $cityId) {
-                $samedayService = new SamedayService();
-                $rawLockers = $samedayService->getLockers(0, $countyId, $cityId);
+            $lockers = array_map(function ($locker) {
+                return [
+                    'id' => (int) $locker['oohId'],
+                    'name' => $locker['name'] ?? '',
+                    'address' => $locker['address'] ?? '',
+                    'countyId' => $locker['countyId'] ?? null,
+                    'cityId' => $locker['cityId'] ?? null,
+                ];
+            }, $rawLockers);
 
-                // Format lockers
-                return array_map(function ($locker) {
-                    return [
-                        'id' => (int) $locker['oohId'],
-                        'name' => $locker['name'] ?? '',
-                        'address' => $locker['address'] ?? '',
-                        'countyId' => $locker['countyId'] ?? null,
-                        'cityId' => $locker['cityId'] ?? null,
-                    ];
-                }, $rawLockers);
-            });
-
-            \Log::info("Lockers loaded from cache for county {$countyId}, city {$cityId}", ['count' => count($lockers)]);
             return response()->json($lockers);
         } catch (\Exception $e) {
             \Log::error('Error loading lockers: ' . $e->getMessage());

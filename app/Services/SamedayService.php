@@ -35,7 +35,7 @@ class SamedayService
             $response = Http::withHeaders([
                 'X-AUTH-USERNAME' => $this->username,
                 'X-AUTH-PASSWORD' => $this->password,
-            ])->post("{$this->baseUrl}/api/authenticate", [
+            ])->timeout(10)->post("{$this->baseUrl}/api/authenticate", [
                 'remember_me' => $rememberMe
             ]);
 
@@ -51,15 +51,16 @@ class SamedayService
             }
 
             Log::error('Sameday authentication failed', [
-                'status' => $response->status()
+                'status' => $response->status(),
+                'body' => $response->body()
             ]);
 
-            return null;
+            throw new \Exception('Sameday authentication failed');
         } catch (\Exception $e) {
             Log::error('Sameday authentication exception', [
                 'message' => $e->getMessage()
             ]);
-            return null;
+            throw $e;
         }
     }
 
@@ -70,6 +71,10 @@ class SamedayService
     {
         if (!$this->token) {
             $this->token = $this->authenticate();
+
+            if (!$this->token) {
+                throw new \Exception('Cannot get auth token for Sameday API');
+            }
         }
 
         return [
@@ -84,71 +89,89 @@ class SamedayService
      */
     public function getCounties(): array
     {
-        return Cache::remember('sameday_counties', now()->addDays(30), function () {
-            try {
-                $response = Http::withHeaders($this->getAuthHeaders())
-                    ->get("{$this->baseUrl}/api/geolocation/county");
+        $cacheKey = 'sameday_counties';
 
-                if ($response->successful()) {
-                    $data = $response->json();
+        if (Cache::has($cacheKey)) {
+            $cached = Cache::get($cacheKey);
+            if (!empty($cached)) {
+                return $cached;
+            }
+            Cache::forget($cacheKey);
+        }
 
-                    if (isset($data['data'])) {
-                        return $data['data'];
-                    }
+        try {
+            $response = Http::withHeaders($this->getAuthHeaders())
+                ->timeout(10)
+                ->get("{$this->baseUrl}/api/geolocation/county");
 
-                    if (is_array($data)) {
-                        return $data;
-                    }
+            if ($response->successful()) {
+                $data = $response->json();
+                $counties = $data['data'] ?? $data;
+
+                if (!empty($counties) && is_array($counties)) {
+                    Cache::put($cacheKey, $counties, now()->addDays(30));
+                    Log::info('Sameday counties cached successfully', ['count' => count($counties)]);
+                    return $counties;
                 }
 
-                Log::error('Sameday getCounties failed', [
-                    'status' => $response->status()
-                ]);
-
-                return [];
-            } catch (\Exception $e) {
-                Log::error('Sameday getCounties exception', [
-                    'message' => $e->getMessage()
-                ]);
-                return [];
+                Log::error('Sameday getCounties returned empty data');
+                throw new \Exception('No counties data received from Sameday API');
             }
-        });
+
+            Log::error('Sameday getCounties failed', [
+                'status' => $response->status(),
+                'body' => $response->body()
+            ]);
+
+            throw new \Exception('Sameday API request failed with status: ' . $response->status());
+        } catch (\Exception $e) {
+            Log::error('Sameday getCounties exception', [
+                'message' => $e->getMessage()
+            ]);
+            throw $e;
+        }
     }
 
     /**
      * Obține orașe pentru un județ
-     * Structura city din API: { "id": 123, "name": "Sectorul 1", "county": { "id": 1, "name": "Bucuresti" }, ... }
      */
     public function getCities(int $countyId): array
     {
-        return Cache::remember("sameday_cities_{$countyId}", now()->addDays(30), function () use ($countyId) {
-            try {
-                $allCities = $this->getAllCities();
+        $cacheKey = "sameday_cities_{$countyId}";
 
-                // Filtrare după county.id
-                $filteredCities = array_filter($allCities, function ($city) use ($countyId) {
-                    // Verifică dacă există structura county->id
-                    if (isset($city['county']) && is_array($city['county']) && isset($city['county']['id'])) {
-                        return $city['county']['id'] == $countyId;
-                    }
-                    return false;
-                });
-
-                Log::info('Sameday getCities filtered', [
-                    'countyId' => $countyId,
-                    'filtered_count' => count($filteredCities),
-                    'sample_city' => !empty($filteredCities) ? array_values($filteredCities)[0]['name'] ?? 'N/A' : 'none'
-                ]);
-
-                return array_values($filteredCities);
-            } catch (\Exception $e) {
-                Log::error('Sameday getCities exception', [
-                    'countyId' => $countyId,
-                    'message' => $e->getMessage()
-                ]);
-                return [];
+        if (Cache::has($cacheKey)) {
+            $cached = Cache::get($cacheKey);
+            if (!empty($cached)) {
+                return $cached;
             }
-        });
+            Cache::forget($cacheKey);
+        }
+
+        try {
+            $allCities = $this->getAllCities();
+
+            $filteredCities = array_filter($allCities, function ($city) use ($countyId) {
+                if (isset($city['county']) && is_array($city['county']) && isset($city['county']['id'])) {
+                    return $city['county']['id'] == $countyId;
+                }
+                return false;
+            });
+
+            $result = array_values($filteredCities);
+
+            if (!empty($result)) {
+                Cache::put($cacheKey, $result, now()->addDays(30));
+                Log::info('Sameday cities cached', ['countyId' => $countyId, 'count' => count($result)]);
+            }
+
+            return $result;
+        } catch (\Exception $e) {
+            Log::error('Sameday getCities exception', [
+                'countyId' => $countyId,
+                'message' => $e->getMessage()
+            ]);
+            throw $e;
+        }
     }
 
     /**
@@ -156,55 +179,67 @@ class SamedayService
      */
     protected function getAllCities(): array
     {
-        return Cache::remember('sameday_all_cities', now()->addDays(30), function () {
-            try {
-                $allCities = [];
-                $page = 1;
-                $perPage = 500;
+        $cacheKey = 'sameday_all_cities';
 
-                do {
-                    $response = Http::withHeaders($this->getAuthHeaders())
-                        ->get("{$this->baseUrl}/api/geolocation/city", [
-                            'countPerPage' => $perPage,
-                            'page' => $page
-                        ]);
+        if (Cache::has($cacheKey)) {
+            $cached = Cache::get($cacheKey);
+            if (!empty($cached)) {
+                return $cached;
+            }
+            Cache::forget($cacheKey);
+        }
 
-                    if (!$response->successful()) {
-                        Log::error('Sameday getAllCities page failed', [
-                            'page' => $page,
-                            'status' => $response->status()
-                        ]);
+        try {
+            $allCities = [];
+            $page = 1;
+            $perPage = 500;
+
+            do {
+                $response = Http::withHeaders($this->getAuthHeaders())
+                    ->timeout(10)
+                    ->get("{$this->baseUrl}/api/geolocation/city", [
+                        'countPerPage' => $perPage,
+                        'page' => $page
+                    ]);
+
+                if (!$response->successful()) {
+                    Log::error('Sameday getAllCities page failed', [
+                        'page' => $page,
+                        'status' => $response->status()
+                    ]);
+                    break;
+                }
+
+                $data = $response->json();
+
+                if (isset($data['data']) && is_array($data['data'])) {
+                    $allCities = array_merge($allCities, $data['data']);
+
+                    if ($page >= ($data['pages'] ?? 1)) {
                         break;
                     }
 
-                    $data = $response->json();
+                    $page++;
+                } else {
+                    break;
+                }
+            } while (true);
 
-                    if (isset($data['data']) && is_array($data['data'])) {
-                        $allCities = array_merge($allCities, $data['data']);
-
-                        if ($page >= ($data['pages'] ?? 1)) {
-                            break;
-                        }
-
-                        $page++;
-                    } else {
-                        break;
-                    }
-                } while (true);
-
+            if (!empty($allCities)) {
+                Cache::put($cacheKey, $allCities, now()->addDays(30));
                 Log::info('Sameday getAllCities complete', [
                     'total_cities' => count($allCities),
                     'pages_fetched' => $page
                 ]);
-
-                return $allCities;
-            } catch (\Exception $e) {
-                Log::error('Sameday getAllCities exception', [
-                    'message' => $e->getMessage()
-                ]);
-                return [];
             }
-        });
+
+            return $allCities;
+        } catch (\Exception $e) {
+            Log::error('Sameday getAllCities exception', [
+                'message' => $e->getMessage()
+            ]);
+            throw $e;
+        }
     }
 
     /**
@@ -215,36 +250,46 @@ class SamedayService
     {
         $cacheKey = "sameday_lockers_{$listingType}_{$countyId}_{$cityId}";
 
-        return Cache::remember($cacheKey, now()->addHours(6), function () use ($listingType, $countyId, $cityId) {
-            try {
-                $allLockers = $this->getAllLockers($listingType);
-
-                $filteredLockers = $allLockers;
-
-                // Filtrare după countyId (câmp direct în locker)
-                if ($countyId) {
-                    $filteredLockers = array_filter($filteredLockers, function ($locker) use ($countyId) {
-                        return isset($locker['countyId']) && $locker['countyId'] == $countyId;
-                    });
-                }
-
-                // Filtrare după cityId (câmp direct în locker)
-                if ($cityId) {
-                    $filteredLockers = array_filter($filteredLockers, function ($locker) use ($cityId) {
-                        return isset($locker['cityId']) && $locker['cityId'] == $cityId;
-                    });
-                }
-
-                return array_values($filteredLockers);
-            } catch (\Exception $e) {
-                Log::error('Sameday get lockers failed', [
-                    'countyId' => $countyId,
-                    'cityId' => $cityId,
-                    'message' => $e->getMessage()
-                ]);
-                return [];
+        if (Cache::has($cacheKey)) {
+            $cached = Cache::get($cacheKey);
+            if (!empty($cached)) {
+                return $cached;
             }
-        });
+            Cache::forget($cacheKey);
+        }
+
+        try {
+            $allLockers = $this->getAllLockers($listingType);
+
+            $filteredLockers = $allLockers;
+
+            if ($countyId) {
+                $filteredLockers = array_filter($filteredLockers, function ($locker) use ($countyId) {
+                    return isset($locker['countyId']) && $locker['countyId'] == $countyId;
+                });
+            }
+
+            if ($cityId) {
+                $filteredLockers = array_filter($filteredLockers, function ($locker) use ($cityId) {
+                    return isset($locker['cityId']) && $locker['cityId'] == $cityId;
+                });
+            }
+
+            $result = array_values($filteredLockers);
+
+            if (!empty($result)) {
+                Cache::put($cacheKey, $result, now()->addHours(6));
+            }
+
+            return $result;
+        } catch (\Exception $e) {
+            Log::error('Sameday get lockers failed', [
+                'countyId' => $countyId,
+                'cityId' => $cityId,
+                'message' => $e->getMessage()
+            ]);
+            throw $e;
+        }
     }
 
     /**
@@ -254,130 +299,162 @@ class SamedayService
     {
         $cacheKey = "sameday_all_lockers_{$listingType}";
 
-        return Cache::remember($cacheKey, now()->addHours(6), function () use ($listingType) {
-            try {
-                $allLockers = [];
-                $page = 1;
-                $perPage = 500; // API returnează 500 per pagină by default
+        if (Cache::has($cacheKey)) {
+            $cached = Cache::get($cacheKey);
+            if (!empty($cached)) {
+                return $cached;
+            }
+            Cache::forget($cacheKey);
+        }
 
-                do {
-                    $response = Http::withHeaders($this->getAuthHeaders())
-                        ->get("{$this->baseUrl}/api/client/ooh-locations", [
-                            'page' => $page,
-                            'countPerPage' => $perPage,
-                            'listingType' => $listingType, // 0 = easybox, 1 = PUDO
-                        ]);
+        try {
+            $allLockers = [];
+            $page = 1;
+            $perPage = 500;
 
-                    if (!$response->successful()) {
-                        Log::error('Sameday get ooh-locations failed', [
-                            'status' => $response->status(),
-                            'page' => $page,
-                            'body' => $response->body()
-                        ]);
-                        break;
-                    }
+            do {
+                $response = Http::withHeaders($this->getAuthHeaders())
+                    ->timeout(10)
+                    ->get("{$this->baseUrl}/api/client/ooh-locations", [
+                        'page' => $page,
+                        'countPerPage' => $perPage,
+                        'listingType' => $listingType,
+                    ]);
 
-                    $data = $response->json();
+                if (!$response->successful()) {
+                    Log::error('Sameday get ooh-locations failed', [
+                        'status' => $response->status(),
+                        'page' => $page,
+                        'body' => $response->body()
+                    ]);
+                    break;
+                }
 
-                    if (!isset($data['data']) || empty($data['data'])) {
-                        break;
-                    }
+                $data = $response->json();
 
-                    // Adaugă lockers din pagina curentă
-                    $allLockers = array_merge($allLockers, $data['data']);
+                if (!isset($data['data']) || empty($data['data'])) {
+                    break;
+                }
 
-                    $totalPages = $data['pages'] ?? 1;
-                    $page++;
-                } while ($page <= $totalPages);
+                $allLockers = array_merge($allLockers, $data['data']);
 
+                $totalPages = $data['pages'] ?? 1;
+                $page++;
+            } while ($page <= $totalPages);
+
+            if (!empty($allLockers)) {
+                Cache::put($cacheKey, $allLockers, now()->addHours(6));
                 Log::info('Sameday lockers loaded', [
                     'total' => count($allLockers),
                     'listingType' => $listingType
                 ]);
-
-                return $allLockers;
-            } catch (\Exception $e) {
-                Log::error('Sameday get all lockers exception', [
-                    'message' => $e->getMessage()
-                ]);
-                return [];
             }
-        });
+
+            return $allLockers;
+        } catch (\Exception $e) {
+            Log::error('Sameday get all lockers exception', [
+                'message' => $e->getMessage()
+            ]);
+            throw $e;
+        }
     }
+
     public function getServices(): array
     {
-        return Cache::remember('sameday_services', now()->addDays(7), function () {
-            try {
-                $response = Http::withHeaders($this->getAuthHeaders())
-                    ->get("{$this->baseUrl}/api/client/services");
+        $cacheKey = 'sameday_services';
 
-                if ($response->successful()) {
-                    return $response->json();
+        if (Cache::has($cacheKey)) {
+            $cached = Cache::get($cacheKey);
+            if (!empty($cached)) {
+                return $cached;
+            }
+            Cache::forget($cacheKey);
+        }
+
+        try {
+            $response = Http::withHeaders($this->getAuthHeaders())
+                ->timeout(10)
+                ->get("{$this->baseUrl}/api/client/services");
+
+            if ($response->successful()) {
+                $data = $response->json();
+
+                if (!empty($data)) {
+                    Cache::put($cacheKey, $data, now()->addDays(7));
+                    return $data;
                 }
 
-                Log::error('Sameday getServices failed', [
-                    'status' => $response->status()
-                ]);
-
-                return [];
-            } catch (\Exception $e) {
-                Log::error('Sameday getServices exception', [
-                    'message' => $e->getMessage()
-                ]);
-                return [];
+                throw new \Exception('No services data received');
             }
-        });
+
+            Log::error('Sameday getServices failed', [
+                'status' => $response->status(),
+                'body' => $response->body()
+            ]);
+
+            throw new \Exception('Failed to fetch services');
+        } catch (\Exception $e) {
+            Log::error('Sameday getServices exception', [
+                'message' => $e->getMessage()
+            ]);
+            throw $e;
+        }
     }
 
     public function getPickupPoints(): array
     {
-        return Cache::remember('sameday_pickup_points', now()->addDays(7), function () {
-            try {
-                $response = Http::withHeaders($this->getAuthHeaders())
-                    ->get("{$this->baseUrl}/api/client/pickup-points");
+        $cacheKey = 'sameday_pickup_points';
 
-                if ($response->successful()) {
-                    $data = $response->json();
+        if (Cache::has($cacheKey)) {
+            $cached = Cache::get($cacheKey);
+            if (!empty($cached)) {
+                return $cached;
+            }
+            Cache::forget($cacheKey);
+        }
 
-                    // Log pentru debug
-                    Log::info('Sameday pickup points response', [
-                        'data' => $data
-                    ]);
+        try {
+            $response = Http::withHeaders($this->getAuthHeaders())
+                ->timeout(10)
+                ->get("{$this->baseUrl}/api/client/pickup-points");
 
-                    // Verifică dacă există cheia 'data'
-                    if (isset($data['data']) && is_array($data['data'])) {
-                        return $data['data'];
+            if ($response->successful()) {
+                $data = $response->json();
+
+                Log::info('Sameday pickup points response', ['data_keys' => array_keys($data)]);
+
+                $pickupPoints = [];
+                if (isset($data['data']) && is_array($data['data'])) {
+                    $pickupPoints = $data['data'];
+                } elseif (is_array($data) && !empty($data)) {
+                    $firstElement = reset($data);
+                    if (is_array($firstElement) && isset($firstElement['id'])) {
+                        $pickupPoints = $data;
                     }
-
-                    // Dacă răspunsul este direct un array de pickup points
-                    if (is_array($data) && !empty($data)) {
-                        // Verifică dacă primul element are structura de pickup point
-                        $firstElement = reset($data);
-                        if (is_array($firstElement) && isset($firstElement['id'])) {
-                            return $data;
-                        }
-                    }
-
-                    Log::warning('Sameday pickup points response has unexpected structure', [
-                        'data' => $data
-                    ]);
-
-                    return [];
                 }
 
-                Log::error('Sameday getPickupPoints failed', [
-                    'status' => $response->status(),
-                    'body' => $response->body()
-                ]);
+                if (!empty($pickupPoints)) {
+                    Cache::put($cacheKey, $pickupPoints, now()->addDays(7));
+                    Log::info('Sameday pickup points cached', ['count' => count($pickupPoints)]);
+                    return $pickupPoints;
+                }
 
-                return [];
-            } catch (\Exception $e) {
-                Log::error('Sameday getPickupPoints exception', [
-                    'message' => $e->getMessage()
-                ]);
-                return [];
+                Log::error('Sameday pickup points response has unexpected structure', ['data' => $data]);
+                throw new \Exception('No pickup points found');
             }
-        });
+
+            Log::error('Sameday getPickupPoints failed', [
+                'status' => $response->status(),
+                'body' => $response->body()
+            ]);
+
+            throw new \Exception('Failed to fetch pickup points');
+        } catch (\Exception $e) {
+            Log::error('Sameday getPickupPoints exception', [
+                'message' => $e->getMessage()
+            ]);
+            throw $e;
+        }
     }
 
     public function createHomeDeliveryAwb(array $orderData): ?array
@@ -656,13 +733,19 @@ class SamedayService
 
     public function clearCache(): void
     {
-        Cache::forget('sameday_token');
-        Cache::forget('sameday_counties');
-        Cache::forget('sameday_all_cities');
-        Cache::forget('sameday_services');
-        Cache::forget('sameday_pickup_points');
-        Cache::forget('sameday_all_lockers_0');
-        Cache::forget('sameday_all_lockers_1');
+        $keysToForget = [
+            'sameday_token',
+            'sameday_counties',
+            'sameday_all_cities',
+            'sameday_services',
+            'sameday_pickup_points',
+            'sameday_all_lockers_0',
+            'sameday_all_lockers_1',
+        ];
+
+        foreach ($keysToForget as $key) {
+            Cache::forget($key);
+        }
 
         // Clear city caches
         for ($i = 1; $i <= 50; $i++) {
@@ -686,15 +769,14 @@ class SamedayService
      */
     public function estimateShippingCost(string $deliveryType, float $weight, int $countyId, ?int $lockerId = null): float
     {
-        // Prețuri de bază estimate (în RON) - ACTUALIZEAZĂ CU TARIFE REALE
         $basePrices = [
             'home' => [
-                'base' => 15.00,  // Cost de bază pentru livrare la domiciliu
-                'per_kg' => 2.00, // Cost suplimentar per kg
+                'base' => 15.00,
+                'per_kg' => 2.00,
             ],
             'locker' => [
-                'base' => 10.00,  // Cost de bază pentru livrare la locker (mai ieftin)
-                'per_kg' => 1.50, // Cost suplimentar per kg
+                'base' => 10.00,
+                'per_kg' => 1.50,
             ]
         ];
 
@@ -703,19 +785,14 @@ class SamedayService
         }
 
         $prices = $basePrices[$deliveryType];
-
-        // Calculează costul de bază
         $cost = $prices['base'];
 
-        // Adaugă cost pentru greutate (peste primul kg)
         if ($weight > 1) {
             $cost += ($weight - 1) * $prices['per_kg'];
         }
 
-        // Majorare pentru județe mai îndepărtate
-        // Județul București (ID 1) are prețul de bază
         if ($countyId != 1) {
-            $cost += 3.00; // Majorare 3 RON pentru alte județe
+            $cost += 3.00;
         }
 
         return round($cost, 2);
