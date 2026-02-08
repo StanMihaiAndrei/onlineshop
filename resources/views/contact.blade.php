@@ -60,7 +60,7 @@
                     "type": "ContactPoint",
                     "telephone": "+40-722-739-278",
                     "contactType": "Customer Service",
-                    "email": "{{ env('ADMIN_EMAIL') }}",
+                    "email": "{{ config('mail.admin_email') }}",
                     "availableLanguage": ["Romanian"],
                     "areaServed": "RO"
                 }
@@ -168,8 +168,8 @@
                     </div>
                     <h3 class="text-xl font-bold text-text mb-2">Email</h3>
                     <p class="text-gray-600 mb-3">Trimite-ne un email</p>
-                    <a href="mailto:{{ env('ADMIN_EMAIL') }}" class="text-primary font-semibold hover:text-primary-dark break-all">
-                        {{ env('ADMIN_EMAIL') }}
+                    <a href="mailto:{{ config('mail.admin_email') }}" class="text-primary font-semibold hover:text-primary-dark break-all">
+                        {{ config('mail.admin_email') }}
                     </a>
                 </div>
 

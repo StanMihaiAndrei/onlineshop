@@ -183,7 +183,7 @@
                 <p style="margin: 10px 0;">&copy; {{ date('Y') }} Toate drepturile rezervate.</p>
                 <p>
                     <a href="{{ config('app.url') }}">Vizitează site-ul</a> | 
-                    <a href="{{ config('app.url') }}contact">Contact</a>
+                    <a href="{{ config('app.url') }}/contact">Contact</a>
                 </p>
             </div>
         </div>
