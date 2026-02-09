@@ -381,11 +381,15 @@ class SamedayService
         }
 
         try {
-            $response = Http::withHeaders($this->getAuthHeaders())
-                ->timeout(30)
-                ->get("{$this->baseUrl}/api/locker/lockers", [
-                    'lockerListingType' => $listingType
-                ]);
+            // ✅ SCHIMBAT: Folosește makeAuthenticatedRequest pentru auto-retry la 401
+            $response = $this->makeAuthenticatedRequest(
+                'GET',
+                "{$this->baseUrl}/api/locker/lockers",
+                [
+                    'query' => ['lockerListingType' => $listingType],
+                    'timeout' => 30
+                ]
+            );
 
             if (!$response->successful()) {
                 Log::error('Sameday API failed', [
