@@ -38,3 +38,19 @@
 .float-animation {
     animation: float 6s ease-in-out infinite;
 }
+
+.logo-container {
+    min-width: 160px;
+    min-height: 160px;
+}
+
+/* Stabilizează înălțimea navbar */
+nav {
+    contain: layout;
+}
+
+/* Previne shift la încărcarea fonturilor */
+body {
+    font-family: 'Comic Relief', 'Comic Sans MS', cursive, sans-serif;
+    font-display: swap;
+}

@@ -28,6 +28,13 @@
     <!-- Canonical URL -->
     <link rel="canonical" href="https://craftgifts.ro/">
     
+    <link rel="preload" href="{{ asset('images/transparent.png') }}" as="image">
+    <link rel="preload" href="{{ Vite::asset('resources/css/app.css') }}" as="style">
+    <link rel="preload" href="{{ Vite::asset('resources/js/app.js') }}" as="script">
+
+    <!-- Preconnect pentru external resources -->
+    <link rel="dns-prefetch" href="https://fonts.cdnfonts.com">
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.cdnfonts.com">
     <link href="https://fonts.cdnfonts.com/css/comic-relief" rel="stylesheet">
@@ -217,7 +224,11 @@
                         <div class="gradient-border shadow-2xl">
                             <div class="gradient-border-content overflow-hidden">
                                 <img src="{{ asset('images/general/gift.webp') }}" 
-                                    alt="Cadouri handmade Craft Gifts" 
+                                    alt="Cadouri handmade Craft Gifts"
+                                    width="400"
+                                    height="400"
+                                    loading="lazy"
+                                    decoding="async" 
                                     class="w-full h-full object-cover rounded-2xl">
                             </div>
                         </div>
@@ -531,7 +542,11 @@
                     <div class="gradient-border shadow-2xl">
                         <div class="gradient-border-content overflow-hidden">
                             <img src="{{ asset('images/general/handmade.webp') }}" 
-                                alt="Proces de creare handmade" 
+                                alt="Proces de creare handmade"
+                                width="400"
+                                height="400"
+                                loading="lazy"
+                                decoding="async" 
                                 class="w-full h-full object-cover rounded-2xl">
                         </div>
                     </div>

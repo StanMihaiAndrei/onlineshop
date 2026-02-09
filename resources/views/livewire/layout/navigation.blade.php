@@ -25,9 +25,12 @@ new class extends Component
                 <div class="flex-shrink-0 transition-all duration-300 lg:mr-12">
                     <a href="{{ route('home') }}" wire:navigate class="flex items-center group">
                         <img src="{{ asset('images/transparent.png') }}" 
-                             alt="Craft Gifts Logo" 
-                             :class="scrolled ? 'h-32' : 'h-40'"
-                             class="w-auto transition-all duration-300 group-hover:scale-105">
+                        alt="Craft Gifts Logo" 
+                        :class="scrolled ? 'h-32' : 'h-40'"
+                        width="160" 
+                        height="160"
+                        fetchpriority="high"
+                        class="w-auto transition-all duration-300 group-hover:scale-105">
                     </a>
                 </div>
 

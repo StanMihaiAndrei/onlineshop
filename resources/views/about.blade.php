@@ -132,7 +132,11 @@
                 </div>
                 <div class="relative">
                     <img src="{{ asset('images/general/about.webp') }}" 
-                        alt="Povestea Craft Gifts" 
+                        alt="Povestea Craft Gifts"
+                        width="400"
+                        height="400"
+                        loading="lazy"
+                        decoding="async" 
                         class="rounded-2xl shadow-2xl w-full h-[400px] sm:h-[500px] object-cover">
                     <div class="absolute -bottom-6 -right-6 w-32 h-32 bg-primary-light/50 rounded-full blur-3xl"></div>
                     <div class="absolute -top-6 -left-6 w-40 h-40 bg-secondary/30 rounded-full blur-3xl"></div>
@@ -292,7 +296,11 @@
             <div class="grid md:grid-cols-2 gap-12 items-center">
                 <div class="relative order-2 md:order-1">
                     <img src="{{ asset('images/general/principal.webp') }}" 
-                        alt="Artizani la lucru" 
+                        alt="Artizani la lucru"
+                        width="400"
+                        height="400"
+                        loading="lazy"
+                        decoding="async" 
                         class="rounded-2xl shadow-2xl w-full h-[400px] sm:h-[500px] object-cover">
                     <div class="absolute -bottom-6 -left-6 w-32 h-32 bg-primary-light/50 rounded-full blur-3xl"></div>
                 </div>

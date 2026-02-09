@@ -10,8 +10,9 @@
         <link rel="icon" type="image/svg+xml" href="{{ asset('images/favicon.svg') }}">
 
         <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.cdnfonts.com">
-        <link href="https://fonts.cdnfonts.com/css/comic-relief" rel="stylesheet">
+        <link rel="preconnect" href="https://fonts.cdnfonts.com" crossorigin>
+        <link rel="preload" href="https://fonts.cdnfonts.com/css/comic-relief" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link href="https://fonts.cdnfonts.com/css/comic-relief" rel="stylesheet"></noscript>
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])

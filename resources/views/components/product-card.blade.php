@@ -30,10 +30,14 @@
     <div class="relative">
         <a href="{{ $productUrl }}" class="block">
             <div class="relative overflow-hidden h-[350px] sm:h-[280px]">
-                @if($firstImage)
-                    <img src="{{ asset('storage/' . $firstImage) }}" 
-                         alt="{{ $productName }}"
-                         class="w-full h-full object-cover transition-transform duration-300 hover:scale-105">
+               @if($firstImage)
+                <img src="{{ asset('storage/' . $firstImage) }}" 
+                    alt="{{ $productName }}"
+                    width="350"
+                    height="350"
+                    loading="lazy"
+                    decoding="async"
+                    class="w-full h-full object-cover transition-transform duration-300 hover:scale-105">
                 @else
                     <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-pink-100 to-purple-100">
                         <svg class="w-16 h-16 text-[#db1cb5] opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
