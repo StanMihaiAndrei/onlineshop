@@ -103,6 +103,7 @@ class CheckoutController extends Controller
             'sameday_locker_name' => 'nullable|string',
             'payment_method' => 'required|in:card,cash_on_delivery',
             'notes' => 'nullable|string|max:1000',
+            'terms_accepted' => 'required|accepted',
         ]);
 
         $cartItems = session()->get('cart', []);

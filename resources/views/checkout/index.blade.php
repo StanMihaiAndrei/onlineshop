@@ -378,7 +378,7 @@
                                     <div class="flex-1">
                                         <p class="text-sm font-medium">{{ $item['title'] }}</p>
                                         <p class="text-xs text-gray-500">Cantitate: {{ $item['quantity'] }}</p>
-                                        <p class="text-sm font-bold text-blue-600">RON {{ number_format($item['final_price'] * $item['quantity'], 2) }}</p>
+                                        <p class="text-sm font-bold text-secondary">RON {{ number_format($item['final_price'] * $item['quantity'], 2) }}</p>
                                     </div>
                                 </div>
                             @endforeach
@@ -435,7 +435,7 @@
                                 </div>
                             @endif
 
-                            <div class="flex justify-between text-blue-600">
+                            <div class="flex justify-between text-secondary">
                                 <span>Livrare:</span>
                                 <span class="font-medium" id="shipping-cost-display">
                                     @if($shippingCost > 0)
@@ -448,12 +448,36 @@
 
                             <div class="flex justify-between text-lg font-bold border-t border-gray-200 pt-2">
                                 <span>Total:</span>
-                                <span class="text-blue-600" id="total-display">RON {{ number_format($finalTotal, 2) }}</span>
+                                <span class="text-secondary" id="total-display">RON {{ number_format($finalTotal, 2) }}</span>
                             </div>
                         </div>
 
+                        <!-- Terms and Conditions Agreement -->
+                        <div class="border-t border-gray-200 pt-4 mt-4">
+                            <p class="text-sm text-gray-600 mb-3">
+                                Datele tale personale vor fi folosite pentru a plasa comanda pe acest website conform 
+                                <a href="{{ route('legal.privacy') }}" target="_blank" class="text-secondary hover:underline">politică de confidențialitate</a>.
+                            </p>
+                            
+                            <div class="flex items-start gap-2">
+                                <input type="checkbox" 
+                                    name="terms_accepted" 
+                                    id="terms_accepted" 
+                                    required
+                                    class="mt-1 w-4 h-4 text-secondary border-gray-300 rounded focus:ring-secondary">
+                                <label for="terms_accepted" class="text-sm text-gray-700">
+                                    Prin plasarea comenzii sunteți de acord cu 
+                                    <a href="{{ route('legal.terms') }}" target="_blank" class="text-secondary hover:underline font-medium">termenii și condițiile</a> 
+                                    acestui website. *
+                                </label>
+                            </div>
+                            @error('terms_accepted')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+
                         <button type="submit" 
-                            class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition mt-6">
+                            class="w-full bg-primary text-white py-3 rounded-lg font-semibold hover:bg-primary-dark transition mt-6">
                             Plasează Comanda
                         </button>
                     </div>

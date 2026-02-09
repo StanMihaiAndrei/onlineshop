@@ -771,11 +771,11 @@ class SamedayService
     {
         $basePrices = [
             'home' => [
-                'base' => 15.00,
+                'base' => 25.00,
                 'per_kg' => 2.00,
             ],
             'locker' => [
-                'base' => 10.00,
+                'base' => 20.00,
                 'per_kg' => 1.50,
             ]
         ];
