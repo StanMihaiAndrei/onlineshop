@@ -353,4 +353,6 @@ new class extends Component
 
     <!-- Spacer pentru ca sticky nav să nu ascundă conținutul -->
     <div class="h-28"></div>
+    <!-- Cookie Banner -->
+    <x-cookie-banner />
 </div>

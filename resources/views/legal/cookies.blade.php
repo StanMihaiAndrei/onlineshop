@@ -141,6 +141,10 @@
                                         <td class="px-6 py-4 text-sm font-medium text-gray-900">coupon_code</td>
                                         <td class="px-6 py-4 text-sm text-gray-700">Stochează codul de cupon aplicat în timpul procesului de checkout. Folosit temporar pentru aplicarea reducerilor.</td>
                                     </tr>
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="px-6 py-4 text-sm font-medium text-gray-900">cookieConsent</td>
+                                        <td class="px-6 py-4 text-sm text-gray-700">Stochează consimțământul utilizatorului pentru politica de cookies (acceptat/refuzat). Utilizat în localStorage pentru a nu arăta repeated banner-ul de cookies.</td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
