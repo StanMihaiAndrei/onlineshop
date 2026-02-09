@@ -23,15 +23,20 @@ class SamedayService
     /**
      * Autentificare și obținere token
      */
-    public function authenticate($rememberMe = true): ?string
+    public function authenticate($rememberMe = true, $forceRefresh = false): ?string
     {
         $cacheKey = 'sameday_token';
 
-        if (Cache::has($cacheKey)) {
-            return Cache::get($cacheKey);
+        // ✅ Verifică cache doar dacă nu forțăm refresh
+        if (!$forceRefresh && Cache::has($cacheKey)) {
+            $token = Cache::get($cacheKey);
+            Log::info('Using cached Sameday token');
+            return $token;
         }
 
         try {
+            Log::info('Authenticating with Sameday API', ['force_refresh' => $forceRefresh]);
+
             $response = Http::withHeaders([
                 'X-AUTH-USERNAME' => $this->username,
                 'X-AUTH-PASSWORD' => $this->password,
@@ -44,8 +49,9 @@ class SamedayService
                 $token = $data['token'] ?? null;
 
                 if ($token) {
-                    Cache::put($cacheKey, $token, now()->addHours(24));
-                    Log::info('Sameday authentication successful');
+                    // ✅ Cache pentru 23 ore (nu 24) pentru siguranță
+                    Cache::put($cacheKey, $token, now()->addHours(23));
+                    Log::info('Sameday authentication successful', ['token_cached' => true]);
                     return $token;
                 }
             }
@@ -65,12 +71,12 @@ class SamedayService
     }
 
     /**
-     * Obține header-ele cu token
+     * Obține header-ele cu token și auto-refresh la 401
      */
-    protected function getAuthHeaders(): array
+    protected function getAuthHeaders($forceRefresh = false): array
     {
-        if (!$this->token) {
-            $this->token = $this->authenticate();
+        if (!$this->token || $forceRefresh) {
+            $this->token = $this->authenticate(true, $forceRefresh);
 
             if (!$this->token) {
                 throw new \Exception('Cannot get auth token for Sameday API');
@@ -82,6 +88,69 @@ class SamedayService
             'Accept' => 'application/json',
             'Content-Type' => 'application/json',
         ];
+    }
+
+    /**
+     * Helper method pentru a face request cu auto-retry la 401
+     */
+    protected function makeAuthenticatedRequest(string $method, string $url, array $options = [], int $maxRetries = 2): \Illuminate\Http\Client\Response
+    {
+        $attempt = 0;
+        $lastException = null;
+
+        while ($attempt < $maxRetries) {
+            try {
+                // ✅ Forțează refresh token la retry
+                $forceRefresh = ($attempt > 0);
+                $headers = $this->getAuthHeaders($forceRefresh);
+
+                $response = Http::withHeaders($headers)
+                    ->timeout($options['timeout'] ?? 30);
+
+                // Apply method
+                if ($method === 'GET') {
+                    $response = $response->get($url, $options['query'] ?? []);
+                } elseif ($method === 'POST') {
+                    $response = $response->post($url, $options['body'] ?? []);
+                }
+
+                // ✅ Dacă primim 401, încearcă din nou cu token fresh
+                if ($response->status() === 401 && $attempt < $maxRetries - 1) {
+                    Log::warning('Received 401, refreshing token', [
+                        'url' => $url,
+                        'attempt' => $attempt + 1
+                    ]);
+
+                    // ✅ Șterge token-ul expirat din cache
+                    Cache::forget('sameday_token');
+                    $this->token = null;
+
+                    $attempt++;
+                    sleep(1); // Pauză scurtă
+                    continue;
+                }
+
+                return $response;
+            } catch (\Exception $e) {
+                $lastException = $e;
+                $attempt++;
+
+                if ($attempt < $maxRetries) {
+                    Log::warning('Request failed, retrying', [
+                        'url' => $url,
+                        'attempt' => $attempt,
+                        'error' => $e->getMessage()
+                    ]);
+                    sleep(1);
+                }
+            }
+        }
+
+        if ($lastException) {
+            throw $lastException;
+        }
+
+        throw new \Exception('Request failed after all retries');
     }
 
     /**
@@ -252,10 +321,12 @@ class SamedayService
 
         if (Cache::has($cacheKey)) {
             $cached = Cache::get($cacheKey);
-            if (!empty($cached)) {
+            // ✅ Verifică lockerId SAU oohId
+            if (is_array($cached) && !empty($cached) && (isset($cached[0]['lockerId']) || isset($cached[0]['oohId']))) {
                 return $cached;
             }
             Cache::forget($cacheKey);
+            Log::warning('Corrupted locker cache removed', ['key' => $cacheKey]);
         }
 
         try {
@@ -277,7 +348,8 @@ class SamedayService
 
             $result = array_values($filteredLockers);
 
-            if (!empty($result)) {
+            // ✅ Verifică lockerId SAU oohId
+            if (!empty($result) && (isset($result[0]['lockerId']) || isset($result[0]['oohId']))) {
                 Cache::put($cacheKey, $result, now()->addHours(6));
             }
 
@@ -291,9 +363,8 @@ class SamedayService
             throw $e;
         }
     }
-
     /**
-     * Obține toate lockers-urile (paginat)
+     * Obține toate lockers-urile (paginat) cu retry logic
      */
     protected function getAllLockers(int $listingType = 0): array
     {
@@ -301,71 +372,9 @@ class SamedayService
 
         if (Cache::has($cacheKey)) {
             $cached = Cache::get($cacheKey);
-            if (!empty($cached)) {
-                return $cached;
-            }
-            Cache::forget($cacheKey);
-        }
-
-        try {
-            $allLockers = [];
-            $page = 1;
-            $perPage = 500;
-
-            do {
-                $response = Http::withHeaders($this->getAuthHeaders())
-                    ->timeout(10)
-                    ->get("{$this->baseUrl}/api/client/ooh-locations", [
-                        'page' => $page,
-                        'countPerPage' => $perPage,
-                        'listingType' => $listingType,
-                    ]);
-
-                if (!$response->successful()) {
-                    Log::error('Sameday get ooh-locations failed', [
-                        'status' => $response->status(),
-                        'page' => $page,
-                        'body' => $response->body()
-                    ]);
-                    break;
-                }
-
-                $data = $response->json();
-
-                if (!isset($data['data']) || empty($data['data'])) {
-                    break;
-                }
-
-                $allLockers = array_merge($allLockers, $data['data']);
-
-                $totalPages = $data['pages'] ?? 1;
-                $page++;
-            } while ($page <= $totalPages);
-
-            if (!empty($allLockers)) {
-                Cache::put($cacheKey, $allLockers, now()->addHours(6));
-                Log::info('Sameday lockers loaded', [
-                    'total' => count($allLockers),
-                    'listingType' => $listingType
-                ]);
-            }
-
-            return $allLockers;
-        } catch (\Exception $e) {
-            Log::error('Sameday get all lockers exception', [
-                'message' => $e->getMessage()
-            ]);
-            throw $e;
-        }
-    }
-
-    public function getServices(): array
-    {
-        $cacheKey = 'sameday_services';
-
-        if (Cache::has($cacheKey)) {
-            $cached = Cache::get($cacheKey);
-            if (!empty($cached)) {
+            // ✅ Verifică lockerId SAU oohId
+            if (is_array($cached) && !empty($cached) && (isset($cached[0]['lockerId']) || isset($cached[0]['oohId']))) {
+                Log::info('Returning cached lockers', ['count' => count($cached)]);
                 return $cached;
             }
             Cache::forget($cacheKey);
@@ -373,30 +382,38 @@ class SamedayService
 
         try {
             $response = Http::withHeaders($this->getAuthHeaders())
-                ->timeout(10)
-                ->get("{$this->baseUrl}/api/client/services");
+                ->timeout(30)
+                ->get("{$this->baseUrl}/api/locker/lockers", [
+                    'lockerListingType' => $listingType
+                ]);
 
-            if ($response->successful()) {
-                $data = $response->json();
-
-                if (!empty($data)) {
-                    Cache::put($cacheKey, $data, now()->addDays(7));
-                    return $data;
-                }
-
-                throw new \Exception('No services data received');
+            if (!$response->successful()) {
+                Log::error('Sameday API failed', [
+                    'status' => $response->status(),
+                    'body' => $response->body()
+                ]);
+                throw new \Exception("HTTP {$response->status()}");
             }
 
-            Log::error('Sameday getServices failed', [
-                'status' => $response->status(),
-                'body' => $response->body()
-            ]);
+            $data = $response->json();
 
-            throw new \Exception('Failed to fetch services');
+            if (!is_array($data) || empty($data)) {
+                Log::error('No locker data', ['type' => gettype($data)]);
+                throw new \Exception('No lockers received');
+            }
+
+            // ✅ Verifică lockerId SAU oohId (API folosește lockerId!)
+            if (!isset($data[0]) || !is_array($data[0]) || (!isset($data[0]['lockerId']) && !isset($data[0]['oohId']))) {
+                Log::error('Invalid locker format', ['first' => $data[0] ?? 'none']);
+                throw new \Exception('Invalid locker structure');
+            }
+
+            Cache::put($cacheKey, $data, now()->addHours(6));
+            Log::info('Lockers loaded', ['count' => count($data)]);
+
+            return $data;
         } catch (\Exception $e) {
-            Log::error('Sameday getServices exception', [
-                'message' => $e->getMessage()
-            ]);
+            Log::error('getAllLockers failed', ['error' => $e->getMessage()]);
             throw $e;
         }
     }

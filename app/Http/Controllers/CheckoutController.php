@@ -547,11 +547,10 @@ class CheckoutController extends Controller
 
             $lockers = array_map(function ($locker) {
                 return [
-                    'id' => (int) $locker['oohId'],
-                    'name' => $locker['name'] ?? '',
+                    'id' => $locker['lockerId'] ?? $locker['oohId'] ?? $locker['id'], // ✅ Verifică toate variantele
+                    'name' => $locker['name'] ?? 'Easybox',
                     'address' => $locker['address'] ?? '',
-                    'countyId' => $locker['countyId'] ?? null,
-                    'cityId' => $locker['cityId'] ?? null,
+                    'city' => $locker['city'] ?? ''
                 ];
             }, $rawLockers);
 
