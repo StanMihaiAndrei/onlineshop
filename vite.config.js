@@ -8,4 +8,14 @@ export default defineConfig({
             refresh: true,
         }),
     ],
+    build: {
+        modulePreload: {
+            polyfill: false,
+        },
+        rollupOptions: {
+            output: {
+                manualChunks: undefined,
+            }
+        }
+    }
 });

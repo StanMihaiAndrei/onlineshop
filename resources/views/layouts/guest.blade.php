@@ -29,7 +29,7 @@
         <link href="https://fonts.cdnfonts.com/css/comic-relief" rel="stylesheet">
 
         <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+        @vite(['resources/css/app.css', 'resources/js/app.js'], 'build', ['crossorigin' => 'anonymous'])
     </head>
     <body class="font-sans antialiased bg-background text-text">
         <!-- Navigation pentru clienți și guest -->

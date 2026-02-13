@@ -50,7 +50,7 @@
         </div>
 
         <!-- Cart Items -->
-        <div class="flex-1 overflow-y-auto p-6">
+        <div class="flex-1 overflow-y-auto p-6 overscroll-contain">
             @if(count($cartItems) > 0)
                 <div class="space-y-4">
                     @foreach($cartItems as $item)
@@ -154,7 +154,7 @@
                         x-transition:leave-start="opacity-100"
                         x-transition:leave-end="opacity-0"
                         class="fixed inset-0 bg-black bg-opacity-50 z-[80] flex items-center justify-center p-4 sm:p-6"
-                        style="display: none;"
+                        style="display: none; position: fixed;"
                         @click.self="showClearModal = false"
                         @keydown.escape.window="showClearModal = false">
                         
@@ -165,7 +165,7 @@
                             x-transition:leave="transition ease-in duration-150"
                             x-transition:leave-start="opacity-100 scale-100 translate-y-0"
                             x-transition:leave-end="opacity-0 scale-95 translate-y-4"
-                            class="bg-white rounded-xl shadow-2xl max-w-sm w-full overflow-hidden relative"
+                            class="bg-white rounded-xl shadow-2xl max-w-sm w-full overflow-hidden relative my-auto"
                             @click.stop>
                             
                             <!-- Modal Header -->

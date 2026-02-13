@@ -15,7 +15,7 @@
         <noscript><link href="https://fonts.cdnfonts.com/css/comic-relief" rel="stylesheet"></noscript>
 
         <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+       @vite(['resources/css/app.css', 'resources/js/app.js'], 'build', ['crossorigin' => 'anonymous'])
         
         @stack('styles')
     </head>
