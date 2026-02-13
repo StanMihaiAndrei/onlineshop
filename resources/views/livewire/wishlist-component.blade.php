@@ -1,4 +1,4 @@
-<div x-data="{ open: @entangle('isOpen') }" class="relative">
+<div x-data="{ open: @entangle('isOpen'), showClearModal: false }" class="relative">
     <!-- Wishlist Button -->
     <button @click="open = !open" 
             type="button"
@@ -127,8 +127,7 @@
 
             <!-- Footer Actions -->
             <div class="px-4 py-3 border-t border-gray-200 bg-gray-50 space-y-2">
-                <button wire:click="clearWishlist"
-                        wire:confirm="Are you sure you want to clear your wishlist?"
+                <button @click="showClearModal = true"
                         class="w-full px-4 py-2 bg-gray-200 text-gray-700 text-sm font-semibold rounded-lg hover:bg-gray-300 transition">
                     Golește lista de dorințe
                 </button>
@@ -147,5 +146,66 @@
                 </a>
             </div>
         @endif
+    </div>
+
+    <!-- Clear Wishlist Modal (OUTSIDE dropdown panel) -->
+    <div x-show="showClearModal"
+        x-transition:enter="transition ease-out duration-200"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100"
+        x-transition:leave="transition ease-in duration-150"
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0"
+        class="fixed inset-0 bg-black bg-opacity-50 z-[80] flex items-center justify-center p-4 sm:p-6"
+        style="display: none; position: fixed;"
+        @click.self="showClearModal = false"
+        @keydown.escape.window="showClearModal = false">
+        
+        <div x-show="showClearModal"
+            x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0 scale-95 translate-y-4"
+            x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+            x-transition:leave="transition ease-in duration-150"
+            x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+            x-transition:leave-end="opacity-0 scale-95 translate-y-4"
+            class="bg-white rounded-xl shadow-2xl max-w-sm w-full overflow-hidden relative my-auto"
+            @click.stop>
+            
+            <!-- Modal Header -->
+            <div class="bg-pink-50 px-4 sm:px-6 py-4 border-b border-pink-100">
+                <div class="flex items-center gap-3">
+                    <div class="flex-shrink-0 w-10 h-10 rounded-full bg-pink-100 flex items-center justify-center">
+                        <svg class="w-6 h-6 text-pink-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-900">Golește lista de dorințe?</h3>
+                </div>
+            </div>
+            
+            <!-- Modal Body -->
+            <div class="px-4 sm:px-6 py-4">
+                <p class="text-sm text-gray-600">
+                    Ești sigur că vrei să ștergi toate produsele din lista de dorințe? Această acțiune nu poate fi anulată.
+                </p>
+                <div class="mt-3 bg-gray-50 rounded-lg p-3">
+                    <p class="text-xs text-gray-500">
+                        <span class="font-semibold">{{ $wishlistCount }}</span> produs{{ $wishlistCount !== 1 ? 'e' : '' }} în listă
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Modal Footer -->
+            <div class="bg-gray-50 px-4 sm:px-6 py-4 flex flex-col sm:flex-row gap-3">
+                <button @click="showClearModal = false" 
+                        class="flex-1 px-4 py-2.5 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium transition">
+                    Anulează
+                </button>
+                <button @click="showClearModal = false; $wire.clearWishlist()" 
+                        class="flex-1 px-4 py-2.5 bg-pink-600 text-white rounded-lg hover:bg-pink-700 font-medium transition">
+                    Golește lista
+                </button>
+            </div>
+        </div>
     </div>
 </div>

@@ -29,7 +29,7 @@
     <!-- Imagine container -->
     <div class="relative">
         <a href="{{ $productUrl }}" class="block">
-            <div class="relative overflow-hidden h-[350px] sm:h-[280px]">
+            <div class="relative overflow-hidden aspect-[3/4]">
                @if($firstImage)
                 <img src="{{ asset('storage/' . $firstImage) }}" 
                     alt="{{ $productName }}"
